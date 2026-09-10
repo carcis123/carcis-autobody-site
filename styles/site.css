@@ -722,3 +722,8 @@ main, .ticker, footer { position: relative; z-index: 1; }
 @media (min-width: 900px) {
   .job-body-grid { grid-template-columns: minmax(0, 1fr) 320px; gap: 56px; }
 }
+
+/* The 404 page reuses .feature-row as links; keep them looking identical to
+   the static rows on the services page, just clickable. */
+a.feature-row { text-decoration: none; color: inherit; }
+a.feature-row:hover .feature-title { color: var(--red-bright); }

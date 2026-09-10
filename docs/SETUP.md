@@ -13,14 +13,14 @@ builds, but the Drive import will not do anything until steps 3 to 6 are done.
 Cloudflare Pages already builds a preview for every branch. You are switching
 it on for `staging` and locking it down.
 
-1. Cloudflare dashboard, **Workers & Pages**, open the `carcis-autobody-site`
-   project.
+1. Cloudflare dashboard, **Workers & Pages**, open the **`carcis-autobody`**
+   project. Note the project name is NOT the repo name.
 2. **Settings**, **Builds & deployments**, **Branch deployments**. Set preview
    branches to **All non-Production branches**, or list `staging` explicitly.
 3. The `staging` branch is already pushed, so a deployment should appear under
    **Deployments** within a minute or two.
 
-You should see: a URL like `https://staging.carcis-autobody-site.pages.dev`
+You should see: a URL like `https://staging.carcis-autobody.pages.dev`
 serving the site with the new **Our Work** nav item.
 
 ### Lock the previews down
@@ -44,6 +44,23 @@ Cloudflare Access login instead of showing the site.
 Analytics will not fire on any hostname except `carcisautobody.com` and
 `www.carcisautobody.com`. Test bookings on staging cannot reach your Google Ads
 conversion data. That check lives in `src/partials/head-open.html`.
+
+### Confirm the soft-404 fix landed
+
+Before this change, every unknown URL on the site returned the home page with
+HTTP 200 instead of a 404. That meant a mistyped address looked to Google like
+a real duplicate of the home page, and a deleted job page would have stayed
+"alive" forever. A `404.html` at the repo root fixes it: Cloudflare Pages
+serves that file with a real 404 status.
+
+You should see, once this branch is live:
+
+```
+curl -s -o /dev/null -w '%{http_code}' https://staging.carcis-autobody.pages.dev/nope-9876/
+```
+
+printing `404`, not `200`. Production still prints `200` today; that is what
+this branch fixes when it merges.
 
 ---
 
