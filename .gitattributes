@@ -1,0 +1,10 @@
+# build.js writes LF. Without this, a Windows checkout gets CRLF on disk and
+# `node build.js --check` reports every generated file as stale forever.
+* text=auto eol=lf
+
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.webp binary
+*.ico  binary
+*.woff2 binary

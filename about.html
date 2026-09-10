@@ -3,6 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Analytics run on the production hostnames only. Preview and staging
+     deployments share this exact HTML, so without this check a test booking
+     on a *.pages.dev preview would land in real Google Ads conversion data. -->
+<script>window.CARCIS_LIVE = /^(www\.)?carcisautobody\.com$/.test(location.hostname);</script>
+<!-- Google Tag Manager -->
+<script>if(window.CARCIS_LIVE){(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-57K7RHSD');}</script>
+<!-- End Google Tag Manager -->
 <title>About Carcis Autobody Repair | Vancouver, WA</title>
 <meta name="description" content="Carcis Autobody Repair is owned and run by Carlos and Kayla Carrasco Cisneros. Certified auto body training, custom paint, and rust repair on classic cars.">
 <link rel="canonical" href="https://www.carcisautobody.com/about.html">
@@ -24,8 +35,8 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#d94a3e">
-<link rel="preload" as="image" href="assets/logo/carcis-logo.jpg">
-<link rel="stylesheet" href="styles/site.css">
+<link rel="preload" as="image" href="/assets/logo/carcis-logo-sm.webp" type="image/webp">
+<link rel="stylesheet" href="/styles/site.css">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -64,54 +75,91 @@
   ]
 }
 </script>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18363583498"></script>
+<!-- Google tag (gtag.js) — Google Ads conversion tracking.
+     WARNING: this loads AW-18363583498 directly, independent of the GTM
+     container above. Do NOT also add a Google Ads tag for this same ID
+     inside GTM-57K7RHSD or every conversion will be counted twice.
+     To move tracking into GTM, add the tag there first, confirm it fires
+     in Preview mode, then delete this block and the gtag() conversion
+     call in src/pages/estimate.html. -->
 <script>
+  // gtag() is defined on every hostname so the Cal.com conversion callback in
+  // estimate.html never throws; on staging it just pushes into a dataLayer
+  // that nothing is listening to. Only the real tag request is gated.
   window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'AW-18363583498');
+  function gtag(){ dataLayer.push(arguments); }
+  if (window.CARCIS_LIVE) {
+    var gtagScript = document.createElement('script');
+    gtagScript.async = true;
+    gtagScript.src = 'https://www.googletagmanager.com/gtag/js?id=AW-18363583498';
+    document.head.appendChild(gtagScript);
+    gtag('js', new Date());
+    gtag('config', 'AW-18363583498');
+  }
 </script>
 </head>
 <body>
 
+<!-- Google Tag Manager (noscript). This one cannot be hostname-gated, since
+     it exists precisely for visitors with no JavaScript. Staging is behind
+     Cloudflare Access so no crawler or real visitor reaches it. -->
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-57K7RHSD"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+
 <div class="watermark" aria-hidden="true">
-  <img src="assets/logo/carcis-logo.jpg" alt="" width="900" height="614">
+  <picture>
+    <source srcset="/assets/logo/carcis-logo.webp" type="image/webp">
+    <img src="/assets/logo/carcis-logo.jpg" alt="" width="900" height="614"
+         loading="lazy" decoding="async">
+  </picture>
 </div>
 
 <header>
   <div class="wrap header-inner">
-    <a href="index.html" class="logo-mark">
-      <img src="assets/logo/carcis-logo.jpg" alt="Carcis Autobody Repair LLC" width="900" height="614">
+    <a href="/" class="logo-mark">
+      <picture>
+        <source srcset="/assets/logo/carcis-logo-sm.webp" type="image/webp">
+        <img src="/assets/logo/carcis-logo-sm.jpg" alt="Carcis Autobody Repair LLC" width="240" height="164" fetchpriority="high">
+      </picture>
     </a>
     <nav class="nav-desktop" aria-label="Primary">
-      <a href="index.html">Home</a>
-      <a href="about.html" aria-current="page">About</a>
-      <a href="services.html">Services</a>
-      <a href="estimate.html">Get an Estimate</a>
+      <a href="/">Home</a>
+      <a href="/about.html" aria-current="page">About</a>
+      <a href="/services.html">Services</a>
+      <a href="/work/">Our Work</a>
+      <a href="/estimate.html">Get an Estimate</a>
     </nav>
     <div class="header-cta">
       <a class="phone-link" href="tel:+13603815219">(360) 381-5219</a>
-      <a class="btn btn-primary" href="estimate.html">Get a Free Estimate</a>
-      <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
+      <a class="btn btn-primary" href="/estimate.html">Get a Free Estimate</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navMobile">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
       </button>
     </div>
   </div>
 </header>
 
-<div class="nav-mobile" id="navMobile">
+<div class="nav-mobile" id="navMobile" role="dialog" aria-modal="true" aria-label="Site menu">
   <div class="nav-mobile-top">
-    <div class="logo-mark"><img src="assets/logo/carcis-logo.jpg" alt="Carcis Autobody Repair LLC" width="900" height="614" style="height:34px;"></div>
+    <div class="logo-mark">
+      <picture>
+        <source srcset="/assets/logo/carcis-logo-sm.webp" type="image/webp">
+        <img src="/assets/logo/carcis-logo-sm.jpg" alt="Carcis Autobody Repair LLC" width="240" height="164" style="height:34px;">
+      </picture>
+    </div>
     <button class="nav-mobile-close" id="navClose" aria-label="Close menu">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
     </button>
   </div>
   <nav class="nav-mobile-links" aria-label="Mobile">
-    <a href="index.html">Home</a>
-    <a href="about.html" aria-current="page">About</a>
-    <a href="services.html">Services</a>
-    <a href="estimate.html">Get an Estimate</a>
+    <a href="/">Home</a>
+    <a href="/about.html" aria-current="page">About</a>
+    <a href="/services.html">Services</a>
+    <a href="/work/">Our Work</a>
+    <a href="/estimate.html">Get an Estimate</a>
   </nav>
   <div class="nav-mobile-foot">
     <a href="tel:+13603815219">(360) 381-5219</a>
@@ -159,19 +207,19 @@
     </div>
     <div class="gallery-grid reveal">
       <div class="gallery-item a">
-        <img src="assets/photos/paint-maroon-sedan.jpg" alt="Maroon sedan masked and taped, prepped for paint in the booth" loading="lazy" width="1200" height="675">
+        <img src="/assets/photos/paint-maroon-sedan.jpg" alt="Maroon sedan masked and taped, prepped for paint in the booth" loading="lazy" width="1200" height="675">
         <span class="gallery-caption">Prepped and taped for paint</span>
       </div>
       <div class="gallery-item b">
-        <img src="assets/photos/paint-black-hatchback.jpg" alt="Black car body freshly painted, still masked, curing in the paint booth" loading="lazy" width="774" height="1032">
+        <img src="/assets/photos/paint-black-hatchback.jpg" alt="Black car body freshly painted, still masked, curing in the paint booth" loading="lazy" width="774" height="1032">
         <span class="gallery-caption">Fresh coat, still curing</span>
       </div>
       <div class="gallery-item c">
-        <img src="assets/photos/rav4-detail.jpg" alt="Close-up of a repaired door panel on a maroon RAV4, before and after" loading="lazy" width="736" height="736">
+        <img src="/assets/photos/rav4-detail.jpg" alt="Close-up of a repaired door panel on a maroon RAV4, before and after" loading="lazy" width="736" height="736">
         <span class="gallery-caption">Panel repair, up close</span>
       </div>
       <div class="gallery-item d">
-        <img src="assets/photos/camry-before-after.jpg" alt="White Toyota Camry with front-end collision damage, and the same car fully repaired below it" loading="lazy" width="958" height="1434">
+        <img src="/assets/photos/camry-before-after.jpg" alt="White Toyota Camry with front-end collision damage, and the same car fully repaired below it" loading="lazy" width="958" height="1434">
         <span class="gallery-caption">Before &amp; after</span>
       </div>
     </div>
@@ -182,7 +230,7 @@
   <div class="wrap cta-inner reveal">
     <h2 class="cta-title">Talk to <span class="accent">Carlos or Kayla</span> directly.</h2>
     <div>
-      <a class="btn btn-primary btn-lg" href="estimate.html">Get a Free Estimate</a>
+      <a class="btn btn-primary btn-lg" href="/estimate.html">Get a Free Estimate</a>
     </div>
   </div>
 </section>
@@ -194,7 +242,10 @@
     <div class="footer-grid">
       <div>
         <div class="footer-logo">
-          <img src="assets/logo/carcis-logo.jpg" alt="Carcis Autobody Repair LLC" width="900" height="614">
+          <picture>
+            <source srcset="/assets/logo/carcis-logo-sm.webp" type="image/webp">
+            <img src="/assets/logo/carcis-logo-sm.jpg" alt="Carcis Autobody Repair LLC" width="240" height="164" loading="lazy" decoding="async">
+          </picture>
         </div>
         <p class="footer-line" style="max-width:32ch;">Certified collision, paint, and custom body work in Vancouver, WA.</p>
       </div>
@@ -212,45 +263,11 @@
     </div>
     <div class="footer-bottom">
       <span>© 2026 Carcis Autobody Repair LLC</span>
-      <span><a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a></span>
+      <span><a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a></span>
     </div>
   </div>
 </footer>
 
-<script src="js/site.js"></script>
-
-<aside class="vx-seo-content" style="position:absolute;left:-10000px;top:-10000px;width:1px;height:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);">
-  <h1>About Carlos and Kayla Carrasco Cisneros, Owners of Carcis Autobody Repair</h1>
-  <p>Carcis Autobody Repair in Vancouver, Washington is owned and operated by Carlos Carrasco Cisneros and Kayla Carrasco Cisneros. The shop opened in 2026 at 1520 Washington St, and its background and specialties shape what kind of work it takes on.</p>
-
-  <h2>About the Shop's Background</h2>
-
-  <h3>Carlos's Training and Certification</h3>
-  <p>Carlos Carrasco Cisneros is a certified auto body technician who trained specifically for auto body repair work. His certification and training set the foundation for the shop's repair standards, covered in more detail on the <a href="/services.html">services page</a>.</p>
-
-  <h3>Custom Paint Experience</h3>
-  <p>Beyond standard repair, Carlos has direct experience with full custom paint designs and custom color work, distinguishing Carcis from shops that only handle factory-match repaints. See examples of this work in the gallery on the <a href="/">home page</a>.</p>
-
-  <h3>Rust Repair on Classic Cars</h3>
-  <p>Carlos has specific experience with rust repair on classic and older vehicles, which uses different technique than modern unibody repair. This is one of the shop's specialties, detailed further on the <a href="/services.html">services page</a>.</p>
-
-  <h3>Total-Loss Vehicle Rebuilds</h3>
-  <p>Carlos has also worked on rebuilding vehicles that were declared a total loss, handling collision damage extensive enough that insurers considered the vehicle not worth repairing under normal circumstances.</p>
-
-  <h3>Kayla's Role</h3>
-  <p>Kayla Carrasco Cisneros co-owns and helps run the day-to-day operations of the shop alongside Carlos.</p>
-
-  <h3>Why Carcis Opened Recently</h3>
-  <p>Carcis is a newly opened shop, which the owners treat as an advantage: a newer shop has not yet built up the backlog that slows down long-established competitors, and customers deal directly with the owners rather than a front desk relaying information. Book a <a href="/estimate.html">free estimate</a> to experience this directly.</p>
-
-  <h3>Shop Location and Hours</h3>
-  <p>Carcis Autobody Repair is located at 1520 Washington St, Vancouver, WA 98660, and is open Monday through Friday, 8am to 5pm.</p>
-
-  <h3>References</h3>
-  <ul>
-    <li><a href="https://www.i-car.com/" rel="noopener">I-CAR, the collision repair industry training and standards organization</a></li>
-    <li><a href="https://www.ase.com/" rel="noopener">ASE, the National Institute for Automotive Service Excellence</a></li>
-  </ul>
-</aside>
+<script src="/js/site.js"></script>
 </body>
 </html>

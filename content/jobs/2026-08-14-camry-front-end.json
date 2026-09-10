@@ -1,0 +1,23 @@
+{
+  "_note": "SEED DATA. Replace `story` with Carlos's description of this specific repair before this goes to production.",
+  "slug": "white-camry-front-end-collision",
+  "date": "2026-08-14",
+  "title": "Full front-end collision repair on a white Toyota Camry",
+  "summary": "A white Toyota Camry came in with front-end collision damage and left with the front clip back to factory fit and finish.",
+  "service": "collision",
+  "vehicle": { "make": "Toyota", "model": "Camry", "color": "White" },
+  "insurance": true,
+  "story": [
+    "Front-end hits are the most common thing through the door, and they are also the ones where a cheap repair shows up fastest. The bumper cover, the headlight seating and the hood line all have to agree with each other, and a panel that is a few millimetres out will catch the eye every time the owner walks up to the car.",
+    "This Camry needed the front clip brought back to factory alignment before any paint work started. Getting the gaps even first is what makes the finished car look untouched rather than merely clean.",
+    "White is often assumed to be the easy colour to match. It is not. Factory whites vary between model years and between panels, so this one was matched to the car in front of us rather than to a code on paper."
+  ],
+  "photos": [
+    {
+      "file": "/assets/photos/camry-before-after.jpg",
+      "alt": "White Toyota Camry with front-end collision damage, and the same car fully repaired below it",
+      "width": 958,
+      "height": 1434
+    }
+  ]
+}

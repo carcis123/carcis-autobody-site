@@ -1,0 +1,37 @@
+{
+  "_note": "SEED DATA. Copy is derived from the captions already on the site, not from a real write-up. Replace `story` with Carlos's description of this specific repair before this goes to production.",
+  "slug": "rav4-rear-door-fender-collision",
+  "date": "2026-08-28",
+  "title": "Rear door and fender collision repair on a maroon RAV4",
+  "summary": "A maroon Toyota RAV4 came in with a damaged rear door and fender. Panel work and a factory colour match put it back to the line it left the factory with.",
+  "service": "collision",
+  "vehicle": { "make": "Toyota", "model": "RAV4", "color": "Maroon" },
+  "insurance": true,
+  "story": [
+    "The impact caught the rear door and carried into the fender, so the damage crossed a panel gap. That is the part that decides whether a repair looks right afterwards: both panels have to come back to the same line, or the seam between them reads as wrong even after the paint is perfect.",
+    "The door skin and fender were worked back to factory contour rather than replaced outright, then refinished in the vehicle's original maroon. Matching a maroon is harder than it sounds. It is a colour that shifts noticeably under different light, so the blend was carried into the adjacent panels rather than stopped hard at the seam.",
+    "This one went through an insurance claim. The process is the same either way at Carcis, and the customer sees the same estimate."
+  ],
+  "photos": [
+    {
+      "file": "/assets/photos/rav4-before.jpg",
+      "role": "before",
+      "alt": "Damaged rear door and fender on a maroon RAV4, before repair",
+      "width": 1400,
+      "height": 791
+    },
+    {
+      "file": "/assets/photos/rav4-after.jpg",
+      "role": "after",
+      "alt": "The same RAV4 after repair, clean bodywork and matched paint",
+      "width": 1400,
+      "height": 791
+    },
+    {
+      "file": "/assets/photos/rav4-detail.jpg",
+      "alt": "Close-up of the repaired door panel on the maroon RAV4",
+      "width": 736,
+      "height": 736
+    }
+  ]
+}

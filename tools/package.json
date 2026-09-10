@@ -1,0 +1,14 @@
+{
+  "name": "carcis-tools",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Drive import for carcisautobody.com. Runs in CI only; the site build itself has no dependencies.",
+  "license": "UNLICENSED",
+  "scripts": {
+    "sync": "node sync-drive.js"
+  },
+  "dependencies": {
+    "googleapis": "^178.0.0",
+    "sharp": "^0.35.0"
+  }
+}

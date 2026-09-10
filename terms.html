@@ -3,6 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Analytics run on the production hostnames only. Preview and staging
+     deployments share this exact HTML, so without this check a test booking
+     on a *.pages.dev preview would land in real Google Ads conversion data. -->
+<script>window.CARCIS_LIVE = /^(www\.)?carcisautobody\.com$/.test(location.hostname);</script>
+<!-- Google Tag Manager -->
+<script>if(window.CARCIS_LIVE){(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-57K7RHSD');}</script>
+<!-- End Google Tag Manager -->
 <title>Terms of Service | Carcis Autobody Repair</title>
 <meta name="description" content="Terms of service for Carcis Autobody Repair, Vancouver, WA.">
 <link rel="canonical" href="https://www.carcisautobody.com/terms.html">
@@ -13,51 +24,85 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#d94a3e">
-<link rel="stylesheet" href="styles/site.css">
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18363583498"></script>
+<link rel="preload" as="image" href="/assets/logo/carcis-logo-sm.webp" type="image/webp">
+<link rel="stylesheet" href="/styles/site.css">
+<!-- Google tag (gtag.js) — Google Ads conversion tracking.
+     WARNING: this loads AW-18363583498 directly, independent of the GTM
+     container above. Do NOT also add a Google Ads tag for this same ID
+     inside GTM-57K7RHSD or every conversion will be counted twice.
+     To move tracking into GTM, add the tag there first, confirm it fires
+     in Preview mode, then delete this block and the gtag() conversion
+     call in src/pages/estimate.html. -->
 <script>
+  // gtag() is defined on every hostname so the Cal.com conversion callback in
+  // estimate.html never throws; on staging it just pushes into a dataLayer
+  // that nothing is listening to. Only the real tag request is gated.
   window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'AW-18363583498');
+  function gtag(){ dataLayer.push(arguments); }
+  if (window.CARCIS_LIVE) {
+    var gtagScript = document.createElement('script');
+    gtagScript.async = true;
+    gtagScript.src = 'https://www.googletagmanager.com/gtag/js?id=AW-18363583498';
+    document.head.appendChild(gtagScript);
+    gtag('js', new Date());
+    gtag('config', 'AW-18363583498');
+  }
 </script>
 </head>
 <body>
 
+<!-- Google Tag Manager (noscript). This one cannot be hostname-gated, since
+     it exists precisely for visitors with no JavaScript. Staging is behind
+     Cloudflare Access so no crawler or real visitor reaches it. -->
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-57K7RHSD"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+
 <header>
   <div class="wrap header-inner">
-    <a href="index.html" class="logo-mark">
-      <img src="assets/logo/carcis-logo.jpg" alt="Carcis Autobody Repair LLC" width="900" height="614">
+    <a href="/" class="logo-mark">
+      <picture>
+        <source srcset="/assets/logo/carcis-logo-sm.webp" type="image/webp">
+        <img src="/assets/logo/carcis-logo-sm.jpg" alt="Carcis Autobody Repair LLC" width="240" height="164" fetchpriority="high">
+      </picture>
     </a>
     <nav class="nav-desktop" aria-label="Primary">
-      <a href="index.html">Home</a>
-      <a href="about.html">About</a>
-      <a href="services.html">Services</a>
-      <a href="estimate.html">Get an Estimate</a>
+      <a href="/">Home</a>
+      <a href="/about.html">About</a>
+      <a href="/services.html">Services</a>
+      <a href="/work/">Our Work</a>
+      <a href="/estimate.html">Get an Estimate</a>
     </nav>
     <div class="header-cta">
       <a class="phone-link" href="tel:+13603815219">(360) 381-5219</a>
-      <a class="btn btn-primary" href="estimate.html">Get a Free Estimate</a>
-      <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
+      <a class="btn btn-primary" href="/estimate.html">Get a Free Estimate</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navMobile">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
       </button>
     </div>
   </div>
 </header>
 
-<div class="nav-mobile" id="navMobile">
+<div class="nav-mobile" id="navMobile" role="dialog" aria-modal="true" aria-label="Site menu">
   <div class="nav-mobile-top">
-    <div class="logo-mark"><img src="assets/logo/carcis-logo.jpg" alt="Carcis Autobody Repair LLC" width="900" height="614" style="height:34px;"></div>
+    <div class="logo-mark">
+      <picture>
+        <source srcset="/assets/logo/carcis-logo-sm.webp" type="image/webp">
+        <img src="/assets/logo/carcis-logo-sm.jpg" alt="Carcis Autobody Repair LLC" width="240" height="164" style="height:34px;">
+      </picture>
+    </div>
     <button class="nav-mobile-close" id="navClose" aria-label="Close menu">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
     </button>
   </div>
   <nav class="nav-mobile-links" aria-label="Mobile">
-    <a href="index.html">Home</a>
-    <a href="about.html">About</a>
-    <a href="services.html">Services</a>
-    <a href="estimate.html">Get an Estimate</a>
+    <a href="/">Home</a>
+    <a href="/about.html">About</a>
+    <a href="/services.html">Services</a>
+    <a href="/work/">Our Work</a>
+    <a href="/estimate.html">Get an Estimate</a>
   </nav>
   <div class="nav-mobile-foot">
     <a href="tel:+13603815219">(360) 381-5219</a>
@@ -100,7 +145,10 @@
     <div class="footer-grid">
       <div>
         <div class="footer-logo">
-          <img src="assets/logo/carcis-logo.jpg" alt="Carcis Autobody Repair LLC" width="900" height="614">
+          <picture>
+            <source srcset="/assets/logo/carcis-logo-sm.webp" type="image/webp">
+            <img src="/assets/logo/carcis-logo-sm.jpg" alt="Carcis Autobody Repair LLC" width="240" height="164" loading="lazy" decoding="async">
+          </picture>
         </div>
         <p class="footer-line" style="max-width:32ch;">Certified collision, paint, and custom body work in Vancouver, WA.</p>
       </div>
@@ -118,11 +166,11 @@
     </div>
     <div class="footer-bottom">
       <span>© 2026 Carcis Autobody Repair LLC</span>
-      <span><a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a></span>
+      <span><a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a></span>
     </div>
   </div>
 </footer>
 
-<script src="js/site.js"></script>
+<script src="/js/site.js"></script>
 </body>
 </html>

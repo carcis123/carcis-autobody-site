@@ -2,3 +2,5 @@
 incoming-photos/
 node_modules/
 *.log
+tools/node_modules/
+tools/package-lock.json

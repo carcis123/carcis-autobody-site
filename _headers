@@ -7,11 +7,41 @@
   Cross-Origin-Opener-Policy: same-origin
   X-DNS-Prefetch-Control: on
 
+# Photos and logos are NOT content-hashed, so they cannot be immutable:
+# editing an image in place would leave a year-old copy in every visitor's
+# cache. One day fresh, then served stale while it revalidates in the
+# background, so repeat visits stay fast without going stale for a year.
 /assets/*
-  Cache-Control: public, max-age=31536000, immutable
+  Cache-Control: public, max-age=86400, stale-while-revalidate=2592000
 
+/styles/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=2592000
+
+# Font filenames are stable and their bytes never change in place.
 /styles/fonts/*
   Cache-Control: public, max-age=31536000, immutable
 
+/js/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=2592000
+
 /*.html
   Cache-Control: public, max-age=300, must-revalidate
+
+# Build sources, job data, docs and the importer all live in the repo and are
+# therefore uploaded by Pages. Nothing links to them, but tell crawlers to
+# ignore them if they are ever found.
+/src/*
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
+
+/content/*
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
+
+/tools/*
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
+
+/docs/*
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store

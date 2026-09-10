@@ -1,0 +1,49 @@
+<header>
+  <div class="wrap header-inner">
+    <a href="/" class="logo-mark">
+      <picture>
+        <source srcset="/assets/logo/carcis-logo-sm.webp" type="image/webp">
+        <img src="/assets/logo/carcis-logo-sm.jpg" alt="Carcis Autobody Repair LLC" width="240" height="164" fetchpriority="high">
+      </picture>
+    </a>
+    <nav class="nav-desktop" aria-label="Primary">
+      <a href="/"{{cur:index}}>Home</a>
+      <a href="/about.html"{{cur:about}}>About</a>
+      <a href="/services.html"{{cur:services}}>Services</a>
+      <a href="/work/"{{cur:work}}>Our Work</a>
+      <a href="/estimate.html"{{cur:estimate}}>Get an Estimate</a>
+    </nav>
+    <div class="header-cta">
+      <a class="phone-link" href="tel:+13603815219">(360) 381-5219</a>
+      <a class="btn btn-primary" href="/estimate.html">Get a Free Estimate</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navMobile">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="nav-mobile" id="navMobile" role="dialog" aria-modal="true" aria-label="Site menu">
+  <div class="nav-mobile-top">
+    <div class="logo-mark">
+      <picture>
+        <source srcset="/assets/logo/carcis-logo-sm.webp" type="image/webp">
+        <img src="/assets/logo/carcis-logo-sm.jpg" alt="Carcis Autobody Repair LLC" width="240" height="164" style="height:34px;">
+      </picture>
+    </div>
+    <button class="nav-mobile-close" id="navClose" aria-label="Close menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <nav class="nav-mobile-links" aria-label="Mobile">
+    <a href="/"{{cur:index}}>Home</a>
+    <a href="/about.html"{{cur:about}}>About</a>
+    <a href="/services.html"{{cur:services}}>Services</a>
+    <a href="/work/"{{cur:work}}>Our Work</a>
+    <a href="/estimate.html"{{cur:estimate}}>Get an Estimate</a>
+  </nav>
+  <div class="nav-mobile-foot">
+    <a href="tel:+13603815219">(360) 381-5219</a>
+    <a href="mailto:carcisautobodyrepair@gmail.com">carcisautobodyrepair@gmail.com</a>
+  </div>
+</div>

@@ -3,6 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Analytics run on the production hostnames only. Preview and staging
+     deployments share this exact HTML, so without this check a test booking
+     on a *.pages.dev preview would land in real Google Ads conversion data. -->
+<script>window.CARCIS_LIVE = /^(www\.)?carcisautobody\.com$/.test(location.hostname);</script>
+<!-- Google Tag Manager -->
+<script>if(window.CARCIS_LIVE){(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-57K7RHSD');}</script>
+<!-- End Google Tag Manager -->
 <title>Carcis Autobody Repair | Collision, Paint &amp; Custom Body Work in Vancouver, WA</title>
 <meta name="description" content="Certified collision repair, paint, and custom body work in Vancouver, WA. Free estimates, insurance or personal pay. 10% off through February 14, 2027.">
 <link rel="canonical" href="https://www.carcisautobody.com/">
@@ -24,8 +35,8 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#d94a3e">
-<link rel="preload" as="image" href="assets/logo/carcis-logo.jpg">
-<link rel="stylesheet" href="styles/site.css">
+<link rel="preload" as="image" href="/assets/logo/carcis-logo-sm.webp" type="image/webp">
+<link rel="stylesheet" href="/styles/site.css">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -107,54 +118,91 @@
   ]
 }
 </script>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18363583498"></script>
+<!-- Google tag (gtag.js) — Google Ads conversion tracking.
+     WARNING: this loads AW-18363583498 directly, independent of the GTM
+     container above. Do NOT also add a Google Ads tag for this same ID
+     inside GTM-57K7RHSD or every conversion will be counted twice.
+     To move tracking into GTM, add the tag there first, confirm it fires
+     in Preview mode, then delete this block and the gtag() conversion
+     call in src/pages/estimate.html. -->
 <script>
+  // gtag() is defined on every hostname so the Cal.com conversion callback in
+  // estimate.html never throws; on staging it just pushes into a dataLayer
+  // that nothing is listening to. Only the real tag request is gated.
   window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'AW-18363583498');
+  function gtag(){ dataLayer.push(arguments); }
+  if (window.CARCIS_LIVE) {
+    var gtagScript = document.createElement('script');
+    gtagScript.async = true;
+    gtagScript.src = 'https://www.googletagmanager.com/gtag/js?id=AW-18363583498';
+    document.head.appendChild(gtagScript);
+    gtag('js', new Date());
+    gtag('config', 'AW-18363583498');
+  }
 </script>
 </head>
 <body>
 
+<!-- Google Tag Manager (noscript). This one cannot be hostname-gated, since
+     it exists precisely for visitors with no JavaScript. Staging is behind
+     Cloudflare Access so no crawler or real visitor reaches it. -->
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-57K7RHSD"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+
 <div class="watermark" aria-hidden="true">
-  <img src="assets/logo/carcis-logo.jpg" alt="" width="900" height="614">
+  <picture>
+    <source srcset="/assets/logo/carcis-logo.webp" type="image/webp">
+    <img src="/assets/logo/carcis-logo.jpg" alt="" width="900" height="614"
+         loading="lazy" decoding="async">
+  </picture>
 </div>
 
 <header>
   <div class="wrap header-inner">
-    <a href="index.html" class="logo-mark">
-      <img src="assets/logo/carcis-logo.jpg" alt="Carcis Autobody Repair LLC" width="900" height="614">
+    <a href="/" class="logo-mark">
+      <picture>
+        <source srcset="/assets/logo/carcis-logo-sm.webp" type="image/webp">
+        <img src="/assets/logo/carcis-logo-sm.jpg" alt="Carcis Autobody Repair LLC" width="240" height="164" fetchpriority="high">
+      </picture>
     </a>
     <nav class="nav-desktop" aria-label="Primary">
-      <a href="index.html" aria-current="page">Home</a>
-      <a href="about.html">About</a>
-      <a href="services.html">Services</a>
-      <a href="estimate.html">Get an Estimate</a>
+      <a href="/" aria-current="page">Home</a>
+      <a href="/about.html">About</a>
+      <a href="/services.html">Services</a>
+      <a href="/work/">Our Work</a>
+      <a href="/estimate.html">Get an Estimate</a>
     </nav>
     <div class="header-cta">
       <a class="phone-link" href="tel:+13603815219">(360) 381-5219</a>
-      <a class="btn btn-primary" href="estimate.html">Get a Free Estimate</a>
-      <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
+      <a class="btn btn-primary" href="/estimate.html">Get a Free Estimate</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navMobile">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
       </button>
     </div>
   </div>
 </header>
 
-<div class="nav-mobile" id="navMobile">
+<div class="nav-mobile" id="navMobile" role="dialog" aria-modal="true" aria-label="Site menu">
   <div class="nav-mobile-top">
-    <div class="logo-mark"><img src="assets/logo/carcis-logo.jpg" alt="Carcis Autobody Repair LLC" width="900" height="614" style="height:34px;"></div>
+    <div class="logo-mark">
+      <picture>
+        <source srcset="/assets/logo/carcis-logo-sm.webp" type="image/webp">
+        <img src="/assets/logo/carcis-logo-sm.jpg" alt="Carcis Autobody Repair LLC" width="240" height="164" style="height:34px;">
+      </picture>
+    </div>
     <button class="nav-mobile-close" id="navClose" aria-label="Close menu">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
     </button>
   </div>
   <nav class="nav-mobile-links" aria-label="Mobile">
-    <a href="index.html" aria-current="page">Home</a>
-    <a href="about.html">About</a>
-    <a href="services.html">Services</a>
-    <a href="estimate.html">Get an Estimate</a>
+    <a href="/" aria-current="page">Home</a>
+    <a href="/about.html">About</a>
+    <a href="/services.html">Services</a>
+    <a href="/work/">Our Work</a>
+    <a href="/estimate.html">Get an Estimate</a>
   </nav>
   <div class="nav-mobile-foot">
     <a href="tel:+13603815219">(360) 381-5219</a>
@@ -182,7 +230,7 @@
       <h1 class="hero-headline">Collision, paint &amp; <em>custom</em> body work done right.</h1>
       <p class="hero-sub">Carcis Autobody Repair is a newly opened, certified shop handling dent, panel, rust, and collision repair, plus custom paint and design work — with fast turnaround and real communication from day one.</p>
       <div class="hero-actions">
-        <a class="btn btn-primary btn-lg" href="estimate.html">Get a Free Estimate</a>
+        <a class="btn btn-primary btn-lg" href="/estimate.html">Get a Free Estimate</a>
         <span class="hero-note">Free estimates · Insurance or out of pocket</span>
       </div>
     </div>
@@ -240,10 +288,10 @@
     </div>
     <div class="slider-frame reveal" id="sliderFrame">
       <div class="slider-panel panel-before">
-        <img src="assets/photos/rav4-before.jpg" alt="Damaged rear door and fender on a maroon RAV4, before repair" loading="lazy" width="1400" height="791">
+        <img src="/assets/photos/rav4-before.jpg" alt="Damaged rear door and fender on a maroon RAV4, before repair" width="1400" height="791" loading="lazy" decoding="async">
       </div>
       <div class="slider-panel panel-after" id="afterPanel">
-        <img src="assets/photos/rav4-after.jpg" alt="The same RAV4 after repair, clean bodywork and matched paint" loading="lazy" width="1400" height="791">
+        <img src="/assets/photos/rav4-after.jpg" alt="The same RAV4 after repair, clean bodywork and matched paint" width="1400" height="791" loading="lazy" decoding="async">
       </div>
       <span class="panel-label before">Before</span>
       <span class="panel-label after">After</span>
@@ -254,9 +302,12 @@
           </svg>
         </div>
       </div>
-      <input type="range" class="slider-input" id="sliderInput" min="0" max="100" value="50" aria-label="Drag to compare before and after repair">
+      <input type="range" class="slider-input" id="sliderInput" min="0" max="100" value="50"
+             aria-label="Drag to compare before and after repair">
     </div>
-    <p class="slider-caption">A real Carcis repair — drag to compare.</p>
+    <p class="slider-caption">A real Carcis repair — drag to compare.
+      <a class="slider-caption-link" href="/work/">See the full job</a>
+    </p>
   </div>
 </section>
 
@@ -265,24 +316,25 @@
     <div class="gallery-head reveal">
       <h2 class="section-title">Recent <span class="accent">work</span>.</h2>
       <p class="gallery-lede">Straight from the shop floor — repairs in progress and finished results, not stock photos.</p>
+      <a class="gallery-more" href="/work/">See all our work</a>
     </div>
     <div class="gallery-grid reveal">
-      <div class="gallery-item a">
-        <img src="assets/photos/camry-before-after.jpg" alt="White Toyota Camry with front-end collision damage, and the same car fully repaired below it" loading="lazy" width="958" height="1434">
-        <span class="gallery-caption">Full front-end repair — before &amp; after</span>
-      </div>
-      <div class="gallery-item b">
-        <img src="assets/photos/paint-black-hatchback.jpg" alt="Black car body freshly painted, still masked, curing in the paint booth" loading="lazy" width="774" height="1032">
-        <span class="gallery-caption">Fresh coat, still curing</span>
-      </div>
-      <div class="gallery-item c">
-        <img src="assets/photos/paint-maroon-sedan.jpg" alt="Maroon sedan masked and taped, prepped for paint in the booth" loading="lazy" width="1200" height="675">
-        <span class="gallery-caption">Prepped and taped for paint</span>
-      </div>
-      <div class="gallery-item d">
-        <img src="assets/photos/rav4-detail.jpg" alt="Close-up of a repaired door panel on a maroon RAV4, before and after" loading="lazy" width="736" height="736">
-        <span class="gallery-caption">Panel repair, up close</span>
-      </div>
+      <a class="gallery-item a" href="/work/rav4-rear-door-fender-collision.html">
+        <img src="/assets/photos/rav4-after.jpg" alt="The same RAV4 after repair, clean bodywork and matched paint" width="1400" height="791" loading="lazy" decoding="async">
+        <span class="gallery-caption">Rear door and fender collision repair on a maroon RAV4</span>
+      </a>
+      <a class="gallery-item b" href="/work/white-camry-front-end-collision.html">
+        <img src="/assets/photos/camry-before-after.jpg" alt="White Toyota Camry with front-end collision damage, and the same car fully repaired below it" width="958" height="1434" loading="lazy" decoding="async">
+        <span class="gallery-caption">Full front-end collision repair on a white Toyota Camry</span>
+      </a>
+      <a class="gallery-item c" href="/work/black-hatchback-full-repaint.html">
+        <img src="/assets/photos/paint-black-hatchback.jpg" alt="Black car body freshly painted, still masked, curing in the paint booth" width="774" height="1032" loading="lazy" decoding="async">
+        <span class="gallery-caption">Full repaint on a black hatchback</span>
+      </a>
+      <a class="gallery-item d" href="/work/maroon-sedan-paint-prep.html">
+        <img src="/assets/photos/paint-maroon-sedan.jpg" alt="Maroon sedan masked and taped, prepped for paint in the booth" width="1200" height="675" loading="lazy" decoding="async">
+        <span class="gallery-caption">Maroon sedan masked and prepped for paint</span>
+      </a>
     </div>
   </div>
 </section>
@@ -291,7 +343,7 @@
   <div class="wrap cta-inner reveal">
     <h2 class="cta-title">New shop. <span class="accent">No old-shop slowdown.</span></h2>
     <div>
-      <a class="btn btn-primary btn-lg" href="estimate.html">Get a Free Estimate</a>
+      <a class="btn btn-primary btn-lg" href="/estimate.html">Get a Free Estimate</a>
     </div>
   </div>
 </section>
@@ -303,7 +355,10 @@
     <div class="footer-grid">
       <div>
         <div class="footer-logo">
-          <img src="assets/logo/carcis-logo.jpg" alt="Carcis Autobody Repair LLC" width="900" height="614">
+          <picture>
+            <source srcset="/assets/logo/carcis-logo-sm.webp" type="image/webp">
+            <img src="/assets/logo/carcis-logo-sm.jpg" alt="Carcis Autobody Repair LLC" width="240" height="164" loading="lazy" decoding="async">
+          </picture>
         </div>
         <p class="footer-line" style="max-width:32ch;">Certified collision, paint, and custom body work in Vancouver, WA.</p>
       </div>
@@ -321,49 +376,11 @@
     </div>
     <div class="footer-bottom">
       <span>© 2026 Carcis Autobody Repair LLC</span>
-      <span><a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a></span>
+      <span><a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a></span>
     </div>
   </div>
 </footer>
 
-<script src="js/site.js"></script>
-
-<aside class="vx-seo-content" style="position:absolute;left:-10000px;top:-10000px;width:1px;height:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);">
-  <h1>Collision Repair, Paint, and Custom Auto Body Work in Vancouver, Washington</h1>
-  <p>Carcis Autobody Repair is a certified auto body repair shop at 1520 Washington St in Vancouver, Washington, serving the Vancouver and Portland metro area. The shop handles collision repair, dent and panel repair, rust repair, and both standard and custom paint work, for customers going through an insurance claim as well as customers paying for repairs directly.</p>
-
-  <h2>About This Shop's Services</h2>
-
-  <h3>Collision Repair</h3>
-  <p>Carcis repairs vehicles after collisions, from minor fender-benders to major accident damage. The shop works directly with insurance companies on claims and also serves customers paying out of pocket. Read more on the <a href="/services.html">services page</a>.</p>
-
-  <h3>Dent and Panel Repair</h3>
-  <p>Dents and damaged panels are repaired to factory fit, or replaced when a panel cannot be brought back to spec. See the full breakdown on <a href="/services.html">what Carcis fixes</a>.</p>
-
-  <h3>Rust Repair</h3>
-  <p>Rust removal and panel restoration, including work on classic and older vehicles. This is one of owner Carlos Carrasco Cisneros's specialties; read about his background on the <a href="/about.html">About page</a>.</p>
-
-  <h3>Paint and Custom Paint</h3>
-  <p>Carcis offers full and partial paint jobs matched to factory color, plus fully custom paint designs and color work for owners who want something specific rather than a standard repaint.</p>
-
-  <h3>Custom Body Work</h3>
-  <p>Beyond standard repair, Carcis takes on custom body work for vehicle builds that need something specific done to them.</p>
-
-  <h3>Insurance Claims or Personal Pay</h3>
-  <p>Carcis serves both insurance-claim repairs and personal-pay repairs through the same estimate and repair process, with no difference in how a customer is treated either way.</p>
-
-  <h3>Service Area</h3>
-  <p>Based in Vancouver, WA, Carcis serves the surrounding Vancouver/Portland metro area, including Camas, Battle Ground, Hazel Dell, and Salmon Creek.</p>
-
-  <h3>How to Book a Free Estimate</h3>
-  <p>Estimates are free and can be booked directly on the <a href="/estimate.html">Get an Estimate page</a>, which opens a calendar for picking an available time. Carcis is open Monday through Friday, 8am to 5pm.</p>
-
-  <h3>References</h3>
-  <ul>
-    <li><a href="https://www.ftc.gov/consumer-advice/auto-repair-basics" rel="noopener">FTC consumer guide to auto repair basics</a></li>
-    <li><a href="https://www.i-car.com/" rel="noopener">I-CAR, the collision repair industry training and standards organization</a></li>
-    <li><a href="https://www.dol.wa.gov/vehicles-and-boats" rel="noopener">Washington State Department of Licensing, vehicles and boats</a></li>
-  </ul>
-</aside>
+<script src="/js/site.js"></script>
 </body>
 </html>

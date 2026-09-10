@@ -22,20 +22,58 @@
   // Mobile nav
   var toggle = document.getElementById('navToggle');
   var mobile = document.getElementById('navMobile');
-  var close = document.getElementById('navClose');
+  var closeBtn = document.getElementById('navClose');
   if (toggle && mobile) {
+    var FOCUSABLE = 'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
+    function focusableItems() {
+      return Array.prototype.filter.call(
+        mobile.querySelectorAll(FOCUSABLE),
+        function (el) { return el.offsetParent !== null || el === document.activeElement; }
+      );
+    }
+
     function openNav() {
       mobile.classList.add('open');
       toggle.setAttribute('aria-expanded', 'true');
       document.body.style.overflow = 'hidden';
+      var items = focusableItems();
+      if (items.length) items[0].focus();
+      document.addEventListener('keydown', onKeydown);
     }
+
     function closeNav() {
       mobile.classList.remove('open');
       toggle.setAttribute('aria-expanded', 'false');
       document.body.style.overflow = '';
+      document.removeEventListener('keydown', onKeydown);
+      toggle.focus();
     }
+
+    // Escape closes the menu; Tab is trapped inside it while it is open, so
+    // keyboard focus cannot wander onto the page hidden behind the overlay.
+    function onKeydown(e) {
+      if (e.key === 'Escape' || e.key === 'Esc') {
+        e.preventDefault();
+        closeNav();
+        return;
+      }
+      if (e.key !== 'Tab') return;
+      var items = focusableItems();
+      if (!items.length) return;
+      var first = items[0];
+      var last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+
     toggle.addEventListener('click', openNav);
-    if (close) close.addEventListener('click', closeNav);
+    if (closeBtn) closeBtn.addEventListener('click', closeNav);
     mobile.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', closeNav); });
   }
 

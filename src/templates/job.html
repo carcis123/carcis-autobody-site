@@ -1,0 +1,91 @@
+<!--#include head-open-->
+<title>{{job.titleEsc}} | Carcis Autobody Repair, Vancouver WA</title>
+<meta name="description" content="{{job.summaryEsc}}">
+<link rel="canonical" href="{{job.absUrl}}">{{job.robots}}
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Carcis Autobody Repair">
+<meta property="og:title" content="{{job.titleEsc}}">
+<meta property="og:description" content="{{job.summaryEsc}}">
+<meta property="og:url" content="{{job.absUrl}}">
+<meta property="og:image" content="{{job.heroImageAbs}}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{job.titleEsc}}">
+<meta name="twitter:description" content="{{job.summaryEsc}}">
+<meta name="twitter:image" content="{{job.heroImageAbs}}">
+<!--#include head-icons-->
+<script type="application/ld+json">
+{{job.jsonLd}}
+</script>
+<script type="application/ld+json">
+{{job.breadcrumbLd}}
+</script>
+<!--#include head-close-->
+<!--#include body-open-->
+
+<!--#include watermark-->
+
+<!--#include header nav="work"-->
+
+<main>
+
+<section class="page-hero">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span aria-hidden="true">/</span>
+      <a href="/work/">Our Work</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">{{job.vehicleLabelEsc}}</span>
+    </nav>
+    <div class="eyebrow"><a href="{{job.serviceUrl}}">{{job.serviceLabelEsc}}</a></div>
+    <h1 class="page-headline">{{job.titleEsc}}</h1>
+    <p class="page-sub">{{job.summaryEsc}}</p>
+  </div>
+</section>
+{{job.comparisonHtml}}
+
+<section class="job-body">
+  <div class="wrap job-body-grid">
+    <div class="job-story reveal">
+{{job.storyHtml}}
+      <p class="job-cta-line">
+        Something similar on your vehicle?
+        <a href="/estimate.html">Book a free estimate</a> and Carlos will look at it in person.
+      </p>
+    </div>
+    <aside class="job-facts reveal">
+      <div class="side-panel-title">The job</div>{{job.vehicleFactHtml}}
+      <div class="job-fact"><span>Work done</span><span><a href="{{job.serviceUrl}}">{{job.serviceLabelEsc}}</a></span></div>
+      <div class="job-fact"><span>Completed</span><span><time datetime="{{job.dateIso}}">{{job.dateTitle}}</time></span></div>{{job.insuranceFactHtml}}
+      <div class="job-fact"><span>Shop</span><span>Vancouver, WA</span></div>
+      <a class="btn btn-primary" href="/estimate.html">Get a Free Estimate</a>
+    </aside>
+  </div>
+</section>
+
+<section class="job-shots">
+  <div class="wrap">
+    <h2 class="section-title">From the <span class="accent">shop floor</span>.</h2>
+    <div class="job-shot-grid reveal">
+{{job.photosHtml}}
+    </div>
+  </div>
+</section>
+{{job.relatedHtml}}
+
+<section class="cta-banner">
+  <div class="wrap cta-inner reveal">
+    <h2 class="cta-title">Your car next. <span class="accent">Free estimate.</span></h2>
+    <div>
+      <a class="btn btn-primary btn-lg" href="/estimate.html">Get a Free Estimate</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!--#include footer-->
+
+<!--#include scripts-->
+</body>
+</html>

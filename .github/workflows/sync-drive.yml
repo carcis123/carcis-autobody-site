@@ -1,0 +1,103 @@
+name: Import repair photos from Drive
+
+# Looks in the shared Drive folder for job subfolders that have not been
+# imported yet, drafts each write-up with Gemini, and opens a pull request.
+# Nothing reaches the live site from this workflow: every job it creates is
+# marked "draft": true, and a person has to read it, correct it and merge.
+#
+# Cloudflare Pages builds a preview deployment for the branch this pushes,
+# so the pull request is also the staging review.
+
+on:
+  schedule:
+    # Every six hours. A body shop does not finish a car every ten minutes,
+    # and this keeps the job well inside the free Actions allowance.
+    - cron: '0 2,8,14,20 * * *'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Re-import folders that were already imported'
+        type: boolean
+        default: false
+
+concurrency:
+  group: sync-drive
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install import dependencies
+        working-directory: tools
+        run: npm install --no-audit --no-fund
+
+      - name: Import from Drive
+        id: sync
+        working-directory: tools
+        env:
+          DRIVE_FOLDER_ID: ${{ secrets.DRIVE_FOLDER_ID }}
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
+        run: node sync-drive.js ${{ inputs.force && '--force' || '' }}
+
+      - name: Rebuild the site
+        if: steps.sync.outputs.imported != '' && steps.sync.outputs.imported != '0'
+        run: node build.js
+
+      - name: Open a pull request
+        if: steps.sync.outputs.imported != '' && steps.sync.outputs.imported != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLUGS: ${{ steps.sync.outputs.slugs }}
+          COUNT: ${{ steps.sync.outputs.imported }}
+        run: |
+          set -euo pipefail
+          BRANCH="drive-import/$(date -u +%Y%m%d-%H%M%S)"
+          git config user.name  "carcis-photo-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add content/jobs assets/work *.html work sitemap.xml
+          git commit -m "Import $COUNT repair job(s) from Drive"
+          git push origin "$BRANCH"
+
+          {
+            echo "Imported **$COUNT** job(s) from the shared Drive folder."
+            echo
+            echo "Every job in this pull request is marked \`\"draft\": true\`, so its page"
+            echo "is \`noindex\` and it does not appear on the home page, the work index"
+            echo "or the sitemap yet."
+            echo
+            echo "### Before merging"
+            echo
+            echo "1. Open the Cloudflare Pages preview for this branch."
+            echo "2. Read each draft. The copy was written by Gemini from the photos"
+            echo "   alone, so check every factual claim, especially vehicle year,"
+            echo "   make, model and anything about insurance."
+            echo "3. Look at \`_generated.uncertain\` in each JSON file. That is the"
+            echo "   model telling you what it was not sure about."
+            echo "4. Fix the wording so it sounds like Carlos, not like a brochure."
+            echo "5. Set \`\"draft\": false\` on the jobs that are ready."
+            echo "6. Run \`node build.js\` and commit, then merge."
+            echo
+            echo "Slugs in this batch: \`$SLUGS\`"
+          } > /tmp/pr-body.md
+
+          gh pr create \
+            --base main \
+            --head "$BRANCH" \
+            --title "Drive import: $COUNT repair job(s)" \
+            --body-file /tmp/pr-body.md

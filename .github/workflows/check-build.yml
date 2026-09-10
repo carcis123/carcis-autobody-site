@@ -1,0 +1,24 @@
+name: Check the site is rebuilt
+
+# The HTML at the repo root is generated from src/ and content/, and it is what
+# Cloudflare Pages serves. This catches the easy mistake: editing a partial or
+# a job file and pushing without running `node build.js`.
+
+on:
+  pull_request:
+  push:
+    branches: [main, staging]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: node build.js --check
+        run: node build.js --check
