@@ -104,6 +104,22 @@ Drive and the answers in a spreadsheet automatically.
 You should see: a new spreadsheet whose first row is the question headers.
 Copy its id from the URL, the long string between `/d/` and `/edit`.
 
+**Already done.** The form is live at
+`https://docs.google.com/forms/d/e/1FAIpQLSdcndAhsM_1NKZmU5_mmqHHQLn0Vmv8JSeDUpssMqA7HkU-wQ/viewform`
+and its responses go to spreadsheet id
+`15BZe8yLpb9aC3OJm4rb09EDU2QvzbZ_KWDM_YCM9ATQ`.
+
+Once the service account exists, confirm the importer reads it correctly:
+
+```
+cd tools && npm install
+FORM_SHEET_ID=15BZe8yLpb9aC3OJm4rb09EDU2QvzbZ_KWDM_YCM9ATQ GOOGLE_SERVICE_ACCOUNT_JSON="$(cat /path/to/key.json)" node sync-form.js --check-columns
+```
+
+That prints every column and what it mapped to, and exits non-zero if a
+required one is missing. It reads only, imports nothing, and needs no Gemini
+key.
+
 File upload requires respondents to be signed in to a Google account. That is
 Google's rule and cannot be turned off.
 

@@ -16,9 +16,10 @@
  * merges. That review is the whole safety mechanism: the model is looking at
  * photographs of a car it has never seen, and it will get details wrong.
  *
- *   node tools/sync-form.js            import anything new
- *   node tools/sync-form.js --dry-run  report what it would do, write nothing
- *   node tools/sync-form.js --force    re-import rows already imported
+ *   node tools/sync-form.js                 import anything new
+ *   node tools/sync-form.js --dry-run       report what it would do, write nothing
+ *   node tools/sync-form.js --force         re-import rows already imported
+ *   node tools/sync-form.js --check-columns print the column mapping and stop
  *
  * Environment:
  *   FORM_SHEET_ID                the response spreadsheet's id
@@ -43,6 +44,7 @@ const WORK_ASSETS = path.join(ROOT, 'assets', 'work');
 
 const DRY_RUN = process.argv.includes('--dry-run');
 const FORCE = process.argv.includes('--force');
+const CHECK_COLUMNS = process.argv.includes('--check-columns');
 
 const MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
 const MAX_EDGE = 1400;         // longest side of a published photo, in pixels
@@ -175,10 +177,12 @@ async function readResponses(auth, sheetId) {
     if (at !== -1) index[key] = at;
   }
 
-  for (const required of ['timestamp', 'before', 'after']) {
-    if (index[required] === undefined) {
-      throw new Error('could not find a "' + required + '" column in the form '
-        + 'responses. Headers seen: ' + headers.filter(Boolean).join(' | '));
+  if (!CHECK_COLUMNS) {
+    for (const required of ['timestamp', 'before', 'after']) {
+      if (index[required] === undefined) {
+        throw new Error('could not find a "' + required + '" column in the form '
+          + 'responses. Headers seen: ' + headers.filter(Boolean).join(' | '));
+      }
     }
   }
 
@@ -202,7 +206,7 @@ async function readResponses(auth, sheetId) {
       };
     });
 
-  return { headers, responses, index };
+  return { headers, responses, index, sheetTitle: first };
 }
 
 async function download(auth, fileId) {
@@ -477,7 +481,32 @@ async function main() {
   const sheetId = need('FORM_SHEET_ID');
   const auth = googleAuth();
 
-  const { headers, responses } = await readResponses(auth, sheetId);
+  const { headers, responses, index, sheetTitle } = await readResponses(auth, sheetId);
+
+  if (CHECK_COLUMNS) {
+    console.log('Sheet tab: ' + sheetTitle);
+    console.log(responses.length + ' response row(s)');
+    console.log('');
+    const byPos = {};
+    for (const [field, at] of Object.entries(index)) byPos[at] = field;
+    console.log('COLUMN'.padEnd(42) + 'MAPPED TO');
+    headers.forEach((h, i) => {
+      if (!h) return;
+      const field = byPos[i];
+      console.log(('  ' + h).slice(0, 40).padEnd(42) + (field || '-- ignored --'));
+    });
+    const missing = ['timestamp', 'date', 'service', 'notes', 'before', 'after']
+      .filter(f => index[f] === undefined);
+    console.log('');
+    if (missing.length) {
+      console.log('MISSING, the import will not work: ' + missing.join(', '));
+      console.log('Rename those questions so they contain the keyword, or widen');
+      console.log('the matcher in the COLUMNS block at the top of this file.');
+      process.exit(1);
+    }
+    console.log('All required columns found. Safe to run the import.');
+    return;
+  }
   if (!responses.length) {
     console.log('No form responses yet. Nothing to do.');
     console.log('Columns seen: ' + headers.filter(Boolean).join(' | '));

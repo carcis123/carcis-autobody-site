@@ -5,7 +5,7 @@ For Carlos and Kayla. It takes about two minutes per car, on your phone.
 There is one form. Fill it in, attach the photos, done. You never touch the
 website, and nothing you submit goes live on its own.
 
-**The form:** *(link goes here once it is created)*
+**The form:** https://docs.google.com/forms/d/e/1FAIpQLSdcndAhsM_1NKZmU5_mmqHHQLn0Vmv8JSeDUpssMqA7HkU-wQ/viewform
 
 Save it to your phone's home screen. On iPhone, open it in Safari, tap the
 share button, then **Add to Home Screen**. On Android, open it in Chrome, tap
