@@ -727,3 +727,8 @@ main, .ticker, footer { position: relative; z-index: 1; }
    the static rows on the services page, just clickable. */
 a.feature-row { text-decoration: none; color: inherit; }
 a.feature-row:hover .feature-title { color: var(--red-bright); }
+
+/* Fallback when no job yet has both a before and an after photo: a single
+   still, sized like the slider so the section keeps its proportions. */
+.slider-single { margin: 0; }
+.slider-single img { width: 100%; height: auto; display: block; }

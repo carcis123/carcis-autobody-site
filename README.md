@@ -46,6 +46,13 @@ on `/work/`, a tile on the home page, and a sitemap entry. The four newest jobs
 fill the home page gallery, and the newest one with both a before and an after
 photo fills the drag-to-compare slider.
 
+Everything that shows jobs sits inside `<!--#ifjobs-->` blocks, so before the
+first job is published the Our Work nav item, the home page slider and
+gallery, the services and estimate strips, the work index and the sitemap
+entries all disappear together. An empty index linked from the nav is worse
+than no link. Draft job pages are still generated so they can be reviewed from
+the pull request.
+
 Two fields decide visibility:
 
 - `"draft": true` renders the page with `noindex` and keeps the job off the

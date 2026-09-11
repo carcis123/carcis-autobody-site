@@ -16,6 +16,10 @@ on:
     - cron: '0 2,8,14,20 * * *'
   workflow_dispatch:
     inputs:
+      check_only:
+        description: 'Only check the spreadsheet columns. Imports nothing.'
+        type: boolean
+        default: false
       force:
         description: 'Re-import rows that were already imported'
         type: boolean
@@ -53,7 +57,12 @@ jobs:
           GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
-        run: node sync-form.js ${{ inputs.force && '--force' || '' }}
+        run: |
+          ARGS=""
+          if [ "${{ inputs.check_only }}" = "true" ]; then ARGS="--check-columns"; fi
+          if [ "${{ inputs.force }}" = "true" ]; then ARGS="$ARGS --force"; fi
+          echo "running: node sync-form.js $ARGS"
+          node sync-form.js $ARGS
 
       - name: Rebuild the site
         if: steps.sync.outputs.imported != '' && steps.sync.outputs.imported != '0'

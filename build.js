@@ -376,11 +376,20 @@ function renderBreadcrumbLd(job) {
 /* ------------------------------------------------------- job block routing */
 
 const JOB_BLOCKS = {
-  // Newest job that has both a before and an after photo.
+  /* Newest job that has both a before and an after photo. If nothing
+     qualifies yet, fall back to a single photo rather than failing the build:
+     a shop that has only posted finished shots should still get a page. */
   slider(jobs, attrs, indent) {
-    const job = select(jobs, attrs).find(j => j.hasComparison);
-    if (!job) fail('<!--#jobs slider--> found no job with both before and after photos');
-    return renderSlider(job, indent);
+    const live = select(jobs, attrs);
+    const pair = live.find(j => j.hasComparison);
+    if (pair) return renderSlider(pair, indent);
+    if (!live.length) return '';
+    const job = live[0];
+    return indentBlock([
+      '<figure class="slider-frame slider-single reveal">',
+      '  ' + img(job.heroPhoto, ' loading="lazy" decoding="async"'),
+      '</figure>',
+    ].join('\n'), indent);
   },
   grid(jobs, attrs, indent) {
     return renderGrid(select(jobs, attrs), indent);
@@ -399,6 +408,13 @@ function select(jobs, attrs) {
 }
 
 /* -------------------------------------------------------------- expansion */
+
+/* <!--#ifjobs--> ... <!--#endifjobs--> keeps its contents only while at least
+   one job is live. Before the first real job is published, and any time every
+   job is a draft, the whole Our Work surface has to disappear: an empty index
+   linked from the nav is worse than no link at all. Stripped before anything
+   inside it is expanded, so the directives within never run. */
+const IF_JOBS = /^[ \t]*<!--#ifjobs-->[ \t]*\r?\n([\s\S]*?)^[ \t]*<!--#endifjobs-->[ \t]*\r?\n/gm;
 
 const INCLUDE = /^([ \t]*)<!--#include\s+([a-z0-9-]+)((?:\s+[a-z]+="[^"]*")*)\s*-->[ \t]*$/gm;
 const JOBS = /^([ \t]*)<!--#jobs\s+([a-z]+)((?:\s+[a-z]+="[^"]*")*)\s*-->[ \t]*$/gm;
@@ -430,7 +446,10 @@ function lookup(scope, key) {
 function expand(text, scope, jobs, depth) {
   if (depth > 10) fail('include nesting too deep, probably a cycle');
 
-  let out = text.replace(INCLUDE, (_m, indent, name, attrs) => {
+  const anyLive = jobs.some(j => !j.draft);
+  let out = text.replace(IF_JOBS, (_m, body) => (anyLive ? body : ''));
+
+  out = out.replace(INCLUDE, (_m, indent, name, attrs) => {
     const inner = Object.assign({}, scope, parseAttrs(attrs));
     return indentBlock(expand(readPartial(name), inner, jobs, depth + 1), indent);
   });
@@ -475,7 +494,9 @@ function renderSitemap(jobs) {
     { loc: SITE + '/', lastmod: newest, changefreq: 'weekly', priority: '1.0' },
     { loc: SITE + '/services', lastmod: newest, changefreq: 'monthly', priority: '0.9' },
     { loc: SITE + '/estimate', lastmod: newest, changefreq: 'monthly', priority: '0.9' },
-    { loc: SITE + '/work/', lastmod: newest, changefreq: 'weekly', priority: '0.9' },
+    ...(live.length
+      ? [{ loc: SITE + '/work/', lastmod: newest, changefreq: 'weekly', priority: '0.9' }]
+      : []),
     { loc: SITE + '/about', lastmod: newest, changefreq: 'monthly', priority: '0.8' },
   ];
 
@@ -522,9 +543,16 @@ function build() {
     writeIfChanged(path.join(WORK_DIR, job.slug + '.html'), html, report);
   }
 
-  const indexTemplate = fs.readFileSync(path.join(TEMPLATES, 'work-index.html'), 'utf8');
-  writeIfChanged(path.join(WORK_DIR, 'index.html'),
-    render(indexTemplate, { nav: 'work' }, jobs, 'work-index'), report);
+  if (jobs.some(j => !j.draft)) {
+    const indexTemplate = fs.readFileSync(path.join(TEMPLATES, 'work-index.html'), 'utf8');
+    writeIfChanged(path.join(WORK_DIR, 'index.html'),
+      render(indexTemplate, { nav: 'work' }, jobs, 'work-index'), report);
+  } else {
+    // Nothing live: drop the index so /work/ returns a real 404 rather than
+    // serving an empty grid. Draft job pages are still generated, so a
+    // reviewer can open them directly from the pull request.
+    expected.delete('index.html');
+  }
 
   // 3. Delete pages whose job JSON is gone, so a removed job does not linger
   //    as an orphaned URL that Google keeps serving.
