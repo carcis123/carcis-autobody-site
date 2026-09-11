@@ -49,7 +49,7 @@ photo fills the drag-to-compare slider.
 Two fields decide visibility:
 
 - `"draft": true` renders the page with `noindex` and keeps the job off the
-  home page, the work index and the sitemap. Everything imported from Drive
+  home page, the work index and the sitemap. Everything imported from the form
   starts this way.
 - Deleting the JSON file deletes the generated page on the next build.
 
@@ -57,16 +57,21 @@ The build prints a warning for any live job with under 60 words of `story`,
 because thin, near-identical pages are worse than no pages under Google's
 helpful content policies.
 
-## Photos from Google Drive
+## Jobs from the Google Form
 
-Carlos and Kayla make one subfolder per job in a shared Drive folder and drop
-photos in. A scheduled workflow imports anything new, downsizes it, drafts the
-write-up with Gemini, and opens a pull request. Nothing publishes without a
-person reading the draft and merging.
+Carlos and Kayla fill in the "Carcis job upload" form on their phone: the
+vehicle, the work, a few sentences about the job, and the before and after
+photos. Google puts the answers in a spreadsheet and the photos in Drive. A
+scheduled workflow reads rows that have not been imported, downsizes the
+photos into the repo, drafts the write-up with Gemini, and opens a pull
+request. Nothing publishes without a person reading the draft and merging.
+
+The vehicle, service and date on a generated job are the shop's own answers.
+The title, summary, story and alt text are model output and need review.
 
 - Setup, one time: [docs/SETUP.md](docs/SETUP.md)
 - For the shop: [docs/PHOTO-GUIDE.md](docs/PHOTO-GUIDE.md)
-- The importer: `tools/sync-drive.js`, dependencies in `tools/package.json`,
+- The importer: `tools/sync-form.js`, dependencies in `tools/package.json`,
   installed only in CI
 
 ## Analytics
