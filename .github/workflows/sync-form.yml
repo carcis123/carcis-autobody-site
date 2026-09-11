@@ -49,7 +49,7 @@ jobs:
         working-directory: tools
         run: npm install --no-audit --no-fund
 
-      - name: Import from Drive
+      - name: Import from the form
         id: sync
         working-directory: tools
         env:

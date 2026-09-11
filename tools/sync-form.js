@@ -504,7 +504,49 @@ async function main() {
       console.log('the matcher in the COLUMNS block at the top of this file.');
       process.exit(1);
     }
-    console.log('All required columns found. Safe to run the import.');
+    console.log('All required columns found.');
+
+    // Reading the spreadsheet proves nothing about the photos. They live in
+    // the form's own "(File responses)" folder, which is a separate share and
+    // the thing most likely to have been missed. Prove access to a real file.
+    const withPhoto = responses.find(r => r.beforeIds.length || r.afterIds.length);
+    if (!withPhoto) {
+      console.log('');
+      console.log('No response has any photos attached yet, so Drive access is');
+      console.log('still untested. Submit the form once with a photo and re-run.');
+      return;
+    }
+
+    const fileId = (withPhoto.beforeIds[0] || withPhoto.afterIds[0]);
+    const drive = google.drive({ version: 'v3', auth });
+    try {
+      const meta = await drive.files.get({
+        fileId,
+        fields: 'name, mimeType, size',
+        supportsAllDrives: true,
+      });
+      const f = meta.data;
+      console.log('');
+      console.log('Drive access OK. Read "' + f.name + '" (' + f.mimeType
+        + ', ' + Math.round((Number(f.size) || 0) / 1024) + ' KB).');
+      if (/hei[cf]/i.test(f.mimeType || '') || /\.hei[cf]$/i.test(f.name || '')) {
+        console.log('');
+        console.log('WARNING: that is a HEIC file. It cannot be decoded and will be');
+        console.log('skipped. On the iPhone: Settings, Camera, Formats, Most');
+        console.log('Compatible, then re-take or re-export the photos.');
+      }
+      console.log('');
+      console.log('Safe to run the import.');
+    } catch (err) {
+      console.log('');
+      console.log('Drive access FAILED for file ' + fileId + ':');
+      console.log('  ' + String(err.message).split(/\r?\n/)[0]);
+      console.log('');
+      console.log('The service account can read the spreadsheet but not the photos.');
+      console.log('Share the "Carcis job upload (File responses)" folder in Drive');
+      console.log('with the same service account address, as Viewer.');
+      process.exit(1);
+    }
     return;
   }
   if (!responses.length) {
