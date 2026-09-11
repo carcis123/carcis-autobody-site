@@ -1,9 +1,10 @@
-# Cloudflare Pages serves pages extensionlessly: /about.html is a 308 to
-# /about. A "/*.html" rule therefore matches nothing, which is why HTML was
-# falling back to Cloudflare's default max-age=0. The page cache lives here
-# instead, and the more specific rules below override it for assets.
+# Cloudflare Pages CONCATENATES every matching rule rather than letting the
+# more specific one win. Two rules that both set Cache-Control produce one
+# malformed header like "max-age=300, ..., max-age=86400, ...", and the first
+# directive wins. So no path may be matched by more than one Cache-Control
+# rule below. Check that before adding one.
+
 /*
-  Cache-Control: public, max-age=300, must-revalidate
   X-Content-Type-Options: nosniff
   X-Frame-Options: SAMEORIGIN
   Referrer-Policy: strict-origin-when-cross-origin
@@ -19,7 +20,8 @@
 /assets/*
   Cache-Control: public, max-age=86400, stale-while-revalidate=2592000
 
-/styles/*
+# Named exactly, not /styles/*, so it cannot also match the fonts rule below.
+/styles/site.css
   Cache-Control: public, max-age=86400, stale-while-revalidate=2592000
 
 # Font filenames are stable and their bytes never change in place.
@@ -29,21 +31,25 @@
 /js/*
   Cache-Control: public, max-age=86400, stale-while-revalidate=2592000
 
+# HTML pages deliberately have NO Cache-Control rule. Pages serves them
+# extensionlessly (/about.html is a 308 to /about), so the obvious "/*.html"
+# rule matches nothing, and a rule on "/*" would collide with every rule
+# above. Without one they get Cloudflare's default, max-age=0 with
+# must-revalidate: the edge still caches and serves them fast, the browser
+# revalidates with a cheap 304, and a merge to main shows up immediately
+# rather than being stuck behind a timer.
+
 # Build sources, job data, docs and the importer all live in the repo and are
 # therefore uploaded by Pages. Nothing links to them, but tell crawlers to
 # ignore them if they are ever found.
 /src/*
   X-Robots-Tag: noindex, nofollow
-  Cache-Control: no-store
 
 /content/*
   X-Robots-Tag: noindex, nofollow
-  Cache-Control: no-store
 
 /tools/*
   X-Robots-Tag: noindex, nofollow
-  Cache-Control: no-store
 
 /docs/*
   X-Robots-Tag: noindex, nofollow
-  Cache-Control: no-store
