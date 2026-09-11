@@ -39,6 +39,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 const ROOT = __dirname;
 const PARTIALS = path.join(ROOT, 'src', 'partials');
@@ -48,6 +49,18 @@ const JOBS_DIR = path.join(ROOT, 'content', 'jobs');
 const WORK_DIR = path.join(ROOT, 'work');
 
 const SITE = 'https://www.carcisautobody.com';
+
+/* styles/site.css and js/site.js are not content-hashed filenames, so a
+   returning visitor could hold a cached copy from before a deploy and render
+   new HTML against old CSS. On images that is cosmetic; on the stylesheet it
+   breaks the layout, for as long as the cache lasts. Stamping a hash of the
+   file's own bytes into the URL means the URL changes exactly when the file
+   does, so the cache can be long and can never serve a mismatched pair. */
+function assetVersion(relPath) {
+  const full = path.join(ROOT, relPath);
+  if (!fs.existsSync(full)) return '0';
+  return crypto.createHash('sha1').update(fs.readFileSync(full)).digest('hex').slice(0, 8);
+}
 const CHECK = process.argv.includes('--check');
 
 /* Service ids used in job JSON, mapped to their label and services.html anchor.
@@ -526,12 +539,14 @@ function build() {
   const jobs = loadJobs();
   const report = { changed: [], upToDate: [], removed: [] };
 
+  const v = { css: assetVersion('styles/site.css'), js: assetVersion('js/site.js') };
+
   // 1. Static pages at the site root.
   const sources = fs.readdirSync(PAGES).filter(f => f.endsWith('.html')).sort();
   if (!sources.length) fail('no page sources found in src/pages/');
   for (const name of sources) {
     const src = fs.readFileSync(path.join(PAGES, name), 'utf8');
-    writeIfChanged(path.join(ROOT, name), render(src, {}, jobs, name), report);
+    writeIfChanged(path.join(ROOT, name), render(src, { v }, jobs, name), report);
   }
 
   // 2. One page per job, plus the work index.
@@ -539,14 +554,14 @@ function build() {
   const expected = new Set(['index.html']);
   for (const job of jobs) {
     expected.add(job.slug + '.html');
-    const html = render(jobTemplate, { nav: 'work', job: job }, jobs, 'job:' + job.slug);
+    const html = render(jobTemplate, { nav: 'work', job: job, v }, jobs, 'job:' + job.slug);
     writeIfChanged(path.join(WORK_DIR, job.slug + '.html'), html, report);
   }
 
   if (jobs.some(j => !j.draft)) {
     const indexTemplate = fs.readFileSync(path.join(TEMPLATES, 'work-index.html'), 'utf8');
     writeIfChanged(path.join(WORK_DIR, 'index.html'),
-      render(indexTemplate, { nav: 'work' }, jobs, 'work-index'), report);
+      render(indexTemplate, { nav: 'work', v }, jobs, 'work-index'), report);
   } else {
     // Nothing live: drop the index so /work/ returns a real 404 rather than
     // serving an empty grid. Draft job pages are still generated, so a

@@ -20,16 +20,20 @@
 /assets/*
   Cache-Control: public, max-age=86400, stale-while-revalidate=2592000
 
-# Named exactly, not /styles/*, so it cannot also match the fonts rule below.
+# The stylesheet and script are requested with a ?v= hash of their own bytes,
+# stamped in by build.js, so the URL changes the moment the file does. That
+# makes a long immutable cache safe: a visitor can never end up holding an old
+# stylesheet against new HTML. Named exactly, not /styles/*, so this cannot
+# also match the fonts rule below.
 /styles/site.css
-  Cache-Control: public, max-age=86400, stale-while-revalidate=2592000
+  Cache-Control: public, max-age=31536000, immutable
 
 # Font filenames are stable and their bytes never change in place.
 /styles/fonts/*
   Cache-Control: public, max-age=31536000, immutable
 
 /js/*
-  Cache-Control: public, max-age=86400, stale-while-revalidate=2592000
+  Cache-Control: public, max-age=31536000, immutable
 
 # HTML pages deliberately have NO Cache-Control rule. Pages serves them
 # extensionlessly (/about.html is a 308 to /about), so the obvious "/*.html"
