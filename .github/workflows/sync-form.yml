@@ -110,8 +110,34 @@ jobs:
             echo "Slugs in this batch: \`$SLUGS\`"
           } > /tmp/pr-body.md
 
-          gh pr create \
-            --base main \
-            --head "$BRANCH" \
-            --title "Job import: $COUNT repair job(s)" \
-            --body-file /tmp/pr-body.md
+          REPO_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}"
+          COMPARE="${REPO_URL}/compare/main...${BRANCH}?expand=1"
+
+          # Opening the pull request can be refused by a repository setting
+          # ("Allow GitHub Actions to create and approve pull requests"). The
+          # import has already succeeded and the branch is pushed by this
+          # point, so failing the run over that would throw away good work.
+          # Fall back to putting the link in the job summary.
+          if gh pr create \
+              --base main \
+              --head "$BRANCH" \
+              --title "Job import: $COUNT repair job(s)" \
+              --body-file /tmp/pr-body.md; then
+            echo "### Imported $COUNT job(s), pull request opened" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "::warning::Branch pushed, but the pull request could not be opened automatically."
+            {
+              echo "### Imported $COUNT job(s) onto branch $BRANCH"
+              echo
+              echo "The pull request could not be opened automatically. Nothing is"
+              echo "lost: the branch is pushed and Cloudflare will build a preview."
+              echo
+              echo "**[Open the pull request]($COMPARE)**"
+              echo
+              echo "To let this happen automatically next time, tick *Allow GitHub"
+              echo "Actions to create and approve pull requests* under Settings,"
+              echo "Actions, General, Workflow permissions."
+              echo
+              cat /tmp/pr-body.md
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi

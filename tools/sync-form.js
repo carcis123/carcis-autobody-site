@@ -50,9 +50,15 @@ const CHECK_COLUMNS = process.argv.includes('--check-columns');
 // in its 404. Override with the GEMINI_MODEL repository variable rather
 // than editing this, so a deprecation does not need a code change.
 const MODEL = process.env.GEMINI_MODEL || 'gemini-3.6-flash';
-const MAX_EDGE = 1400;         // longest side of a published photo, in pixels
+/* Photos are committed to git, so size compounds forever. At 1400px/q82 a
+   five-photo job cost 1.4 MB, roughly 150 MB a year at two jobs a week.
+   1200px/q78 halves that with no visible loss: the widest slot any photo
+   occupies is the 1180px page wrapper, and the job grid renders them at
+   300-560px. If the repo ever does get uncomfortable, the real fix is moving
+   images to R2 rather than degrading these further. */
+const MAX_EDGE = 1200;         // longest side of a published photo, in pixels
 const MAX_PHOTOS = 8;          // per job, to keep the repo from ballooning
-const WEBP_QUALITY = 82;
+const WEBP_QUALITY = 78;
 
 const SERVICE_LABELS = {
   dent: 'Dent Repair',
