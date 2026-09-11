@@ -76,7 +76,7 @@ Drive and the answers in a spreadsheet automatically.
 | 2 | Vehicle **year** | Short answer | no |
 | 3 | Vehicle **make** | Short answer | yes |
 | 4 | Vehicle **model** | Short answer | yes |
-| 5 | **Colour** | Short answer | no |
+| 5 | **Color** | Short answer | no |
 | 6 | What **work** did you do? | Multiple choice | yes |
 | 7 | Was this an **insurance** claim? | Multiple choice | no |
 | 8 | **Tell us** about this job | Paragraph | yes |
