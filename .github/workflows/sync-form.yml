@@ -80,7 +80,10 @@ jobs:
           git config user.name  "carcis-photo-bot"
           git config user.email "actions@users.noreply.github.com"
           git checkout -b "$BRANCH"
-          git add content/jobs assets/work *.html work sitemap.xml
+          # -A rather than a path list: with set -e, naming a directory that
+          # does not exist yet (assets/work before the first import, work/
+          # while every job is still a draft) aborts the whole step.
+          git add -A
           git commit -m "Import $COUNT repair job(s) from the job upload form"
           git push origin "$BRANCH"
 
