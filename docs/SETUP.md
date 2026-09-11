@@ -3,8 +3,13 @@
 Everything in here is a one-time job, and every step needs a console I cannot
 reach. Work top to bottom. Each step says what you should see when it worked.
 
-Nothing in this document has been run yet. The code is committed and the site
-builds, but the Drive import will not do anything until steps 3 to 6 are done.
+Steps 1 and 2 are **done**. The `staging` branch is deployed and locked behind
+Cloudflare Access. Steps 3 to 6 are still outstanding, and the Drive import
+will not do anything until they are.
+
+One gotcha already hit and fixed: Cloudflare's GitHub integration had silently
+broken, so no push produced a build. If deployments ever stop appearing, look
+for a warning banner on the project page and reconnect the Git repository.
 
 ---
 
@@ -32,12 +37,31 @@ Google can find and index.
    deployments. Turn it on and restrict it to your email and Carlos's.
 
 You should see: opening the preview URL in a private window now asks for a
-Cloudflare Access login instead of showing the site.
+Cloudflare Access login instead of showing the site. Verified working on
+2026-09-11: the staging URL returns a 302 to `cloudflareaccess.com`.
 
-### Optional: a stable staging address
+### Do not give staging a custom domain
 
-5. **Custom domains**, add `staging.carcisautobody.com` and point it at the
-   `staging` branch rather than production.
+An earlier version of this document said to add `staging.carcisautobody.com`
+as a custom domain pointed at the branch. **That does not work.** Cloudflare
+Pages custom domains always serve the project's *production* deployment;
+there is no way to bind one to a preview branch from that screen.
+
+What happens if you try: you add a proxied CNAME from your subdomain to
+`staging.<project>.pages.dev`, Cloudflare follows it, Pages has never heard of
+that hostname, and every request returns **error 522, connection timed out**.
+The CNAME is only half of it. A custom domain also has to be registered inside
+the Pages project, and registering it would point the subdomain at `main`.
+
+You do not need one. `https://staging.carcis-autobody.pages.dev` is permanent
+for as long as the branch exists, and it is already behind Access.
+
+If you ever genuinely want `beta.carcisautobody.com`, the supported route is a
+second Pages project on the same repo with `staging` as *its* production
+branch. Be aware that it would then be a production deployment, so the preview
+Access policy would not cover it, and you would have to put a Zero Trust
+Access application on that hostname. Without one it is a fully public,
+crawlable duplicate of the whole site on a real subdomain.
 
 ### What is already handled in code
 
