@@ -25,7 +25,7 @@
     "color": "Matalic grey"
   },
   "insurance": false,
-  "draft": true,
+  "draft": false,
   "story": [
     "This 2024 Tesla Model 3 came in for dent repair and paint and body work correction. Correcting body damage on late-model panels requires thorough surface preparation so filler and primer adhere correctly.",
     "Technicians smoothed out the damaged sections on the rear trunk lid. Sanding removed the damaged finish, allowing body filler to level out the depressions. Masking tape protected adjacent glass and trim from debris and paint overspray during the prep phase.",
