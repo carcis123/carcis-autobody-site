@@ -25,7 +25,7 @@
  *   FORM_SHEET_ID                the response spreadsheet's id
  *   GOOGLE_SERVICE_ACCOUNT_JSON  service account key, as JSON
  *   GEMINI_API_KEY               Google AI Studio key
- *   GEMINI_MODEL                 optional, defaults to gemini-2.5-flash
+ *   GEMINI_MODEL                 optional, defaults to gemini-3.6-flash
  *
  * Columns are matched on keywords, not exact text, so the form's wording can
  * be edited without breaking this. See COLUMNS below.
@@ -46,7 +46,10 @@ const DRY_RUN = process.argv.includes('--dry-run');
 const FORCE = process.argv.includes('--force');
 const CHECK_COLUMNS = process.argv.includes('--check-columns');
 
-const MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+// Google retires model ids periodically and the API names the replacement
+// in its 404. Override with the GEMINI_MODEL repository variable rather
+// than editing this, so a deprecation does not need a code change.
+const MODEL = process.env.GEMINI_MODEL || 'gemini-3.6-flash';
 const MAX_EDGE = 1400;         // longest side of a published photo, in pixels
 const MAX_PHOTOS = 8;          // per job, to keep the repo from ballooning
 const WEBP_QUALITY = 82;
@@ -303,6 +306,18 @@ async function draftWithGemini(facts, photos) {
 
   if (!res.ok) {
     const body = await res.text();
+
+    // A retired model id is the one Gemini failure that recurs, and the API
+    // helpfully names its own replacement. Surface that as an instruction
+    // rather than making someone read a JSON blob in a CI log.
+    const suggested = body.match(/use\s+models\/([A-Za-z0-9.\-]+)/);
+    if (res.status === 404 && suggested) {
+      throw new Error(
+        'the model "' + MODEL + '" is no longer available. Google suggests "'
+        + suggested[1] + '". Set the GEMINI_MODEL repository variable in GitHub '
+        + '(Settings, Secrets and variables, Actions, Variables) to "'
+        + suggested[1] + '" and re-run. No code change needed.');
+    }
     throw new Error('Gemini request failed (' + res.status + '): ' + body.slice(0, 400));
   }
 

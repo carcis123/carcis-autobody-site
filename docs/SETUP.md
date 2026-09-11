@@ -192,7 +192,10 @@ Paste the whole JSON file for the second one, braces and all. Do not paste just
 the private key.
 
 Optionally add a **variable**, not a secret, named `GEMINI_MODEL` to pin a
-different model. It defaults to `gemini-2.5-flash`.
+different model. It defaults to `gemini-3.6-flash`. Google retires model ids
+periodically; when that happens the import fails with a 404 that names the
+replacement, and the error tells you exactly which variable to set. No code
+change is needed.
 
 ---
 
