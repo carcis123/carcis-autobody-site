@@ -70,7 +70,7 @@ const SERVICE_LABELS = {
   'custom-body': 'Custom Body Work',
 };
 
-/* Each column is found by testing the normalised header against these
+/* Each column is found by testing the normalized header against these
    predicates, in order, first match wins. Keep them loose. */
 const COLUMNS = {
   timestamp: h => h === 'timestamp',
@@ -98,7 +98,7 @@ function need(name) {
   return v;
 }
 
-function normaliseHeader(h) {
+function normalizeHeader(h) {
   return String(h || '').toLowerCase().replace(/[^a-z0-9 ]+/g, ' ')
     .replace(/\s+/g, ' ').trim();
 }
@@ -137,9 +137,9 @@ function fileIdsFrom(answer) {
 }
 
 function serviceIdFrom(label) {
-  const want = normaliseHeader(label);
+  const want = normalizeHeader(label);
   for (const [id, text] of Object.entries(SERVICE_LABELS)) {
-    if (normaliseHeader(text) === want) return id;
+    if (normalizeHeader(text) === want) return id;
   }
   // Fall back to a keyword sweep so a lightly reworded option still lands.
   if (/custom.*paint|design/.test(want)) return 'custom-paint';
@@ -179,7 +179,7 @@ async function readResponses(auth, sheetId) {
   const rows = res.data.values || [];
   if (!rows.length) return { headers: [], responses: [] };
 
-  const headers = rows[0].map(normaliseHeader);
+  const headers = rows[0].map(normalizeHeader);
   const index = {};
   for (const [key, test] of Object.entries(COLUMNS)) {
     const at = headers.findIndex(h => h && test(h));
@@ -277,7 +277,7 @@ async function draftWithGemini(facts, photos) {
 
   const factLines = [
     'Vehicle: ' + ([facts.year, facts.make, facts.model].filter(Boolean).join(' ') || 'not given'),
-    'Colour: ' + (facts.color || 'not given'),
+    'Color: ' + (facts.color || 'not given'),
     'Work done: ' + (SERVICE_LABELS[facts.serviceId] || 'not given'),
     'Completed: ' + facts.date,
     'Insurance claim: ' + (facts.insurance ? 'yes' : 'not stated'),

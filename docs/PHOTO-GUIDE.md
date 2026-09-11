@@ -20,7 +20,7 @@ the three dots, then **Add to Home screen**.
 | Date the job was finished | Not today's date, the day the car was done |
 | Vehicle year | Leave blank if you are not sure. Do not guess |
 | Vehicle make and model | Toyota, RAV4 |
-| Colour | Maroon, white, black |
+| Color | Maroon, white, black |
 | What work did you do? | Pick the closest one |
 | Was this an insurance claim? | Yes or no |
 | Tell us about this job | The important one, see below |
@@ -45,7 +45,7 @@ That is it. That is a good answer.
 
 **Why it matters this much.** The website writes the page for you, but it can
 only describe what it can see in the photos. It does not know the car came in
-on a tow truck, or that the colour was discontinued, or that you saved the
+on a tow truck, or that the color was discontinued, or that you saved the
 customer a whole panel. Those details are what make the page worth reading,
 and Google ranks pages that people actually read. A page with nothing real in
 it can do more harm than good.
