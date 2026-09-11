@@ -170,10 +170,10 @@ function decorate(job, where) {
   const before = job.photos.find(p => p.role === 'before');
   const after = job.photos.find(p => p.role === 'after');
 
-  job.url = '/work/' + job.slug + '.html';
+  job.url = '/work/' + job.slug;
   job.absUrl = SITE + job.url;
   job.serviceLabel = SERVICES[job.service];
-  job.serviceUrl = '/services.html#svc-' + job.service;
+  job.serviceUrl = '/services#svc-' + job.service;
   job.draft = job.draft === true;
 
   const [y, m, d] = job.date.split('-').map(Number);
@@ -473,10 +473,10 @@ function renderSitemap(jobs) {
 
   const entries = [
     { loc: SITE + '/', lastmod: newest, changefreq: 'weekly', priority: '1.0' },
-    { loc: SITE + '/services.html', lastmod: newest, changefreq: 'monthly', priority: '0.9' },
-    { loc: SITE + '/estimate.html', lastmod: newest, changefreq: 'monthly', priority: '0.9' },
+    { loc: SITE + '/services', lastmod: newest, changefreq: 'monthly', priority: '0.9' },
+    { loc: SITE + '/estimate', lastmod: newest, changefreq: 'monthly', priority: '0.9' },
     { loc: SITE + '/work/', lastmod: newest, changefreq: 'weekly', priority: '0.9' },
-    { loc: SITE + '/about.html', lastmod: newest, changefreq: 'monthly', priority: '0.8' },
+    { loc: SITE + '/about', lastmod: newest, changefreq: 'monthly', priority: '0.8' },
   ];
 
   for (const job of live) {

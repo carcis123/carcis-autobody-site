@@ -1,4 +1,9 @@
+# Cloudflare Pages serves pages extensionlessly: /about.html is a 308 to
+# /about. A "/*.html" rule therefore matches nothing, which is why HTML was
+# falling back to Cloudflare's default max-age=0. The page cache lives here
+# instead, and the more specific rules below override it for assets.
 /*
+  Cache-Control: public, max-age=300, must-revalidate
   X-Content-Type-Options: nosniff
   X-Frame-Options: SAMEORIGIN
   Referrer-Policy: strict-origin-when-cross-origin
@@ -23,9 +28,6 @@
 
 /js/*
   Cache-Control: public, max-age=86400, stale-while-revalidate=2592000
-
-/*.html
-  Cache-Control: public, max-age=300, must-revalidate
 
 # Build sources, job data, docs and the importer all live in the repo and are
 # therefore uploaded by Pages. Nothing links to them, but tell crawlers to
