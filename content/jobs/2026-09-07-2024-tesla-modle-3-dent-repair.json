@@ -1,0 +1,50 @@
+{
+  "_generated": {
+    "by": "tools/sync-form.js",
+    "model": "gemini-3.6-flash",
+    "importedAt": "2026-09-11T20:12:34.118Z",
+    "formTimestamp": "9/11/2026 11:41:11",
+    "formRow": 3,
+    "submittedOn": "2026-09-11",
+    "shopNotes": "Paint and body work correction",
+    "uncertain": [
+      "Cause of initial denting prior to shop teardown and prep work."
+    ],
+    "skippedPhotos": [],
+    "review": "The vehicle, service and date came from the form and are the shop's own answers. The title, summary, story and alt text are a Gemini draft. Check every claim, fix the voice, then set \"draft\" to false to publish."
+  },
+  "slug": "2024-tesla-modle-3-dent-repair",
+  "date": "2026-09-07",
+  "title": "2024 Tesla Model 3 Dent Repair and Paint Correction",
+  "summary": "Carcis Autobody Repair completed dent repair and paint correction on a 2024 Tesla Model 3 in Vancouver, Washington.",
+  "service": "dent",
+  "vehicle": {
+    "year": "2024",
+    "make": "Tesla",
+    "model": "Modle 3",
+    "color": "Matalic grey"
+  },
+  "insurance": false,
+  "draft": true,
+  "story": [
+    "This 2024 Tesla Model 3 came in for dent repair and paint and body work correction. Correcting body damage on late-model panels requires thorough surface preparation so filler and primer adhere correctly.",
+    "Technicians smoothed out the damaged sections on the rear trunk lid. Sanding removed the damaged finish, allowing body filler to level out the depressions. Masking tape protected adjacent glass and trim from debris and paint overspray during the prep phase.",
+    "After blocking the surface smooth, the area was primed and sprayed with color-matched metallic grey paint. Clear coat was applied to match the original factory sheen and protect the new finish."
+  ],
+  "photos": [
+    {
+      "file": "/assets/work/2024-tesla-modle-3-dent-repair/before-1.webp",
+      "alt": "Rear trunk lid of a dark grey Tesla Model 3 sanded down with body filler during paint and body repair prep.",
+      "width": 1200,
+      "height": 900,
+      "role": "before"
+    },
+    {
+      "file": "/assets/work/2024-tesla-modle-3-dent-repair/after-1.webp",
+      "alt": "Rear view of the completed metallic grey Tesla Model 3 parked outside after body repair and repainting.",
+      "width": 1200,
+      "height": 900,
+      "role": "after"
+    }
+  ]
+}
