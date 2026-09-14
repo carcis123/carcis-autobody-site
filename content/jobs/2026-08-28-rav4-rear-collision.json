@@ -5,7 +5,11 @@
   "title": "Rear door and fender collision repair on a maroon RAV4",
   "summary": "A maroon Toyota RAV4 came in with a damaged rear door and fender. Panel work and a factory color match put it back to the line it left the factory with.",
   "service": "collision",
-  "vehicle": { "make": "Toyota", "model": "RAV4", "color": "Maroon" },
+  "vehicle": {
+    "make": "Toyota",
+    "model": "RAV4",
+    "color": "Maroon"
+  },
   "insurance": true,
   "story": [
     "The impact caught the rear door and carried into the fender, so the damage crossed a panel gap. That is the part that decides whether a repair looks right afterwards: both panels have to come back to the same line, or the seam between them reads as wrong even after the paint is perfect.",
@@ -33,5 +37,6 @@
       "width": 736,
       "height": 736
     }
-  ]
+  ],
+  "draft": true
 }

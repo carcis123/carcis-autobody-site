@@ -5,7 +5,10 @@
   "title": "Maroon sedan masked and prepped for paint",
   "summary": "A maroon sedan taped and masked in the booth, at the stage that decides whether the finished paint looks factory or looks resprayed.",
   "service": "paint",
-  "vehicle": { "model": "Sedan", "color": "Maroon" },
+  "vehicle": {
+    "model": "Sedan",
+    "color": "Maroon"
+  },
   "story": [
     "This is the part of a paint job nobody photographs and everybody judges. Masking decides where the new paint stops, and a lazy tape line leaves a hard edge that will be visible for as long as the owner keeps the car.",
     "Trim, glass rubbers and door jambs all get treated differently depending on whether the panel is being blended or fully refinished. On this sedan the blend was carried into the neighboring panels so the color change happens gradually rather than at a seam.",
@@ -18,5 +21,6 @@
       "width": 1200,
       "height": 675
     }
-  ]
+  ],
+  "draft": true
 }

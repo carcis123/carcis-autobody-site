@@ -19,7 +19,7 @@ the three dots, then **Add to Home screen**.
 | --- | --- |
 | Date the job was finished | Not today's date, the day the car was done |
 | Vehicle year | Leave blank if you are not sure. Do not guess |
-| Vehicle make and model | Toyota, RAV4 |
+| Vehicle make and model | Toyota, RAV4. Close is fine, typos get fixed |
 | Color | Maroon, white, black |
 | What work did you do? | Pick the closest one |
 | Was this an insurance claim? | Yes or no |
@@ -63,8 +63,8 @@ the website builds a slider that people drag across to compare the two, and it
 only works properly when the two photos line up.
 
 **Keep the license plate out of the shot when you can.** If it ends up in
-frame, that's fine. It gets blurred before the page goes live. It's just one
-less thing to catch.
+frame, that's fine. It gets blurred automatically before the page goes live,
+and so does anything else personal, like faces or paperwork.
 
 **iPhone owners, change one setting once.** Go to **Settings**, **Camera**,
 **Formats**, and choose **Most Compatible**.
@@ -80,7 +80,8 @@ it once, and it applies to every photo you take from then on.
 Within six hours the website picks up your submission and prepares a draft
 page with your photos and a written description.
 
-**The draft does not go live.** Someone reviews it first, fixes anything the
+**The draft does not go live.** License plates, faces and other personal
+details are blurred automatically. Someone then reviews it, fixes anything the
 computer got wrong, and publishes it. Anything the computer was unsure about is
 flagged for that person to check.
 

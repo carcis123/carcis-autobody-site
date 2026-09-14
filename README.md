@@ -64,11 +64,17 @@ The build prints a warning for any live job with under 60 words of `story`,
 because thin, near-identical pages are worse than no pages under Google's
 helpful content policies.
 
-A published job cannot carry an unreviewed privacy flag. The importer asks the
-model to list readable plates, faces, names or paperwork in
-`_generated.privacyIssues`. If that list is not empty, the build refuses to
-publish the job until the photos are redacted and `_generated.privacyReviewed`
-is set to true.
+Personal information is removed automatically. The importer has Gemini box
+every license plate, face, name, document or screen in the photos and
+pixelates them, then sends the redacted photos back to be checked, redacting
+again if anything is still readable. The shop's notes are stored with personal
+details replaced by [removed], and the page copy is kept free of them. Anything
+the model could not fix, or a check that did not finish, goes into
+`_generated.privacyIssues`, and the build refuses to publish that job until
+someone has looked and set `_generated.privacyReviewed` to true.
+
+The importer also fixes typos in the form's vehicle fields, recording each
+change in `_generated.corrections`, and keeps all copy in American English.
 
 ## Jobs from the Google Form
 

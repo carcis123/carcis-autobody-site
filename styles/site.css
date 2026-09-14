@@ -454,6 +454,20 @@ header {
   grid-template-areas: "a a a b b b" "a a a c c d";
 }
 @media (min-width: 780px) { .gallery-grid { grid-template-rows: repeat(2, minmax(200px, 280px)); } }
+/* The grid is designed for four tiles, but the home page shows however many
+   jobs are published, and fewer than four would leave empty cells. :has()
+   lets the layout adapt without the build having to count. Desktop only; the
+   single-column mobile layout has its own rules below. */
+@media (min-width: 720px) {
+  .gallery-grid:not(:has(.gallery-item.b)) { grid-template-areas: "a a a a a a" "a a a a a a"; }
+  .gallery-grid:has(.gallery-item.b):not(:has(.gallery-item.c)) { grid-template-areas: "a a a b b b" "a a a b b b"; }
+  .gallery-grid:has(.gallery-item.c):not(:has(.gallery-item.d)) { grid-template-areas: "a a a b b b" "a a a c c c"; }
+}
+@media (max-width: 719px) {
+  .gallery-grid:not(:has(.gallery-item.b)) { grid-template-areas: "a"; }
+  .gallery-grid:has(.gallery-item.b):not(:has(.gallery-item.c)) { grid-template-areas: "a" "b"; }
+  .gallery-grid:has(.gallery-item.c):not(:has(.gallery-item.d)) { grid-template-areas: "a" "b" "c"; }
+}
 @media (max-width: 719px) {
   .gallery-grid { grid-template-columns: 1fr; grid-template-rows: none; grid-template-areas: "a" "b" "c" "d"; gap: 12px; }
   .gallery-item { aspect-ratio: 4 / 3; }

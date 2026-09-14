@@ -24,6 +24,10 @@ on:
         description: 'Re-import rows that were already imported'
         type: boolean
         default: false
+      dry_run:
+        description: 'Run Gemini on every existing row and print the corrections, redactions and privacy findings. Writes nothing, opens no pull request.'
+        type: boolean
+        default: false
 
 concurrency:
   group: sync-form
@@ -61,6 +65,7 @@ jobs:
           ARGS=""
           if [ "${{ inputs.check_only }}" = "true" ]; then ARGS="--check-columns"; fi
           if [ "${{ inputs.force }}" = "true" ]; then ARGS="$ARGS --force"; fi
+          if [ "${{ inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run --force"; fi
           echo "running: node sync-form.js $ARGS"
           node sync-form.js $ARGS
 
@@ -96,10 +101,11 @@ jobs:
             echo
             echo "### Before merging"
             echo
-            echo "0. FIRST check privacyIssues in each job JSON. Any readable plate,"
-            echo "   face, name or address must be redacted in the image before this"
-            echo "   merges. The build refuses to publish a flagged job until"
-            echo "   privacyReviewed is set to true."
+            echo "0. Photos were redacted automatically and then re-checked by the model."
+            echo "   Look at every photo in the preview anyway, since the model can miss"
+            echo "   things. Anything it could not fix is listed in privacyIssues, and the"
+            echo "   build refuses to publish that job until privacyReviewed is true."
+            echo "   Typos it fixed in the vehicle fields are listed in corrections."
             echo "1. Open the Cloudflare Pages preview for this branch."
             echo "2. The vehicle, service and date are the shop's own answers from"
             echo "   the form and can be trusted. The title, summary, story and alt"

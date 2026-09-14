@@ -5,7 +5,10 @@
   "title": "Full repaint on a black hatchback",
   "summary": "A black hatchback body shell photographed in the booth, freshly sprayed and still masked while the finish cured.",
   "service": "paint",
-  "vehicle": { "model": "Hatchback", "color": "Black" },
+  "vehicle": {
+    "model": "Hatchback",
+    "color": "Black"
+  },
   "story": [
     "Black is the least forgiving color in the shop. It hides nothing. Every ripple left in a panel, every bit of dust that settles during the spray, and every polishing mark shows up under direct light, which is why most of the hours on a black repaint go into the prep rather than the paint itself.",
     "This shell was stripped back, straightened and sealed before any color went on. The masking in the photo is the last stage before spraying, and the car stayed in the booth to cure rather than being pulled early to free up the bay.",
@@ -18,5 +21,6 @@
       "width": 774,
       "height": 1032
     }
-  ]
+  ],
+  "draft": true
 }
