@@ -732,3 +732,28 @@ a.feature-row:hover .feature-title { color: var(--red-bright); }
    still, sized like the slider so the section keeps its proportions. */
 .slider-single { margin: 0; }
 .slider-single img { width: 100%; height: auto; display: block; }
+
+/* ---------- Photo guide page (unlisted, noindex) ---------- */
+.guide-table-wrap { overflow-x: auto; max-width: 68ch; margin: 8px 0 18px; }
+.guide-table { width: 100%; border-collapse: collapse; font-size: 15px; }
+.guide-table th,
+.guide-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line-soft);
+  color: var(--ink-dim);
+}
+.guide-table th { color: var(--ink); font-weight: 600; }
+.guide-table td:first-child { color: var(--ink); white-space: nowrap; }
+.guide-quote {
+  margin: 8px 0 18px;
+  padding: 14px 18px;
+  max-width: 68ch;
+  border-left: 3px solid var(--red);
+  background: var(--canvas-raised);
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.7;
+}
+.legal-body strong { color: var(--ink); }

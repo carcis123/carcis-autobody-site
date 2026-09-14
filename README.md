@@ -83,7 +83,9 @@ The vehicle, service and date on a generated job are the shop's own answers.
 The title, summary, story and alt text are model output and need review.
 
 - Setup, one time: [docs/SETUP.md](docs/SETUP.md)
-- For the shop: [docs/PHOTO-GUIDE.md](docs/PHOTO-GUIDE.md)
+- For the shop: https://www.carcisautobody.com/photo-guide, an unlisted,
+  noindex page built from `src/pages/photo-guide.html`. Keep it in step with
+  [docs/PHOTO-GUIDE.md](docs/PHOTO-GUIDE.md).
 - The importer: `tools/sync-form.js`, dependencies in `tools/package.json`,
   installed only in CI
 
