@@ -96,6 +96,10 @@ jobs:
             echo
             echo "### Before merging"
             echo
+            echo "0. FIRST check privacyIssues in each job JSON. Any readable plate,"
+            echo "   face, name or address must be redacted in the image before this"
+            echo "   merges. The build refuses to publish a flagged job until"
+            echo "   privacyReviewed is set to true."
             echo "1. Open the Cloudflare Pages preview for this branch."
             echo "2. The vehicle, service and date are the shop's own answers from"
             echo "   the form and can be trusted. The title, summary, story and alt"

@@ -62,6 +62,10 @@ distance, same side of the car. This matters more than camera quality, because
 the website builds a slider that people drag across to compare the two, and it
 only works properly when the two photos line up.
 
+**Keep the license plate out of the shot when you can.** If it ends up in
+frame, that's fine. It gets blurred before the page goes live. It's just one
+less thing to catch.
+
 **iPhone owners, change one setting once.** Go to **Settings**, **Camera**,
 **Formats**, and choose **Most Compatible**.
 

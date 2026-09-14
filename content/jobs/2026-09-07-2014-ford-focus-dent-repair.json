@@ -13,7 +13,7 @@
     ],
     "skippedPhotos": [],
     "review": "The vehicle, service and date came from the form and are the shop's own answers. The title, summary, story and alt text are a Gemini draft. Check every claim, fix the voice, then set \"draft\" to false to publish.",
-    "editedByHuman": "Title, summary and story rewritten after import. Removed the customer's rental-fleet and Craigslist details from the shop notes: accurate, but a customer's commercial arrangements do not belong on a public page. Replaced the generic how-dent-repair-works paragraph with what the photos actually show. No repair technique is claimed, since the import flagged that as uncertain."
+    "editedByHuman": "Title, summary and story rewritten after import. Removed the customer's rental-fleet and Craigslist details from the shop notes: accurate, but a customer's commercial arrangements do not belong on a public page. Replaced the generic how-dent-repair-works paragraph with what the photos actually show. No repair technique is claimed, since the import flagged that as uncertain. License plate redacted in both after photos on 2026-09-14."
   },
   "slug": "2014-ford-focus-dent-repair",
   "date": "2026-09-07",
@@ -56,14 +56,14 @@
       "role": "before"
     },
     {
-      "file": "/assets/work/2014-ford-focus-dent-repair/after-1.webp",
+      "file": "/assets/work/2014-ford-focus-dent-repair/after-1-v2.webp",
       "alt": "Front three-quarter view of the black 2014 Ford Focus parked outside Carcis Autobody Repair after dent repair.",
       "width": 1400,
       "height": 1050,
       "role": "after"
     },
     {
-      "file": "/assets/work/2014-ford-focus-dent-repair/after-2.webp",
+      "file": "/assets/work/2014-ford-focus-dent-repair/after-2-v2.webp",
       "alt": "Rear three-quarter view of the repaired black 2014 Ford Focus Titanium outside the shop.",
       "width": 1400,
       "height": 1050,

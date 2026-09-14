@@ -1,0 +1,12 @@
+# Cloudflare Pages redirects. Format: source  destination  status
+
+# The Tesla job's URL carried a typo in from the form ("modle"). It was live and
+# in the sitemap for three days, so it redirects permanently instead of 404ing.
+# The assets rule sends any saved or indexed image link to the redacted copy.
+/work/2024-tesla-modle-3-dent-repair                 /work/2024-tesla-model-3-dent-repair                 301
+/assets/work/2024-tesla-modle-3-dent-repair/*        /assets/work/2024-tesla-model-3-dent-repair/:splat   301
+
+# The Ford Focus after photos showed a readable license plate. Redacted copies
+# live under new filenames; old links land on the redacted versions.
+/assets/work/2014-ford-focus-dent-repair/after-1.webp  /assets/work/2014-ford-focus-dent-repair/after-1-v2.webp  301
+/assets/work/2014-ford-focus-dent-repair/after-2.webp  /assets/work/2014-ford-focus-dent-repair/after-2-v2.webp  301

@@ -64,6 +64,12 @@ The build prints a warning for any live job with under 60 words of `story`,
 because thin, near-identical pages are worse than no pages under Google's
 helpful content policies.
 
+A published job cannot carry an unreviewed privacy flag. The importer asks the
+model to list readable plates, faces, names or paperwork in
+`_generated.privacyIssues`. If that list is not empty, the build refuses to
+publish the job until the photos are redacted and `_generated.privacyReviewed`
+is set to true.
+
 ## Jobs from the Google Form
 
 Carlos and Kayla fill in the "Carcis job upload" form on their phone: the

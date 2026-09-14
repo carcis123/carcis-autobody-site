@@ -237,6 +237,7 @@ const RESPONSE_SCHEMA = {
     story: { type: 'array', items: { type: 'string' } },
     photoAlts: { type: 'array', items: { type: 'string' } },
     uncertain: { type: 'array', items: { type: 'string' } },
+    privacyIssues: { type: 'array', items: { type: 'string' } },
   },
   required: ['title', 'summary', 'story', 'photoAlts'],
 };
@@ -268,6 +269,13 @@ Write the draft. Rules, in order of importance:
 7. "title" names the vehicle and the work, under 70 characters.
 8. "photoAlts" has exactly one entry per photo, in the same order, each a
    plain factual description for a screen reader. No keyword stuffing.
+9. "privacyIssues" lists anything in any photo that identifies a customer or
+   another person and must be hidden before the page is public: a readable
+   license plate, a face, a name, an address, a VIN, paperwork, or a phone
+   screen. Say which photo, counting from 1, and where in it, for example
+   "photo 2: rear license plate, center of the bumper". Return an empty array
+   only if you checked every photo and found nothing. Never mention these
+   details in the page copy or the alt text.
 
 The facts from the form:
 `;
@@ -339,6 +347,7 @@ async function draftWithGemini(facts, photos) {
   }
   if (!Array.isArray(draft.story)) draft.story = [];
   if (!Array.isArray(draft.photoAlts)) draft.photoAlts = [];
+  if (!Array.isArray(draft.privacyIssues)) draft.privacyIssues = [];
   return draft;
 }
 
@@ -457,6 +466,7 @@ async function importResponse(auth, row, known) {
       submittedOn: submittedIso,
       shopNotes: row.notes || null,
       uncertain: draft.uncertain || [],
+      privacyIssues: draft.privacyIssues,
       skippedPhotos: unreadable,
       review: 'The vehicle, service and date came from the form and are the '
         + "shop's own answers. The title, summary, story and alt text are a "
@@ -596,6 +606,9 @@ async function main() {
         console.log('imported  ' + label + ' -> ' + result.slug
           + ' (' + result.photos + ' photos)');
         for (const u of result.uncertain || []) console.log('    unsure: ' + u);
+        for (const u of (result.job && result.job._generated.privacyIssues) || []) {
+          console.log('    PRIVACY: ' + u);
+        }
       }
     } catch (err) {
       failed.push(label + ': ' + err.message);

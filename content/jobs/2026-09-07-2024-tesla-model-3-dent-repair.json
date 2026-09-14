@@ -1,0 +1,51 @@
+{
+  "_generated": {
+    "by": "tools/sync-form.js",
+    "model": "gemini-3.6-flash",
+    "importedAt": "2026-09-11T20:12:34.118Z",
+    "formTimestamp": "9/11/2026 11:41:11",
+    "formRow": 3,
+    "submittedOn": "2026-09-11",
+    "shopNotes": "Paint and body work correction",
+    "uncertain": [
+      "Cause of initial denting prior to shop teardown and prep work."
+    ],
+    "skippedPhotos": [],
+    "review": "The vehicle, service and date came from the form and are the shop's own answers. The title, summary, story and alt text are a Gemini draft. Check every claim, fix the voice, then set \"draft\" to false to publish.",
+    "editedByHuman": "Fixed typos carried in from the form (Modle, Matalic grey), which had also put a typo in the URL; the old URL redirects. Redacted the license plate in both photos. Rewrote the copy from what the before photo shows (filler over the low spots, full-lid sanding, glass masked). The cause of the damage is not stated, since the import flagged it as unknown."
+  },
+  "slug": "2024-tesla-model-3-dent-repair",
+  "date": "2026-09-07",
+  "title": "Dent and refinish on a 2024 Tesla Model 3 trunk lid",
+  "summary": "A 2024 Tesla Model 3 came in with dents in the trunk lid. The panel was filled, sanded smooth and refinished to match the metallic gray.",
+  "service": "dent",
+  "vehicle": {
+    "year": "2024",
+    "make": "Tesla",
+    "model": "Model 3",
+    "color": "Metallic Gray"
+  },
+  "insurance": false,
+  "draft": false,
+  "story": [
+    "This 2024 Model 3 came in with damage in two spots on the trunk lid, one across the upper surface and one lower down, just above the license plate.",
+    "The before photo shows the panel partway through the repair. The whole lid has been sanded, the rear glass is taped off, and the white patches are filler over the low spots. Filler is only as good as the shaping that follows it. It has to be sanded until the curve of the lid runs through the repair without a flat or a high spot, because a trunk lid catches light across its full width and any wave shows.",
+    "Once the shape was right, the lid was primed and refinished in the car's metallic gray. Metallic colors are harder to match than solid ones. The flake in the paint has to lie the same way as the factory finish, or the repaired panel looks lighter or darker than the rest of the car from an angle."
+  ],
+  "photos": [
+    {
+      "file": "/assets/work/2024-tesla-model-3-dent-repair/before-1.webp",
+      "alt": "Trunk lid of a 2024 Tesla Model 3 sanded down with body filler over the dents and the rear glass taped off.",
+      "width": 1200,
+      "height": 900,
+      "role": "before"
+    },
+    {
+      "file": "/assets/work/2024-tesla-model-3-dent-repair/after-1.webp",
+      "alt": "The repaired 2024 Tesla Model 3 in metallic gray, parked outside the shop.",
+      "width": 1200,
+      "height": 900,
+      "role": "after"
+    }
+  ]
+}

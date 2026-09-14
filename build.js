@@ -147,6 +147,18 @@ function loadJobs() {
       }
     });
 
+    // A readable license plate went public on two job pages before anyone
+    // noticed. The importer now asks the model to list anything identifying
+    // in the photos. A flagged job can sit as a draft, but it cannot be
+    // published until a person has redacted the photos and said so.
+    const gen = job._generated || {};
+    const privacy = Array.isArray(gen.privacyIssues) ? gen.privacyIssues : [];
+    if (job.draft !== true && privacy.length && gen.privacyReviewed !== true) {
+      fail(where + ': cannot publish. The import flagged private details in the '
+        + 'photos: ' + privacy.join('; ') + '. Redact them, then set '
+        + '"_generated.privacyReviewed": true.');
+    }
+
     return decorate(job, where);
   });
 
