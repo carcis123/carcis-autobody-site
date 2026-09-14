@@ -76,6 +76,24 @@ someone has looked and set `_generated.privacyReviewed` to true.
 The importer also fixes typos in the form's vehicle fields, recording each
 change in `_generated.corrections`, and keeps all copy in American English.
 
+## Photos and the gallery
+
+Every photo on a job page opens in a lightbox: a full-screen viewer with arrow
+buttons, arrow keys, swipe, and Escape to close, built on the native `<dialog>`
+element in `js/site.js`. Without JavaScript the photo links still open the
+image itself.
+
+`/gallery/` shows every photo from every published job, newest job first and
+before shots ahead of after shots, in the same viewer, with captions linking
+back to each job. Like the work index, it only exists while at least one job
+is live, and drafts never appear in it.
+
+Instagram (@carcisautobody) is linked from the footer and the gallery, and is
+listed as the business's `sameAs` profile in structured data. The site does not
+embed an Instagram feed on purpose: those photos would bypass the redaction the
+importer applies, and a live feed needs an Instagram Business account tied to a
+Facebook Page plus access tokens that expire every 60 days.
+
 ## Jobs from the Google Form
 
 Carlos and Kayla fill in the "Carcis job upload" form on their phone: the

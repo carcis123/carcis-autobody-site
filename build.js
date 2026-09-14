@@ -14,13 +14,14 @@
  * Inputs
  *   src/partials/    shared fragments (head, header, nav, ticker, footer)
  *   src/pages/       one source per static page at the site root
- *   src/templates/   job.html and work-index.html, rendered from job data
+ *   src/templates/   job.html, work-index.html and gallery.html, rendered from job data
  *   content/jobs/    one JSON file per completed repair
  *
  * Outputs (all committed, all overwritten on every build)
- *   *.html           the six static pages
- *   work/index.html  the "Our Work" index
- *   work/<slug>.html one page per job
+ *   *.html              the static pages
+ *   work/index.html     the "Our Work" index
+ *   work/<slug>.html    one page per job
+ *   gallery/index.html  every photo from every published job
  *   sitemap.xml
  *
  * Directives, expanded recursively:
@@ -47,6 +48,7 @@ const PAGES = path.join(ROOT, 'src', 'pages');
 const TEMPLATES = path.join(ROOT, 'src', 'templates');
 const JOBS_DIR = path.join(ROOT, 'content', 'jobs');
 const WORK_DIR = path.join(ROOT, 'work');
+const GALLERY_DIR = path.join(ROOT, 'gallery');
 
 const SITE = 'https://www.carcisautobody.com';
 
@@ -281,6 +283,10 @@ function img(p, extra) {
     + ' width="' + p.width + '" height="' + p.height + '"' + (extra || '') + '>';
 }
 
+function roleLabel(p) {
+  return p.role === 'before' ? 'Before' : p.role === 'after' ? 'After' : '';
+}
+
 /* The drag-to-compare slider. js/site.js binds to #sliderFrame / #sliderInput,
    so there can only ever be one of these per page. */
 function renderSlider(job, indent) {
@@ -339,19 +345,61 @@ function renderCards(jobs, indent) {
   return indentBlock(body, indent);
 }
 
-/* Every photo on the job page, with the before/after pair called out. */
+/* Opening tag of a link that shows a photo in the lightbox (js/site.js).
+   Links in the same data-lb group can be paged through together. Without
+   JavaScript the link still works: it opens the image file itself. */
+function lightboxOpen(p, opts) {
+  const role = roleLabel(p);
+  return '<a class="lb-item' + (opts.className ? ' ' + opts.className : '') + '"'
+    + ' href="' + esc(p.file) + '"'
+    + ' data-lb="' + esc(opts.group) + '"'
+    + ' data-lb-w="' + p.width + '" data-lb-h="' + p.height + '"'
+    + (role ? ' data-lb-role="' + role + '"' : '')
+    + ' data-lb-caption="' + esc(p.alt) + '"'
+    + (opts.job ? ' data-lb-title="' + opts.job.titleEsc + '" data-lb-link="' + opts.job.url + '"' : '')
+    + ' aria-label="View larger: ' + esc(p.alt) + '">';
+}
+
+/* Every photo on the job page, with the before/after pair called out. Each
+   opens in the lightbox, paged within this job. */
 function renderPhotoStrip(job, indent) {
   const body = job.photos.map(p => {
-    const label = p.role === 'before' ? 'Before'
-      : p.role === 'after' ? 'After' : '';
+    const label = roleLabel(p);
     return [
       '<figure class="job-shot">',
-      '  ' + img(p, ' loading="lazy" decoding="async"'),
+      '  ' + lightboxOpen(p, { group: 'job-' + job.slug }),
+      '    ' + img(p, ' loading="lazy" decoding="async"'),
+      '  </a>',
       (label ? '  <figcaption class="job-shot-label">' + label + '</figcaption>' : ''),
       '</figure>',
     ].filter(Boolean).join('\n');
   }).join('\n');
   return indentBlock(body, indent);
+}
+
+/* Every photo from every published job, for the gallery page. Newest job
+   first; within a job, before shots ahead of after shots so paging through
+   the lightbox reads as a repair. The lightbox caption links to the job. */
+function renderGalleryTiles(jobs, indent) {
+  const tiles = [];
+  for (const job of jobs.filter(j => !j.draft)) {
+    const ordered = job.photos.filter(p => p.role === 'before')
+      .concat(job.photos.filter(p => p.role === 'after'))
+      .concat(job.photos.filter(p => p.role !== 'before' && p.role !== 'after'));
+    for (const p of ordered) {
+      const label = roleLabel(p);
+      tiles.push([
+        lightboxOpen(p, { group: 'gallery', job, className: 'gallery-tile' }),
+        '  ' + img(p, ' loading="lazy" decoding="async"'),
+        '  <span class="gallery-tile-meta">'
+          + (label ? '<span class="gallery-tile-role">' + label + '</span>' : '')
+          + '<span class="gallery-tile-title">' + (job.vehicleLabelEsc || job.titleEsc) + '</span>'
+          + '</span>',
+        '</a>',
+      ].join('\n'));
+    }
+  }
+  return { html: indentBlock(tiles.join('\n'), indent), count: tiles.length };
 }
 
 function renderJobJsonLd(job) {
@@ -520,7 +568,10 @@ function renderSitemap(jobs) {
     { loc: SITE + '/services', lastmod: newest, changefreq: 'monthly', priority: '0.9' },
     { loc: SITE + '/estimate', lastmod: newest, changefreq: 'monthly', priority: '0.9' },
     ...(live.length
-      ? [{ loc: SITE + '/work/', lastmod: newest, changefreq: 'weekly', priority: '0.9' }]
+      ? [
+        { loc: SITE + '/work/', lastmod: newest, changefreq: 'weekly', priority: '0.9' },
+        { loc: SITE + '/gallery/', lastmod: newest, changefreq: 'weekly', priority: '0.7' },
+      ]
       : []),
     { loc: SITE + '/about', lastmod: newest, changefreq: 'monthly', priority: '0.8' },
   ];
@@ -550,6 +601,7 @@ function renderSitemap(jobs) {
 function build() {
   const jobs = loadJobs();
   const report = { changed: [], upToDate: [], removed: [] };
+  const anyLive = jobs.some(j => !j.draft);
 
   const v = { css: assetVersion('styles/site.css'), js: assetVersion('js/site.js') };
 
@@ -570,7 +622,7 @@ function build() {
     writeIfChanged(path.join(WORK_DIR, job.slug + '.html'), html, report);
   }
 
-  if (jobs.some(j => !j.draft)) {
+  if (anyLive) {
     const indexTemplate = fs.readFileSync(path.join(TEMPLATES, 'work-index.html'), 'utf8');
     writeIfChanged(path.join(WORK_DIR, 'index.html'),
       render(indexTemplate, { nav: 'work', v }, jobs, 'work-index'), report);
@@ -592,10 +644,24 @@ function build() {
     }
   }
 
-  // 4. Sitemap, derived from whatever is live.
+  // 4. The gallery page, from every published job's photos. Like the work
+  //    index, it only exists while something is live.
+  const galleryFile = path.join(GALLERY_DIR, 'index.html');
+  if (anyLive) {
+    const galleryTemplate = fs.readFileSync(path.join(TEMPLATES, 'gallery.html'), 'utf8');
+    const tiles = renderGalleryTiles(jobs, '      ');
+    writeIfChanged(galleryFile, render(galleryTemplate,
+      { nav: 'gallery', v, galleryHtml: tiles.html, galleryCount: tiles.count },
+      jobs, 'gallery'), report);
+  } else if (fs.existsSync(galleryFile)) {
+    report.removed.push('gallery/index.html');
+    if (!CHECK) fs.unlinkSync(galleryFile);
+  }
+
+  // 5. Sitemap, derived from whatever is live.
   writeIfChanged(path.join(ROOT, 'sitemap.xml'), renderSitemap(jobs), report);
 
-  // 5. Report.
+  // 6. Report.
   const live = jobs.filter(j => !j.draft).length;
   for (const f of report.changed) console.log('  ' + (CHECK ? 'STALE   ' : 'wrote   ') + f);
   for (const f of report.removed) console.log('  ' + (CHECK ? 'ORPHAN  ' : 'deleted ') + f);

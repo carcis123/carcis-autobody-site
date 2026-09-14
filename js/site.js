@@ -124,4 +124,173 @@
     }
   }
 
+  // Photo lightbox. Any <a class="lb-item"> opens its image large, and links
+  // sharing a data-lb group can be paged through with the arrow buttons, the
+  // arrow keys, or a swipe. Built on <dialog>, which supplies the modal focus
+  // handling and Escape to close. Without JavaScript, or in a browser without
+  // <dialog>, the link simply opens the image file.
+  if (document.querySelector('a.lb-item') && typeof HTMLDialogElement === 'function') {
+    var lb = null;
+    var lbImg, lbRole, lbText, lbLink, lbCount, lbPrev, lbNext, lbStage, lbClose;
+    var lbGroup = [];
+    var lbIndex = 0;
+    var lbOpener = null;
+    var lbSwiped = false;
+
+    function lbIcon(d) {
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"'
+        + ' stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + d + '"/></svg>';
+    }
+
+    function buildLightbox() {
+      lb = document.createElement('dialog');
+      lb.className = 'lb';
+      lb.setAttribute('aria-label', 'Photo viewer');
+      lb.innerHTML =
+        '<div class="lb-bar">'
+        + '<span class="lb-count" aria-live="polite"></span>'
+        + '<button type="button" class="lb-btn lb-close" aria-label="Close">' + lbIcon('M6 6l12 12M18 6L6 18') + '</button>'
+        + '</div>'
+        + '<div class="lb-stage">'
+        + '<button type="button" class="lb-btn lb-prev" aria-label="Previous photo">' + lbIcon('M15 6l-6 6 6 6') + '</button>'
+        + '<img class="lb-img" alt="">'
+        + '<button type="button" class="lb-btn lb-next" aria-label="Next photo">' + lbIcon('M9 6l6 6-6 6') + '</button>'
+        + '</div>'
+        + '<p class="lb-caption"><span class="lb-role"></span><span class="lb-text"></span>'
+        + '<a class="lb-link" href="#"></a></p>';
+      document.body.appendChild(lb);
+
+      lbImg = lb.querySelector('.lb-img');
+      lbRole = lb.querySelector('.lb-role');
+      lbText = lb.querySelector('.lb-text');
+      lbLink = lb.querySelector('.lb-link');
+      lbCount = lb.querySelector('.lb-count');
+      lbPrev = lb.querySelector('.lb-prev');
+      lbNext = lb.querySelector('.lb-next');
+      lbStage = lb.querySelector('.lb-stage');
+      lbClose = lb.querySelector('.lb-close');
+
+      lbClose.addEventListener('click', closeLightbox);
+      lbPrev.addEventListener('click', function () { showPhoto(lbIndex - 1); });
+      lbNext.addEventListener('click', function () { showPhoto(lbIndex + 1); });
+      lbImg.addEventListener('load', function () { lb.classList.remove('lb-loading'); });
+      // Escape: take over the browser's own close, so every way out of the
+      // viewer runs the same synchronous cleanup. If the browser closes the
+      // dialog anyway, the close event is the backstop, and it ignores a stale
+      // event that arrives after the viewer has already been reopened.
+      lb.addEventListener('cancel', function (e) { e.preventDefault(); closeLightbox(); });
+      lb.addEventListener('close', function () { if (!lb.open) onLightboxClosed(); });
+
+      lb.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowLeft') { e.preventDefault(); showPhoto(lbIndex - 1); }
+        else if (e.key === 'ArrowRight') { e.preventDefault(); showPhoto(lbIndex + 1); }
+      });
+
+      // Clicking the dark area around the photo closes the viewer.
+      lbStage.addEventListener('click', function (e) {
+        if (lbSwiped) { lbSwiped = false; return; }
+        if (e.target === lbStage) closeLightbox();
+      });
+
+      // A horizontal swipe pages; a mostly vertical one is left for scrolling.
+      var startX = null;
+      var startY = null;
+      lbStage.addEventListener('pointerdown', function (e) { startX = e.clientX; startY = e.clientY; });
+      lbStage.addEventListener('pointerup', function (e) {
+        if (startX === null) return;
+        var dx = e.clientX - startX;
+        var dy = e.clientY - startY;
+        startX = null;
+        if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) && lbGroup.length > 1) {
+          lbSwiped = true;
+          showPhoto(lbIndex + (dx < 0 ? 1 : -1));
+        }
+      });
+    }
+
+    function showPhoto(i) {
+      if (!lbGroup.length) return;
+      lbIndex = (i + lbGroup.length) % lbGroup.length;
+      var a = lbGroup[lbIndex];
+
+      lb.classList.add('lb-loading');
+      lbImg.alt = a.getAttribute('data-lb-caption') || '';
+      if (a.getAttribute('data-lb-w')) {
+        lbImg.width = parseInt(a.getAttribute('data-lb-w'), 10);
+        lbImg.height = parseInt(a.getAttribute('data-lb-h'), 10);
+      }
+      lbImg.src = a.getAttribute('href');
+      if (lbImg.complete && lbImg.naturalWidth) lb.classList.remove('lb-loading');
+
+      lbRole.textContent = a.getAttribute('data-lb-role') || '';
+      lbRole.hidden = !lbRole.textContent;
+      lbText.textContent = a.getAttribute('data-lb-caption') || '';
+
+      var link = a.getAttribute('data-lb-link');
+      if (link) {
+        lbLink.href = link;
+        lbLink.textContent = 'See the full job: ' + (a.getAttribute('data-lb-title') || '');
+        lbLink.hidden = false;
+      } else {
+        lbLink.hidden = true;
+      }
+
+      var many = lbGroup.length > 1;
+      lbCount.textContent = many ? (lbIndex + 1) + ' / ' + lbGroup.length : '';
+      lbPrev.hidden = !many;
+      lbNext.hidden = !many;
+
+      // Warm the neighbors so paging through feels instant.
+      if (many) {
+        [lbIndex - 1, lbIndex + 1].forEach(function (n) {
+          var b = lbGroup[(n + lbGroup.length) % lbGroup.length];
+          if (b !== a) { var pre = new Image(); pre.src = b.getAttribute('href'); }
+        });
+      }
+    }
+
+    var lbCleanedUp = true;
+
+    function openLightbox(a) {
+      if (!lb) buildLightbox();
+      var group = a.getAttribute('data-lb');
+      lbGroup = Array.prototype.filter.call(document.querySelectorAll('a.lb-item'), function (x) {
+        return x.getAttribute('data-lb') === group;
+      });
+      lbOpener = a;
+      lbCleanedUp = false;
+      document.documentElement.style.overflow = 'hidden';
+      lb.showModal();
+      showPhoto(Math.max(0, lbGroup.indexOf(a)));
+      lbClose.focus();
+    }
+
+    function closeLightbox() {
+      if (lb && lb.open) lb.close();
+      onLightboxClosed();
+    }
+
+    // Undo everything opening did: unlock page scrolling, drop the large
+    // image, and put focus back on the photo that was clicked. Called directly
+    // when we close the viewer, and from the dialog's close event for Escape,
+    // which the browser closes natively. That event is dispatched
+    // asynchronously, so relying on it alone left the page scroll-locked for a
+    // moment or longer. The flag makes the second call a no-op.
+    function onLightboxClosed() {
+      if (lbCleanedUp) return;
+      lbCleanedUp = true;
+      document.documentElement.style.overflow = '';
+      lbImg.removeAttribute('src');
+      if (lbOpener) lbOpener.focus({ preventScroll: true });
+    }
+
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest ? e.target.closest('a.lb-item') : null;
+      if (!a || e.defaultPrevented || e.button !== 0) return;
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;   // new tab still works
+      e.preventDefault();
+      openLightbox(a);
+    });
+  }
+
 })();
