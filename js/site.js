@@ -181,9 +181,14 @@
       lb.addEventListener('cancel', function (e) { e.preventDefault(); closeLightbox(); });
       lb.addEventListener('close', function () { if (!lb.open) onLightboxClosed(); });
 
+      // Keys are read from e.key. Escape is handled here as well as through the
+      // cancel event: the browser's own dialog handling decides on the legacy
+      // key code, which some input tooling does not send, and closing from
+      // here keeps every exit on the same synchronous cleanup.
       lb.addEventListener('keydown', function (e) {
         if (e.key === 'ArrowLeft') { e.preventDefault(); showPhoto(lbIndex - 1); }
         else if (e.key === 'ArrowRight') { e.preventDefault(); showPhoto(lbIndex + 1); }
+        else if (e.key === 'Escape' || e.key === 'Esc') { e.preventDefault(); closeLightbox(); }
       });
 
       // Clicking the dark area around the photo closes the viewer.
