@@ -154,20 +154,23 @@
     layout: "month_view"
   });
 
-  // Fire the Google Ads conversion only on a real completed booking,
-  // not on button clicks or page loads.
-  Cal.ns["free-estimate"]("on", {
-    action: "bookingSuccessful",
-    callback: function () {
-      if (typeof gtag === "function") {
-        gtag('event', 'conversion', {
-          'send_to': 'AW-18363583498/8cLACP2cjOUcEIqYuLRE',
-          'value': 1.0,
-          'currency': 'USD'
-        });
-      }
+  // Fire the Google Ads conversion and the GA4 lead event only on a real
+  // completed booking, not on button clicks or page loads. Cal.com has
+  // replaced bookingSuccessful with bookingSuccessfulV2 and may send both for
+  // one booking, so both are handled and a booking is counted once.
+  var lastBookingAt = 0;
+  function onBooked() {
+    if (Date.now() - lastBookingAt < 30000) return;
+    lastBookingAt = Date.now();
+    if (typeof gtag !== "function") return;
+    var t = window.CARCIS_TRACKING || {};
+    if (t.adsBooking) {
+      gtag('event', 'conversion', { 'send_to': t.adsBooking, 'value': 1.0, 'currency': 'USD' });
     }
-  });
+    gtag('event', 'generate_lead', { 'lead_source': 'online_booking' });
+  }
+  Cal.ns["free-estimate"]("on", { action: "bookingSuccessfulV2", callback: onBooked });
+  Cal.ns["free-estimate"]("on", { action: "bookingSuccessful", callback: onBooked });
 </script>
 </body>
 </html>

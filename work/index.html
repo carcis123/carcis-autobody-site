@@ -51,26 +51,46 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   }
 }
 </script>
-<!-- Google tag (gtag.js) — Google Ads conversion tracking.
-     WARNING: this loads AW-18363583498 directly, independent of the GTM
-     container above. Do NOT also add a Google Ads tag for this same ID
-     inside GTM-57K7RHSD or every conversion will be counted twice.
-     To move tracking into GTM, add the tag there first, confirm it fires
-     in Preview mode, then delete this block and the gtag() conversion
-     call in src/pages/estimate.html. -->
+<!-- Measurement: Google Ads, Google Analytics 4 and Microsoft Clarity.
+     Every ID lives in CARCIS_TRACKING below, and an empty string switches that
+     service off. Google Ads and GA4 share one gtag.js loader.
+     WARNING: this loads the Google tag directly, independent of the GTM
+     container above. Do NOT also add a Google Ads or GA4 tag for these same
+     IDs inside GTM-57K7RHSD or every conversion and page view will be counted
+     twice. -->
 <script>
-  // gtag() is defined on every hostname so the Cal.com conversion callback in
-  // estimate.html never throws; on staging it just pushes into a dataLayer
-  // that nothing is listening to. Only the real tag request is gated.
+  window.CARCIS_TRACKING = {
+    ads: 'AW-18363583498',
+    // Conversion labels (send_to values) from Google Ads > Goals > Conversions.
+    adsBooking: 'AW-18363583498/8cLACP2cjOUcEIqYuLRE',   // Book appointment
+    adsCall: '',                                         // Website phone number clicks
+    ga4: '',                                             // GA4 measurement ID, G-XXXXXXXXXX
+    clarity: ''                                          // Microsoft Clarity project ID
+  };
+
+  // gtag() is defined on every hostname so the lead tracking in site.js and
+  // the Cal.com callback in estimate.html never throw; on staging it just
+  // pushes into a dataLayer that nothing is listening to. Only the real tag
+  // requests are gated.
   window.dataLayer = window.dataLayer || [];
   function gtag(){ dataLayer.push(arguments); }
   if (window.CARCIS_LIVE) {
-    var gtagScript = document.createElement('script');
-    gtagScript.async = true;
-    gtagScript.src = 'https://www.googletagmanager.com/gtag/js?id=AW-18363583498';
-    document.head.appendChild(gtagScript);
-    gtag('js', new Date());
-    gtag('config', 'AW-18363583498');
+    (function (t) {
+      var gtagScript = document.createElement('script');
+      gtagScript.async = true;
+      gtagScript.src = 'https://www.googletagmanager.com/gtag/js?id=' + (t.ga4 || t.ads);
+      document.head.appendChild(gtagScript);
+      gtag('js', new Date());
+      if (t.ads) gtag('config', t.ads);
+      if (t.ga4) gtag('config', t.ga4);
+
+      if (t.clarity) {
+        (function(c,l,a,r,i,s,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        s=l.createElement(r);s.async=1;s.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(s,y);
+        })(window, document, "clarity", "script", t.clarity);
+      }
+    })(window.CARCIS_TRACKING);
   }
 </script>
 </head>
@@ -230,6 +250,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </div>
 </footer>
 
-<script src="/js/site.js?v=de7a0b37"></script>
+<script src="/js/site.js?v=dee1fcc8"></script>
 </body>
 </html>

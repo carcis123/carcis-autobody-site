@@ -298,4 +298,26 @@
     });
   }
 
+  // Lead tracking. Most customers call rather than book online, so a tap on
+  // the phone number counts as a Google Ads conversion, and phone and email
+  // taps are sent to Google Analytics along with where on the page they
+  // happened. gtag() and CARCIS_TRACKING come from head-close.html; off the
+  // production hostname nothing is sent.
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest ? e.target.closest('a[href^="tel:"], a[href^="mailto:"]') : null;
+    if (!a || typeof gtag !== 'function') return;
+    var t = window.CARCIS_TRACKING || {};
+    var area = a.closest('header') ? 'header'
+      : a.closest('.nav-mobile') ? 'mobile_menu'
+      : a.closest('footer') ? 'footer'
+      : 'page';
+
+    if (a.protocol === 'tel:') {
+      if (t.adsCall) gtag('event', 'conversion', { send_to: t.adsCall, value: 1.0, currency: 'USD' });
+      gtag('event', 'phone_click', { link_location: area });
+    } else {
+      gtag('event', 'email_click', { link_location: area });
+    }
+  });
+
 })();

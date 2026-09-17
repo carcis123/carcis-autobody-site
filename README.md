@@ -116,11 +116,31 @@ The title, summary, story and alt text are model output and need review.
 ## Analytics
 
 Google Tag Manager container `GTM-57K7RHSD` loads on every page. Google Ads
-conversion tracking for `AW-18363583498` is *also* hardcoded in
-`src/partials/head-close.html`, separately from GTM. Adding that same Ads ID
-inside the GTM container would double-count conversions. Read the comment in
-that partial before changing either one.
+(`AW-18363583498`), Google Analytics 4 and Microsoft Clarity are *also*
+loaded directly from `src/partials/head-close.html`, separately from GTM.
+Adding the same IDs inside the GTM container would double-count. Read the
+comment in that partial before changing either one.
 
-Both are gated on the hostname, so previews and staging never touch real
-conversion data. The estimate page fires the conversion only on a completed
-Cal.com booking, not on page load or button clicks.
+Every ID is in the `CARCIS_TRACKING` object in that partial, and an empty
+string switches that service off. To turn one on, paste the ID in, run
+`node build.js`, and commit.
+
+| Key | What it is | Where to find it |
+| --- | --- | --- |
+| `adsBooking` | Book appointment conversion | Google Ads > Goals > Conversions > the action > Tag setup, the `send_to` value |
+| `adsCall` | Website phone number clicks conversion | Same place, for that action |
+| `ga4` | GA4 measurement ID, `G-...` | Analytics > Admin > Data streams > the web stream |
+| `clarity` | Clarity project ID | Clarity > the project > Settings > Overview |
+
+What is measured:
+
+- **Online bookings.** The estimate page fires the Ads booking conversion and
+  a GA4 `generate_lead` event only on a completed Cal.com booking, not on
+  page load or button clicks.
+- **Phone taps.** `js/site.js` fires the Ads call conversion and a GA4
+  `phone_click` event on any `tel:` link, with `link_location` set to
+  header, mobile_menu, footer or page. Email links send `email_click`.
+
+Everything is gated on the hostname, so previews and staging never touch real
+data. The privacy page describes all of these services; update it if one is
+added or removed.
