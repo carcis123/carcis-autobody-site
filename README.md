@@ -129,8 +129,13 @@ string switches that service off. To turn one on, paste the ID in, run
 | --- | --- | --- |
 | `adsBooking` | Book appointment conversion | Google Ads > Goals > Conversions > the action > Tag setup, the `send_to` value |
 | `adsCall` | Website phone number clicks conversion | Same place, for that action |
-| `ga4` | GA4 measurement ID, `G-...` | Analytics > Admin > Data streams > the web stream |
+| `ga4` | GA4 measurement ID, `G-...`. **Leave empty**: see below | Analytics > Admin > Data streams > the web stream |
 | `clarity` | Clarity project ID | Clarity > the project > Settings > Overview |
+
+GA4 property `G-WC1N8XG1KK` ("Carcis autobody repair") is linked to the Ads
+Google tag in Google's own tag settings, so loading `AW-18363583498` already
+sends page views and every `gtag('event')` to it. Setting `ga4` as well would
+count everything twice.
 
 What is measured:
 

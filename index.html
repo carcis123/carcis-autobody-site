@@ -131,7 +131,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     ads: 'AW-18363583498',
     // Conversion labels (send_to values) from Google Ads > Goals > Conversions.
     adsBooking: 'AW-18363583498/8cLACP2cjOUcEIqYuLRE',   // Book appointment
-    adsCall: '',                                         // Website phone number clicks
+    adsCall: 'AW-18363583498/0JXbCMeOi_scEIqYuLRE',      // Website phone number clicks
+    // Leave ga4 empty. GA4 property G-WC1N8XG1KK is already a linked
+    // destination of the Ads Google tag, so gtag.js loads it and every
+    // gtag('event') reaches it. Configuring it here too would double count.
     ga4: '',                                             // GA4 measurement ID, G-XXXXXXXXXX
     clarity: ''                                          // Microsoft Clarity project ID
   };
