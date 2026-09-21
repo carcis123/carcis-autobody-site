@@ -315,9 +315,26 @@
     if (a.protocol === 'tel:') {
       if (t.adsCall) gtag('event', 'conversion', { send_to: t.adsCall, value: 1.0, currency: 'USD' });
       gtag('event', 'phone_click', { link_location: area });
+      clarityLead('phone_click', area);
     } else {
       gtag('event', 'email_click', { link_location: area });
+      clarityLead('email_click', area);
     }
   });
+
+  // Tag the Clarity recording so sessions that produced a lead can be found by
+  // filtering, and ask Clarity to keep the recording. Bookings happen inside
+  // the Cal.com frame, which Clarity cannot see, so without this a converting
+  // session looks like someone sitting on the estimate page doing nothing.
+  window.carcisClarityLead = clarityLead;
+  function clarityLead(name, where) {
+    if (typeof window.clarity !== 'function') return;
+    try {
+      window.clarity('event', name);
+      window.clarity('set', 'lead', name);
+      if (where) window.clarity('set', 'lead_location', where);
+      window.clarity('upgrade', name);
+    } catch (e) { /* never let tracking break the page */ }
+  }
 
 })();

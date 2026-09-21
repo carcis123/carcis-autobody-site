@@ -162,6 +162,7 @@
   function onBooked() {
     if (Date.now() - lastBookingAt < 30000) return;
     lastBookingAt = Date.now();
+    if (typeof window.carcisClarityLead === "function") window.carcisClarityLead('booking');
     if (typeof gtag !== "function") return;
     var t = window.CARCIS_TRACKING || {};
     if (t.adsBooking) {
