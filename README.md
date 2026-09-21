@@ -145,6 +145,12 @@ What is measured:
 - **Phone taps.** `js/site.js` fires the Ads call conversion and a GA4
   `phone_click` event on any `tel:` link, with `link_location` set to
   header, mobile_menu, footer or page. Email links send `email_click`.
+- **Clarity tagging.** The same three leads call `clarityLead()` in
+  `js/site.js`, which sends a Clarity event, sets a `lead` tag so those
+  sessions can be filtered in the recordings list, and calls
+  `clarity('upgrade')` so the recording is kept. This matters because the
+  booking runs in a cross-origin Cal.com frame that Clarity cannot record,
+  so without the tag a converting session looks like an idle page.
 
 Everything is gated on the hostname, so previews and staging never touch real
 data. The privacy page describes all of these services; update it if one is
