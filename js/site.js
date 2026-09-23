@@ -298,6 +298,28 @@
     });
   }
 
+  // Sticky call bar. CSS keeps it off desktop; here it only slides up once the
+  // visitor is past the hero, where the header's own Call button has scrolled
+  // away, so it never covers the first screen.
+  var callBar = document.getElementById('callBar');
+  if (callBar) {
+    var barShown = false;
+    var barTicking = false;
+    function updateCallBar() {
+      barTicking = false;
+      var show = window.pageYOffset > 320;
+      if (show === barShown) return;
+      barShown = show;
+      callBar.classList.toggle('in', show);
+    }
+    window.addEventListener('scroll', function () {
+      if (barTicking) return;
+      barTicking = true;
+      requestAnimationFrame(updateCallBar);
+    }, { passive: true });
+    updateCallBar();
+  }
+
   // Lead tracking. Most customers call rather than book online, so a tap on
   // the phone number counts as a Google Ads conversion, and phone and email
   // taps are sent to Google Analytics along with where on the page they
@@ -307,7 +329,8 @@
     var a = e.target.closest ? e.target.closest('a[href^="tel:"], a[href^="mailto:"]') : null;
     if (!a || typeof gtag !== 'function') return;
     var t = window.CARCIS_TRACKING || {};
-    var area = a.closest('header') ? 'header'
+    var area = a.classList.contains('call-bar') ? 'sticky_bar'
+      : a.closest('header') ? 'header'
       : a.closest('.nav-mobile') ? 'mobile_menu'
       : a.closest('footer') ? 'footer'
       : 'page';

@@ -905,3 +905,45 @@ a.feature-row:hover .feature-title { color: var(--red-bright); }
 @media (prefers-reduced-motion: reduce) {
   .lb-item img, .lb-img { transition: none; }
 }
+
+/* ---------- Sticky call bar (phones only) ----------
+   Under 640px the header's phone number is hidden, so a visitor scrolling
+   the middle of a page has no way to call without hunting. This bar slides
+   up once they are past the hero and stays within thumb reach. It sits below
+   the mobile menu (z-index 60) so the menu still covers it. */
+.call-bar { display: none; }
+@media (max-width: 899px) {
+  .call-bar {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px 18px;
+    padding-bottom: calc(15px + env(safe-area-inset-bottom, 0px));
+    background: var(--red);
+    color: oklch(0.98 0.005 35);
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    box-shadow: 0 -12px 28px -16px oklch(0 0 0 / 0.95);
+    transform: translateY(110%);
+    transition: transform 0.28s var(--ease-snap);
+  }
+  .call-bar.in { transform: translateY(0); }
+  .call-bar:active { background: var(--red-bright); }
+  .call-bar svg { width: 19px; height: 19px; flex: none; }
+  /* Room so the bar never covers the last of the footer. */
+  body { padding-bottom: 68px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .call-bar { transition: none; }
+}
+@media print {
+  .call-bar { display: none; }
+}
