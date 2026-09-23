@@ -947,3 +947,26 @@ a.feature-row:hover .feature-title { color: var(--red-bright); }
 @media print {
   .call-bar { display: none; }
 }
+
+/* ---------- FAQ list ---------- */
+.faq { padding: 72px 0; }
+@media (min-width: 900px) { .faq { padding: 96px 0; } }
+.faq-list { margin-top: 32px; max-width: 74ch; }
+.faq-item { border-top: 1px solid var(--line-soft); padding: 24px 0; }
+.faq-item:last-child { border-bottom: 1px solid var(--line-soft); }
+.faq-q {
+  margin: 0 0 10px;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 23px;
+  line-height: 1.15;
+  color: var(--ink);
+}
+.faq-a { font-size: 16px; line-height: 1.75; color: var(--ink-dim); }
+.feature-body a {
+  color: var(--red-bright);
+  text-decoration: none;
+  white-space: nowrap;
+  border-bottom: 1px solid transparent;
+}
+.feature-body a:hover { border-bottom-color: currentColor; }

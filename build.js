@@ -566,6 +566,7 @@ function renderSitemap(jobs) {
   const entries = [
     { loc: SITE + '/', lastmod: newest, changefreq: 'weekly', priority: '1.0' },
     { loc: SITE + '/services', lastmod: newest, changefreq: 'monthly', priority: '0.9' },
+    { loc: SITE + '/certified-collision-repair', lastmod: newest, changefreq: 'monthly', priority: '0.9' },
     { loc: SITE + '/estimate', lastmod: newest, changefreq: 'monthly', priority: '0.9' },
     ...(live.length
       ? [
