@@ -4,3 +4,6 @@ node_modules/
 *.log
 tools/node_modules/
 tools/package-lock.json
+
+# Local preview config for the browser tooling
+.claude/
