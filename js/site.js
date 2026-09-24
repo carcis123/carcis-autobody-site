@@ -326,8 +326,13 @@
   // happened. gtag() and CARCIS_TRACKING come from head-close.html; off the
   // production hostname nothing is sent.
   document.addEventListener('click', function (e) {
-    var a = e.target.closest ? e.target.closest('a[href^="tel:"], a[href^="mailto:"]') : null;
+    var a = e.target.closest ? e.target.closest('a[href^="tel:"], a[href^="mailto:"], a.map-link') : null;
     if (!a || typeof gtag !== 'function') return;
+    if (a.classList.contains('map-link')) {
+      gtag('event', 'directions_click');
+      clarityLead('directions_click');
+      return;
+    }
     var t = window.CARCIS_TRACKING || {};
     var area = a.classList.contains('call-bar') ? 'sticky_bar'
       : a.closest('header') ? 'header'

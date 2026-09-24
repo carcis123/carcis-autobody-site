@@ -970,3 +970,7 @@ a.feature-row:hover .feature-title { color: var(--red-bright); }
   border-bottom: 1px solid transparent;
 }
 .feature-body a:hover { border-bottom-color: currentColor; }
+/* The address doubles as a directions link; underline on hover only so the
+   footer and estimate sidebar keep their quiet look. */
+.map-link { text-decoration: none; border-bottom: 1px solid transparent; }
+.map-link:hover { border-bottom-color: var(--ink-faint); }
