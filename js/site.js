@@ -303,20 +303,18 @@
   // away, so it never covers the first screen.
   var callBar = document.getElementById('callBar');
   if (callBar) {
+    // Cheap enough to run straight from the scroll event: it compares one
+    // number and only touches the DOM when the state actually flips. Doing it
+    // through requestAnimationFrame meant no frames, no bar, in any context
+    // that does not paint.
     var barShown = false;
-    var barTicking = false;
     function updateCallBar() {
-      barTicking = false;
       var show = window.pageYOffset > 320;
       if (show === barShown) return;
       barShown = show;
       callBar.classList.toggle('in', show);
     }
-    window.addEventListener('scroll', function () {
-      if (barTicking) return;
-      barTicking = true;
-      requestAnimationFrame(updateCallBar);
-    }, { passive: true });
+    window.addEventListener('scroll', updateCallBar, { passive: true });
     updateCallBar();
   }
 
