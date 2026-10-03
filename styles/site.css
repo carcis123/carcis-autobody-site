@@ -1019,3 +1019,6 @@ a.feature-row:hover .feature-title { color: var(--red-bright); }
 .assist-note { margin-top: 14px; font-size: 13px; color: var(--ink-faint); }
 .assist-note a { color: var(--red-bright); text-decoration: none; }
 @media (prefers-reduced-motion: reduce) { .assist-opt { transition: none; } }
+/* The header is sticky, so a section arrived at from a #link has to leave
+   room for it or its heading lands underneath. */
+.assist, .faq, .gallery-page { scroll-margin-top: 92px; }
