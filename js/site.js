@@ -318,6 +318,45 @@
     updateCallBar();
   }
 
+  // "Can't drive it over?" interest check. A demand test: each tap records an
+  // anonymous count in Analytics and Clarity so the shop can see what people
+  // need before paying to offer it. Nothing is submitted anywhere, and the
+  // choice is remembered per browser only so the block does not keep asking.
+  var assist = document.getElementById('assistCheck');
+  if (assist) {
+    var assistThanks = document.getElementById('assistThanks');
+    var ASSIST_KEY = 'carcis.assist';
+    var picked = [];
+    try {
+      picked = JSON.parse(localStorage.getItem(ASSIST_KEY) || '[]');
+      if (!Array.isArray(picked)) picked = [];
+    } catch (e) { picked = []; }
+
+    assist.querySelectorAll('.assist-opt').forEach(function (btn) {
+      var name = btn.getAttribute('data-assist');
+      var on = picked.indexOf(name) !== -1;
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      if (on && assistThanks) assistThanks.hidden = false;
+
+      btn.addEventListener('click', function () {
+        var nowOn = btn.getAttribute('aria-pressed') !== 'true';
+        btn.setAttribute('aria-pressed', nowOn ? 'true' : 'false');
+        var at = picked.indexOf(name);
+        if (nowOn && at === -1) picked.push(name);
+        if (!nowOn && at !== -1) picked.splice(at, 1);
+        try { localStorage.setItem(ASSIST_KEY, JSON.stringify(picked)); } catch (e) { /* private mode */ }
+        if (assistThanks) assistThanks.hidden = picked.length === 0;
+
+        // Count the interest, not the withdrawal: an untap is someone fixing a
+        // mis-tap, and counting it would make the totals read lower than the
+        // number of people who actually said yes.
+        if (!nowOn) return;
+        if (typeof gtag === 'function') gtag('event', 'assist_interest', { assist_type: name });
+        clarityLead('assist_' + name);
+      });
+    });
+  }
+
   // Lead tracking. Most customers call rather than book online, so a tap on
   // the phone number counts as a Google Ads conversion, and phone and email
   // taps are sent to Google Analytics along with where on the page they

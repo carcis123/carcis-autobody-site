@@ -113,6 +113,24 @@ The title, summary, story and alt text are model output and need review.
 - The importer: `tools/sync-form.js`, dependencies in `tools/package.json`,
   installed only in CI
 
+## Staged features
+
+`content/features.json` holds switches for work that ships dark. The markup,
+styles and behavior deploy while the switch is `false`, so turning one on is a
+one-line change rather than a release.
+
+| Switch | What it shows |
+| --- | --- |
+| `towInterestCheck` | The "Can't drive it over?" block on `/estimate` and `/certified-collision-repair`. Taps record `assist_interest` in GA4 and a Clarity lead tag. Nothing is submitted. |
+| `towRequestPage` | `/tow-and-loaner`, built from `src/templates/tow-and-loaner.html`, plus its nav link and sitemap entry. Switched off, the generated file is deleted. |
+| `requestFormUrl` | Optional form link on that page. Empty means the page asks people to call. |
+
+`<!--#iffeature name--> ... <!--#endiffeature-->` drops its contents when the
+switch is off, and an unknown name fails the build so a typo cannot silently
+hide a finished feature. Carlos and Kayla can flip a switch without touching
+code through the "Turn a website feature on or off" workflow in GitHub
+Actions, which edits the JSON, rebuilds and pushes to `main`.
+
 ## Analytics
 
 Google Tag Manager container `GTM-57K7RHSD` loads on every page. Google Ads

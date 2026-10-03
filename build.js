@@ -14,8 +14,10 @@
  * Inputs
  *   src/partials/    shared fragments (head, header, nav, ticker, footer)
  *   src/pages/       one source per static page at the site root
- *   src/templates/   job.html, work-index.html and gallery.html, rendered from job data
+ *   src/templates/   job.html, work-index.html, gallery.html and
+ *                    tow-and-loaner.html, rendered from job or feature data
  *   content/jobs/    one JSON file per completed repair
+ *   content/features.json  switches for features that ship dark
  *
  * Outputs (all committed, all overwritten on every build)
  *   *.html              the static pages
@@ -28,6 +30,7 @@
  *   <!--#include name-->              inline src/partials/name.html
  *   <!--#include name key="value"-->  ...and set {{key}} within it
  *   <!--#jobs KIND attr="value"-->    render job data; see JOB_BLOCKS below
+ *   <!--#iffeature name--> ... <!--#endiffeature-->  only while that feature is on
  *   {{key}} / {{a.b}}                 a value from the current scope
  *   {{cur:foo}}                       ' aria-current="page"' when nav == foo
  *
@@ -47,6 +50,7 @@ const PARTIALS = path.join(ROOT, 'src', 'partials');
 const PAGES = path.join(ROOT, 'src', 'pages');
 const TEMPLATES = path.join(ROOT, 'src', 'templates');
 const JOBS_DIR = path.join(ROOT, 'content', 'jobs');
+const FEATURES_FILE = path.join(ROOT, 'content', 'features.json');
 const WORK_DIR = path.join(ROOT, 'work');
 const GALLERY_DIR = path.join(ROOT, 'gallery');
 
@@ -482,12 +486,50 @@ function select(jobs, attrs) {
 
 /* -------------------------------------------------------------- expansion */
 
+/* ---------------------------------------------------------------- features
+
+   Staged work ships dark: the markup, styles and behavior are written, tested
+   and deployed while the switch in content/features.json is false, so turning
+   one on later is a one-line change and not a release. A name that is not on
+   this list fails the build, because a typo in the JSON would otherwise hide
+   a finished feature forever with no error anywhere. */
+const FEATURE_NAMES = ['towInterestCheck', 'towRequestPage'];
+const FEATURE_STRINGS = ['requestFormUrl'];
+
+function loadFeatures() {
+  if (!fs.existsSync(FEATURES_FILE)) fail('missing content/features.json');
+  let raw;
+  try {
+    raw = JSON.parse(fs.readFileSync(FEATURES_FILE, 'utf8'));
+  } catch (e) {
+    fail('content/features.json is not valid JSON: ' + e.message);
+  }
+  for (const key of Object.keys(raw)) {
+    if (key[0] === '_') continue;   // _name keys are notes for whoever edits the file
+    if (FEATURE_NAMES.indexOf(key) === -1 && FEATURE_STRINGS.indexOf(key) === -1) {
+      fail('unknown key "' + key + '" in content/features.json. Valid: '
+        + FEATURE_NAMES.concat(FEATURE_STRINGS).join(', '));
+    }
+  }
+  const out = {};
+  for (const name of FEATURE_NAMES) out[name] = raw[name] === true;
+  for (const name of FEATURE_STRINGS) out[name] = typeof raw[name] === 'string' ? raw[name] : '';
+  return out;
+}
+
+let FEATURES = {};
+
 /* <!--#ifjobs--> ... <!--#endifjobs--> keeps its contents only while at least
    one job is live. Before the first real job is published, and any time every
    job is a draft, the whole Our Work surface has to disappear: an empty index
    linked from the nav is worse than no link at all. Stripped before anything
    inside it is expanded, so the directives within never run. */
 const IF_JOBS = /^[ \t]*<!--#ifjobs-->[ \t]*\r?\n([\s\S]*?)^[ \t]*<!--#endifjobs-->[ \t]*\r?\n/gm;
+
+/* <!--#iffeature name--> ... <!--#endiffeature--> is the same idea for a
+   staged feature: dropped before anything inside it expands, so a switched-off
+   block costs nothing and cannot leak a half-finished surface into the HTML. */
+const IF_FEATURE = /^[ \t]*<!--#iffeature\s+([a-zA-Z]+)-->[ \t]*\r?\n([\s\S]*?)^[ \t]*<!--#endiffeature-->[ \t]*\r?\n/gm;
 
 const INCLUDE = /^([ \t]*)<!--#include\s+([a-z0-9-]+)((?:\s+[a-z]+="[^"]*")*)\s*-->[ \t]*$/gm;
 const JOBS = /^([ \t]*)<!--#jobs\s+([a-z]+)((?:\s+[a-z]+="[^"]*")*)\s*-->[ \t]*$/gm;
@@ -522,6 +564,13 @@ function expand(text, scope, jobs, depth) {
   const anyLive = jobs.some(j => !j.draft);
   let out = text.replace(IF_JOBS, (_m, body) => (anyLive ? body : ''));
 
+  out = out.replace(IF_FEATURE, (_m, name, body) => {
+    if (FEATURE_NAMES.indexOf(name) === -1) {
+      fail('unknown feature "' + name + '" in #iffeature. Valid: ' + FEATURE_NAMES.join(', '));
+    }
+    return FEATURES[name] ? body : '';
+  });
+
   out = out.replace(INCLUDE, (_m, indent, name, attrs) => {
     const inner = Object.assign({}, scope, parseAttrs(attrs));
     return indentBlock(expand(readPartial(name), inner, jobs, depth + 1), indent);
@@ -552,7 +601,7 @@ function expand(text, scope, jobs, depth) {
 
 function render(source, scope, jobs, where) {
   const html = expand(source, scope, jobs, 0);
-  const leftover = html.match(/<!--#(include|jobs)|\{\{/);
+  const leftover = html.match(/<!--#(include|jobs|iffeature|endiffeature)|\{\{/);
   if (leftover) fail(where + ': unexpanded directive near ' + leftover[0]);
   return html;
 }
@@ -575,6 +624,9 @@ function renderSitemap(jobs) {
       ]
       : []),
     { loc: SITE + '/about', lastmod: newest, changefreq: 'monthly', priority: '0.8' },
+    ...(FEATURES.towRequestPage
+      ? [{ loc: SITE + '/tow-and-loaner', lastmod: newest, changefreq: 'monthly', priority: '0.8' }]
+      : []),
   ];
 
   for (const job of live) {
@@ -600,6 +652,7 @@ function renderSitemap(jobs) {
 /* ------------------------------------------------------------------ build */
 
 function build() {
+  FEATURES = loadFeatures();
   const jobs = loadJobs();
   const report = { changed: [], upToDate: [], removed: [] };
   const anyLive = jobs.some(j => !j.draft);
@@ -659,10 +712,29 @@ function build() {
     if (!CHECK) fs.unlinkSync(galleryFile);
   }
 
-  // 5. Sitemap, derived from whatever is live.
+  // 5. The towing and loaner page, while that feature is on. Off, the file is
+  //    deleted rather than left behind, so a switched-off page cannot keep
+  //    being served, linked or indexed.
+  const towFile = path.join(ROOT, 'tow-and-loaner.html');
+  if (FEATURES.towRequestPage) {
+    const towTemplate = fs.readFileSync(path.join(TEMPLATES, 'tow-and-loaner.html'), 'utf8');
+    // The request form is optional: until there is a form to point at, the
+    // page tells people to call rather than linking nowhere.
+    const formLink = FEATURES.requestFormUrl
+      ? ', or <a href="' + esc(FEATURES.requestFormUrl) + '" rel="noopener" target="_blank">tell us what you need</a>'
+        + ' and we’ll get back to you.'
+      : '.';
+    writeIfChanged(towFile, render(towTemplate,
+      { nav: 'tow', v, requestFormLink: formLink }, jobs, 'tow-and-loaner'), report);
+  } else if (fs.existsSync(towFile)) {
+    report.removed.push('tow-and-loaner.html');
+    if (!CHECK) fs.unlinkSync(towFile);
+  }
+
+  // 6. Sitemap, derived from whatever is live.
   writeIfChanged(path.join(ROOT, 'sitemap.xml'), renderSitemap(jobs), report);
 
-  // 6. Report.
+  // 7. Report.
   const live = jobs.filter(j => !j.draft).length;
   for (const f of report.changed) console.log('  ' + (CHECK ? 'STALE   ' : 'wrote   ') + f);
   for (const f of report.removed) console.log('  ' + (CHECK ? 'ORPHAN  ' : 'deleted ') + f);

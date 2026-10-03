@@ -974,3 +974,48 @@ a.feature-row:hover .feature-title { color: var(--red-bright); }
    footer and estimate sidebar keep their quiet look. */
 .map-link { text-decoration: none; border-bottom: 1px solid transparent; }
 .map-link:hover { border-bottom-color: var(--ink-faint); }
+
+/* ---------- "Can't drive it over?" interest check ----------
+   A demand test, not a form: tapping records an anonymous count so the shop
+   can see what people need before committing to offer it. */
+.assist { padding: 56px 0 72px; }
+@media (min-width: 900px) { .assist { padding: 72px 0 96px; } }
+.assist-card {
+  border: 1px solid var(--line);
+  background: var(--canvas-raised);
+  padding: 28px 24px 24px;
+  max-width: 64ch;
+}
+@media (min-width: 720px) { .assist-card { padding: 34px 34px 28px; } }
+.assist-title {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 30px;
+  line-height: 1.05;
+  margin: 10px 0 12px;
+}
+@media (min-width: 720px) { .assist-title { font-size: 36px; } }
+.assist-lede { font-size: 15.5px; line-height: 1.7; color: var(--ink-dim); margin-bottom: 20px; }
+.assist-options { display: flex; flex-wrap: wrap; gap: 10px; }
+.assist-opt {
+  font-family: var(--body);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--line);
+  padding: 11px 16px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s var(--ease-snap);
+}
+.assist-opt:hover { border-color: var(--silver); transform: translateY(-2px); }
+.assist-opt[aria-pressed="true"] {
+  border-color: var(--red-bright);
+  background: var(--red-deep);
+  color: oklch(0.97 0.01 35);
+}
+.assist-opt[aria-pressed="true"]::before { content: '✓ '; }
+.assist-thanks { margin-top: 16px; font-size: 15px; line-height: 1.6; color: var(--ink); }
+.assist-note { margin-top: 14px; font-size: 13px; color: var(--ink-faint); }
+.assist-note a { color: var(--red-bright); text-decoration: none; }
+@media (prefers-reduced-motion: reduce) { .assist-opt { transition: none; } }

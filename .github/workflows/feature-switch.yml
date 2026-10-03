@@ -1,0 +1,85 @@
+name: Turn a website feature on or off
+
+# For Carlos and Kayla. Each of these is already built and tested; this flips
+# the switch in content/features.json, rebuilds the site and publishes it, so
+# nobody has to touch code. Pick a feature, pick On or Off, press the button.
+#
+#   Towing interest check  the "Can't drive it over?" block on the estimate
+#                          and collision pages. Anonymous taps only.
+#   Towing page            the full /tow-and-loaner page, plus its nav link.
+#
+# The site is live within about a minute of the run finishing.
+
+on:
+  workflow_dispatch:
+    inputs:
+      feature:
+        description: 'Which feature'
+        required: true
+        type: choice
+        options:
+          - Towing interest check
+          - Towing page
+      state:
+        description: 'On or Off'
+        required: true
+        type: choice
+        options:
+          - 'On'
+          - 'Off'
+      form_url:
+        description: 'Optional: link to the request form for the towing page (leave blank to keep what is set)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  switch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Flip the switch
+        env:
+          FEATURE: ${{ inputs.feature }}
+          STATE: ${{ inputs.state }}
+          FORM_URL: ${{ inputs.form_url }}
+        run: |
+          node - <<'EOF'
+          const fs = require('fs');
+          const file = 'content/features.json';
+          const keys = {
+            'Towing interest check': 'towInterestCheck',
+            'Towing page': 'towRequestPage',
+          };
+          const key = keys[process.env.FEATURE];
+          if (!key) { console.error('Unknown feature: ' + process.env.FEATURE); process.exit(1); }
+          const data = JSON.parse(fs.readFileSync(file, 'utf8'));
+          data[key] = process.env.STATE === 'On';
+          if (process.env.FORM_URL) data.requestFormUrl = process.env.FORM_URL.trim();
+          fs.writeFileSync(file, JSON.stringify(data, null, 2) + '\n');
+          console.log(key + ' is now ' + data[key]);
+          EOF
+
+      - name: Rebuild the site
+        run: node build.js
+
+      - name: Publish
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Nothing changed — that feature was already ${{ inputs.state }}." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git commit -m "Turn ${{ inputs.feature }} ${{ inputs.state }}"
+          git push origin HEAD:main
+          echo "${{ inputs.feature }} is now ${{ inputs.state }}. The live site updates in about a minute." >> "$GITHUB_STEP_SUMMARY"
