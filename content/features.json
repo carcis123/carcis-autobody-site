@@ -3,7 +3,7 @@
   "_towInterestCheck": "Layer 1. The 'Can't drive it over?' tap-to-tell-us block on the estimate and collision pages. Collects anonymous counts only, asks for nothing, promises nothing.",
   "towInterestCheck": true,
   "_towRequestPage": "Layer 2. The full /tow-and-loaner page, linked from the nav, with a request form. Turn this on once layer 1 shows people want it.",
-  "towRequestPage": false,
+  "towRequestPage": true,
   "_requestFormUrl": "Google Form link used by the layer 2 page. While it is empty the page asks people to call or book instead.",
   "requestFormUrl": ""
 }

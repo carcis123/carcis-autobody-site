@@ -1022,3 +1022,10 @@ a.feature-row:hover .feature-title { color: var(--red-bright); }
 /* The header is sticky, so a section arrived at from a #link has to leave
    room for it or its heading lands underneath. */
 .assist, .faq, .gallery-page { scroll-margin-top: 92px; }
+/* Seven nav items plus the phone number and the estimate button is tight on a
+   small laptop, so the links close ranks before they can collide. */
+@media (min-width: 900px) and (max-width: 1180px) {
+  .nav-desktop { gap: 18px; }
+  .nav-desktop a { font-size: 13px; }
+  .header-cta { gap: 10px; }
+}
