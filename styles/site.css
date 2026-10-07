@@ -1034,3 +1034,25 @@ a.feature-row:hover .feature-title { color: var(--red-bright); }
 .ticker-link { display: block; text-decoration: none; }
 .ticker-link:hover { background: oklch(0.36 0.15 22); }
 .ticker-link:hover .ticker span { color: oklch(0.98 0.01 35); }
+
+/* ---------- Award ---------- */
+.award { padding: 64px 0; border-top: 1px solid var(--line-soft); }
+@media (min-width: 900px) { .award { padding: 88px 0; } }
+.award-inner { display: grid; gap: 28px; align-items: center; }
+@media (min-width: 780px) { .award-inner { grid-template-columns: 240px 1fr; gap: 44px; } }
+.award-plaque { display: block; line-height: 0; justify-self: start; max-width: 240px; }
+.award-plaque img { width: 100%; height: auto; border: 1px solid var(--line-soft); }
+.award-plaque:hover img { border-color: var(--silver); }
+.award-lede { font-size: 16px; line-height: 1.75; color: var(--ink-dim); margin: 14px 0 12px; max-width: 58ch; }
+.award-note { font-size: 15px; line-height: 1.7; color: var(--ink-dim); max-width: 58ch; }
+.award-link {
+  display: inline-block;
+  margin-top: 16px;
+  font-family: var(--body);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--red-bright);
+  text-decoration: none;
+}
+.award-link:hover { text-decoration: underline; }
+.award-img { width: 100%; height: auto; margin-bottom: 20px; border: 1px solid var(--line-soft); }

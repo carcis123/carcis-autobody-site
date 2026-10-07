@@ -630,6 +630,7 @@ function renderSitemap(jobs) {
       ]
       : []),
     { loc: SITE + '/about', lastmod: newest, changefreq: 'monthly', priority: '0.8' },
+    { loc: SITE + '/ranked-number-one-vancouver', lastmod: '2026-10-06', changefreq: 'yearly', priority: '0.7' },
     ...(FEATURES.towRequestPage
       ? [{ loc: SITE + '/tow-and-loaner', lastmod: newest, changefreq: 'monthly', priority: '0.8' }]
       : []),
