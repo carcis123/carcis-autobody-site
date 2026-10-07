@@ -528,8 +528,13 @@ const IF_JOBS = /^[ \t]*<!--#ifjobs-->[ \t]*\r?\n([\s\S]*?)^[ \t]*<!--#endifjobs
 
 /* <!--#iffeature name--> ... <!--#endiffeature--> is the same idea for a
    staged feature: dropped before anything inside it expands, so a switched-off
-   block costs nothing and cannot leak a half-finished surface into the HTML. */
-const IF_FEATURE = /^[ \t]*<!--#iffeature\s+([a-zA-Z]+)-->[ \t]*\r?\n([\s\S]*?)^[ \t]*<!--#endiffeature-->[ \t]*\r?\n/gm;
+   block costs nothing and cannot leak a half-finished surface into the HTML.
+   <!--#iffeature !name--> is the inverse, for the fallback a surface needs
+   while the feature is off, such as a banner that links somewhere else until
+   its own page exists.
+   A partial read for an include has its final newline stripped, so the closing
+   directive has to be allowed to end the text as well as the line. */
+const IF_FEATURE = /^[ \t]*<!--#iffeature\s+(!?)([a-zA-Z]+)-->[ \t]*\r?\n([\s\S]*?)^[ \t]*<!--#endiffeature-->[ \t]*(?:\r?\n|$)/gm;
 
 const INCLUDE = /^([ \t]*)<!--#include\s+([a-z0-9-]+)((?:\s+[a-z]+="[^"]*")*)\s*-->[ \t]*$/gm;
 const JOBS = /^([ \t]*)<!--#jobs\s+([a-z]+)((?:\s+[a-z]+="[^"]*")*)\s*-->[ \t]*$/gm;
@@ -564,11 +569,12 @@ function expand(text, scope, jobs, depth) {
   const anyLive = jobs.some(j => !j.draft);
   let out = text.replace(IF_JOBS, (_m, body) => (anyLive ? body : ''));
 
-  out = out.replace(IF_FEATURE, (_m, name, body) => {
+  out = out.replace(IF_FEATURE, (_m, negate, name, body) => {
     if (FEATURE_NAMES.indexOf(name) === -1) {
       fail('unknown feature "' + name + '" in #iffeature. Valid: ' + FEATURE_NAMES.join(', '));
     }
-    return FEATURES[name] ? body : '';
+    const on = negate ? !FEATURES[name] : FEATURES[name];
+    return on ? body : '';
   });
 
   out = out.replace(INCLUDE, (_m, indent, name, attrs) => {

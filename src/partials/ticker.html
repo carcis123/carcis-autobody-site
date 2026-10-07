@@ -1,10 +1,16 @@
-<div class="ticker" aria-hidden="true">
-  <div class="ticker-track">
-    <span>10% OFF ALL WORK — THROUGH FEB 14, 2027</span>
-    <span>INSURANCE CLAIMS OR PERSONAL PAY</span>
-    <span>VANCOUVER, WA</span>
-    <span>10% OFF ALL WORK — THROUGH FEB 14, 2027</span>
-    <span>INSURANCE CLAIMS OR PERSONAL PAY</span>
-    <span>VANCOUVER, WA</span>
-  </div>
-</div>
+<!-- The banner scrolls the offer across the top of the home page. It leads with
+     towing because that is the thing a stranded customer needs to hear first,
+     and it links to wherever towing is explained: its own page once that is
+     switched on, otherwise the block on the estimate page. The scrolling text
+     itself is duplicated for the seamless loop, so it stays aria-hidden and the
+     link carries the accessible name. -->
+<!--#iffeature towRequestPage-->
+<a class="ticker ticker-link" href="/tow-and-loaner" aria-label="Towing and loaner options">
+<!--#include ticker-track-->
+</a>
+<!--#endiffeature-->
+<!--#iffeature !towRequestPage-->
+<a class="ticker ticker-link" href="/estimate#towing" aria-label="Towing and loaner options">
+<!--#include ticker-track-->
+</a>
+<!--#endiffeature-->

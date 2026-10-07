@@ -36,7 +36,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#d94a3e">
 <link rel="preload" as="image" href="/assets/logo/carcis-logo-sm.webp" type="image/webp">
-<link rel="stylesheet" href="/styles/site.css?v=4ad11468">
+<link rel="stylesheet" href="/styles/site.css?v=f532e0ab">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -238,16 +238,23 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </div>
 </div>
 
-<div class="ticker" aria-hidden="true">
-  <div class="ticker-track">
-    <span>10% OFF ALL WORK — THROUGH FEB 14, 2027</span>
-    <span>INSURANCE CLAIMS OR PERSONAL PAY</span>
-    <span>VANCOUVER, WA</span>
-    <span>10% OFF ALL WORK — THROUGH FEB 14, 2027</span>
-    <span>INSURANCE CLAIMS OR PERSONAL PAY</span>
-    <span>VANCOUVER, WA</span>
-  </div>
+<!-- The banner scrolls the offer across the top of the home page. It leads with
+     towing because that is the thing a stranded customer needs to hear first,
+     and it links to wherever towing is explained: its own page once that is
+     switched on, otherwise the block on the estimate page. The scrolling text
+     itself is duplicated for the seamless loop, so it stays aria-hidden and the
+     link carries the accessible name. -->
+<a class="ticker ticker-link" href="/tow-and-loaner" aria-label="Towing and loaner options">
+<div class="ticker-track" aria-hidden="true">
+  <span>CAN'T DRIVE IT? ASK US ABOUT TOWING</span>
+  <span>10% OFF ALL WORK &mdash; THROUGH FEB 14, 2027</span>
+  <span>INSURANCE CLAIMS OR PERSONAL PAY</span>
+  <span>CAN'T DRIVE IT? ASK US ABOUT TOWING</span>
+  <span>10% OFF ALL WORK &mdash; THROUGH FEB 14, 2027</span>
+  <span>INSURANCE CLAIMS OR PERSONAL PAY</span>
 </div>
+</a>
+
 
 <main>
 
@@ -409,6 +416,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <span>Call (360) 381-5219</span>
 </a>
 
-<script src="/js/site.js?v=7c5512d5"></script>
+<script src="/js/site.js?v=f967e728"></script>
 </body>
 </html>

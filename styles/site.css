@@ -1029,3 +1029,8 @@ a.feature-row:hover .feature-title { color: var(--red-bright); }
   .nav-desktop a { font-size: 13px; }
   .header-cta { gap: 10px; }
 }
+/* The banner is a link now, so it needs the underline off and a hover that
+   says so without disturbing the scroll. */
+.ticker-link { display: block; text-decoration: none; }
+.ticker-link:hover { background: oklch(0.36 0.15 22); }
+.ticker-link:hover .ticker span { color: oklch(0.98 0.01 35); }

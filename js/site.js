@@ -363,8 +363,17 @@
   // happened. gtag() and CARCIS_TRACKING come from head-close.html; off the
   // production hostname nothing is sent.
   document.addEventListener('click', function (e) {
-    var a = e.target.closest ? e.target.closest('a[href^="tel:"], a[href^="mailto:"], a.map-link') : null;
+    var a = e.target.closest
+      ? e.target.closest('a[href^="tel:"], a[href^="mailto:"], a.map-link, a.ticker-link')
+      : null;
     if (!a || typeof gtag !== 'function') return;
+    if (a.classList.contains('ticker-link')) {
+      // Carlos asked for towing in the top banner so it is seen without
+      // reading the whole page; this counts whether that is what happens.
+      gtag('event', 'towing_banner_click');
+      clarityLead('towing_banner');
+      return;
+    }
     if (a.classList.contains('map-link')) {
       gtag('event', 'directions_click');
       clarityLead('directions_click');
