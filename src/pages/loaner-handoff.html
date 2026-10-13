@@ -1,0 +1,287 @@
+<!--#include head-open-->
+<title>Loaner Vehicle Handoff | Carcis Autobody Repair</title>
+<meta name="description" content="Internal form for recording a Drive &amp; Dwell loaner vehicle handoff.">
+<link rel="canonical" href="https://www.carcisautobody.com/loaner-handoff">
+<meta name="robots" content="noindex, nofollow">
+<!--#include head-icons-->
+<!--#include head-close-->
+<!--#include body-open-->
+
+<!--#include header nav=""-->
+
+<main>
+
+<section class="page-hero hf-hero">
+  <div class="wrap page-hero-grid">
+    <div>
+      <div class="eyebrow">Staff only &middot; not linked from the website</div>
+      <h1 class="page-headline">Loaner vehicle <span class="accent">handoff</span>.</h1>
+      <p class="page-sub">Fill this out on the counter tablet or a phone when a customer takes a Drive &amp; Dwell car, and again when it comes back. Nothing is sent anywhere automatically: when you're done, email it, copy it, or print it for signatures.</p>
+    </div>
+  </div>
+</section>
+
+<section class="hf">
+  <div class="wrap">
+
+    <div class="hf-bar" id="hfBar">
+      <button type="button" class="btn btn-primary" data-hf="email">Email it to Drive &amp; Dwell</button>
+      <button type="button" class="btn btn-secondary" data-hf="copy">Copy everything</button>
+      <button type="button" class="btn btn-secondary" data-hf="print">Print or save as PDF</button>
+      <button type="button" class="btn btn-secondary hf-clear" data-hf="clear">Clear the form</button>
+      <span class="hf-status" id="hfStatus" role="status"></span>
+    </div>
+
+    <p class="hf-note">Photos of the license, the insurance document and the car itself still go in the shared Drive folder. This form records the numbers and the signatures, not the pictures. What you type stays in this browser tab until you clear it or close the tab.</p>
+
+    <form id="hfForm" autocomplete="off">
+
+      <fieldset class="hf-set">
+        <legend>Customer and repair</legend>
+        <div class="hf-grid">
+          <label>Customer name<input type="text" name="customer_name"></label>
+          <label>Phone<input type="tel" name="customer_phone"></label>
+          <label>Email<input type="email" name="customer_email"></label>
+          <label>Carcis repair order #<input type="text" name="customer_repair_order"></label>
+          <label class="hf-wide">Address<input type="text" name="customer_address"></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="hf-set">
+        <legend>License and insurance</legend>
+        <div class="hf-grid">
+          <label>Driver's license state<input type="text" name="license_state"></label>
+          <label>License expiration<input type="date" name="license_expiration"></label>
+          <label>Insurance company<input type="text" name="insurance_company"></label>
+          <label>Policy expiration<input type="date" name="insurance_expiration"></label>
+        </div>
+        <div class="hf-checks">
+          <label><input type="checkbox" name="license_front"> License photo, front</label>
+          <label><input type="checkbox" name="license_back"> License photo, back</label>
+          <label><input type="checkbox" name="insurance_saved"> Insurance document photographed</label>
+        </div>
+        <p class="hf-hint">Don't type the license or policy number here. Photograph them into the Drive folder instead, so the numbers aren't sitting on a tablet.</p>
+      </fieldset>
+
+      <fieldset class="hf-set">
+        <legend>Vehicle out</legend>
+        <div class="hf-grid">
+          <label>Drive &amp; Dwell vehicle<input type="text" name="vehicle" placeholder="Year, make, model"></label>
+          <label>Plate<input type="text" name="plate"></label>
+          <label class="hf-wide">VIN<input type="text" name="vin"></label>
+          <label>Pickup date and time<input type="datetime-local" name="pickup_datetime"></label>
+          <label>Expected return<input type="datetime-local" name="expected_return"></label>
+          <label>Mileage out<input type="number" inputmode="numeric" name="mileage_out"></label>
+          <label>Fuel out<select name="fuel_out">
+            <option value=""></option><option>Full</option><option>3/4</option><option>1/2</option><option>1/4</option><option>Low</option>
+          </select></label>
+          <label>Keys handed over<input type="number" inputmode="numeric" name="keys_out" value="1"></label>
+          <label>Carcis staff authorizing<input type="text" name="carcis_authorizer"></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="hf-set">
+        <legend>Photos taken before it leaves</legend>
+        <div class="hf-checks">
+          <label><input type="checkbox" name="out_front"> Front</label>
+          <label><input type="checkbox" name="out_rear"> Rear</label>
+          <label><input type="checkbox" name="out_driver"> Driver side</label>
+          <label><input type="checkbox" name="out_passenger"> Passenger side</label>
+          <label><input type="checkbox" name="out_wheels"> Wheels and tires</label>
+          <label><input type="checkbox" name="out_dash"> Dashboard, mileage, fuel</label>
+          <label><input type="checkbox" name="out_interior"> Interior</label>
+          <label><input type="checkbox" name="out_damage"> Close-ups of existing damage</label>
+          <label><input type="checkbox" name="out_folder"> Uploaded to the Drive folder</label>
+        </div>
+        <label class="hf-block">Condition notes<textarea name="condition_notes" rows="3"></textarea></label>
+      </fieldset>
+
+      <fieldset class="hf-set hf-sign">
+        <legend>Checkout signatures</legend>
+        <div class="hf-grid">
+          <label>Customer signature<span class="hf-line"></span></label>
+          <label>Carcis staff signature<span class="hf-line"></span></label>
+        </div>
+        <p class="hf-hint">Signatures go on the printed copy. Print this page, sign it, and photograph it into the folder with the rest.</p>
+      </fieldset>
+
+      <fieldset class="hf-set">
+        <legend>When the car comes back</legend>
+        <div class="hf-grid">
+          <label>Return date and time<input type="datetime-local" name="return_datetime"></label>
+          <label>Mileage in<input type="number" inputmode="numeric" name="mileage_in"></label>
+          <label>Fuel in<select name="fuel_in">
+            <option value=""></option><option>Full</option><option>3/4</option><option>1/2</option><option>1/4</option><option>Low</option>
+          </select></label>
+          <label>Keys returned<input type="number" inputmode="numeric" name="keys_in"></label>
+          <label>Miles used<input type="number" inputmode="numeric" name="miles_used"></label>
+          <label>Days used<input type="number" inputmode="numeric" name="days_used"></label>
+          <label>Agreed rate<input type="text" name="billing_rate" placeholder="$ per day"></label>
+          <label>Amount Carcis owes Drive &amp; Dwell<input type="text" name="amount_due_dd" placeholder="$"></label>
+        </div>
+        <div class="hf-checks">
+          <label><input type="checkbox" name="in_front"> Front</label>
+          <label><input type="checkbox" name="in_rear"> Rear</label>
+          <label><input type="checkbox" name="in_driver"> Driver side</label>
+          <label><input type="checkbox" name="in_passenger"> Passenger side</label>
+          <label><input type="checkbox" name="in_wheels"> Wheels and tires</label>
+          <label><input type="checkbox" name="in_dash"> Dashboard, mileage, fuel</label>
+          <label><input type="checkbox" name="in_interior"> Interior</label>
+          <label><input type="checkbox" name="in_folder"> Uploaded to the Drive folder</label>
+          <label><input type="checkbox" name="no_new_damage"> No new damage</label>
+          <label><input type="checkbox" name="clean_ok"> Returned clean</label>
+        </div>
+        <label class="hf-block">New damage, warning lights or missing items<textarea name="new_damage" rows="3"></textarea></label>
+        <label class="hf-block">Anything else worth recording<textarea name="return_notes" rows="3"></textarea></label>
+      </fieldset>
+
+      <fieldset class="hf-set">
+        <legend>Only if something happened</legend>
+        <div class="hf-grid">
+          <label>Date of incident<input type="date" name="incident_date"></label>
+          <label>Claim number<input type="text" name="claim_number"></label>
+          <label class="hf-wide">Tow or mechanical details<input type="text" name="tow_info"></label>
+        </div>
+        <label class="hf-block">What happened<textarea name="incident_notes" rows="3"></textarea></label>
+      </fieldset>
+
+      <fieldset class="hf-set hf-sign">
+        <legend>Return signatures</legend>
+        <div class="hf-grid">
+          <label>Customer signature<span class="hf-line"></span></label>
+          <label>Carcis staff signature<span class="hf-line"></span></label>
+          <label>Carcis staff name<input type="text" name="carcis_return_staff"></label>
+        </div>
+      </fieldset>
+
+    </form>
+
+    <div class="hf-bar hf-bar-end">
+      <button type="button" class="btn btn-primary" data-hf="email">Email it to Drive &amp; Dwell</button>
+      <button type="button" class="btn btn-secondary" data-hf="copy">Copy everything</button>
+      <button type="button" class="btn btn-secondary" data-hf="print">Print or save as PDF</button>
+    </div>
+
+  </div>
+</section>
+
+</main>
+
+<!--#include footer-->
+
+<script>
+(function () {
+  var form = document.getElementById('hfForm');
+  if (!form) return;
+  var status = document.getElementById('hfStatus');
+  var KEY = 'carcis.handoff';
+  var TO = 'damola.omotosho@gmail.com';
+
+  // Kept in sessionStorage, not localStorage: a half-filled form survives a
+  // dropped connection or a stray refresh, and closing the tab takes the
+  // customer's details with it rather than leaving them on a shared tablet.
+  function save() {
+    try { sessionStorage.setItem(KEY, JSON.stringify(values())); } catch (e) { /* private mode */ }
+  }
+
+  function values() {
+    var out = {};
+    Array.prototype.forEach.call(form.elements, function (el) {
+      if (!el.name) return;
+      out[el.name] = el.type === 'checkbox' ? el.checked : el.value;
+    });
+    return out;
+  }
+
+  function restore() {
+    var saved;
+    try { saved = JSON.parse(sessionStorage.getItem(KEY) || '{}'); } catch (e) { return; }
+    Array.prototype.forEach.call(form.elements, function (el) {
+      if (!el.name || !(el.name in saved)) return;
+      if (el.type === 'checkbox') el.checked = !!saved[el.name];
+      else el.value = saved[el.name];
+    });
+  }
+
+  function label(el) {
+    var l = el.closest('label');
+    if (!l) return el.name;
+    return l.textContent.replace(/\s+/g, ' ').trim();
+  }
+
+  // One readable block of text: skips anything left blank, so a checkout-only
+  // handoff does not email four screens of empty return fields.
+  function summary() {
+    var lines = [];
+    Array.prototype.forEach.call(form.querySelectorAll('fieldset'), function (set) {
+      var rows = [];
+      Array.prototype.forEach.call(set.querySelectorAll('input, select, textarea'), function (el) {
+        if (!el.name) return;
+        if (el.type === 'checkbox') { if (el.checked) rows.push('  [x] ' + label(el)); return; }
+        if (!el.value) return;
+        rows.push('  ' + label(el) + ': ' + el.value);
+      });
+      if (rows.length) {
+        lines.push(set.querySelector('legend').textContent.toUpperCase());
+        lines.push(rows.join('\n'));
+        lines.push('');
+      }
+    });
+    return lines.length ? lines.join('\n') : 'Nothing filled in yet.';
+  }
+
+  function say(msg) {
+    status.textContent = msg;
+    setTimeout(function () { if (status.textContent === msg) status.textContent = ''; }, 4000);
+  }
+
+  var actions = {
+    copy: function () {
+      var text = summary();
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () { say('Copied.'); },
+          function () { say('Could not copy. Use print instead.'); });
+      } else {
+        say('Could not copy. Use print instead.');
+      }
+    },
+    email: function () {
+      var v = values();
+      var who = v.customer_name || 'customer';
+      var car = v.vehicle || 'loaner';
+      var subject = 'Carcis loaner handoff - ' + who + ' - ' + car;
+      var body = summary();
+      var href = 'mailto:' + TO + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+      // Long mailto links get truncated by some mail clients, so the full text
+      // goes on the clipboard at the same time as a fallback.
+      if (href.length > 1800 && navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(body);
+        say('Opened your email. The full text is also copied, in case it looks cut off.');
+      }
+      window.location.href = href;
+    },
+    print: function () { window.print(); },
+    clear: function () {
+      if (!window.confirm('Clear everything on this form?')) return;
+      form.reset();
+      try { sessionStorage.removeItem(KEY); } catch (e) { /* private mode */ }
+      say('Cleared.');
+    }
+  };
+
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest ? e.target.closest('[data-hf]') : null;
+    if (!btn) return;
+    var fn = actions[btn.getAttribute('data-hf')];
+    if (fn) fn();
+  });
+
+  form.addEventListener('input', save);
+  form.addEventListener('change', save);
+  restore();
+})();
+</script>
+
+<!--#include scripts-->
+</body>
+</html>

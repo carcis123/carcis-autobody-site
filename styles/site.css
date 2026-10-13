@@ -1056,3 +1056,56 @@ a.feature-row:hover .feature-title { color: var(--red-bright); }
 }
 .award-link:hover { text-decoration: underline; }
 .award-img { width: 100%; height: auto; margin-bottom: 20px; border: 1px solid var(--line-soft); }
+
+/* ---------- Loaner handoff form (staff only) ---------- */
+.hf-hero { padding-bottom: 36px; }
+.hf { padding: 0 0 80px; }
+.hf-bar {
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+  padding: 14px 0 10px; margin-bottom: 8px;
+}
+.hf-bar-end { margin-top: 26px; border-top: 1px solid var(--line-soft); }
+.hf-clear { color: var(--ink-dim); }
+.hf-status { font-size: 13.5px; color: var(--red-bright); }
+.hf-note, .hf-hint { font-size: 13.5px; line-height: 1.6; color: var(--ink-faint); max-width: 70ch; }
+.hf-note { margin-bottom: 26px; }
+.hf-hint { margin-top: 10px; }
+.hf-set {
+  border: 1px solid var(--line-soft); background: var(--canvas-raised);
+  padding: 18px 18px 22px; margin: 0 0 18px; max-width: 900px;
+}
+.hf-set legend {
+  font-family: var(--display); font-weight: 700; font-size: 20px;
+  letter-spacing: 0.02em; text-transform: uppercase; padding: 0 8px; color: var(--ink);
+}
+.hf-grid { display: grid; gap: 14px; }
+@media (min-width: 640px) { .hf-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 980px) { .hf-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.hf-wide { grid-column: 1 / -1; }
+.hf-grid label, .hf-block {
+  display: flex; flex-direction: column; gap: 6px;
+  font-size: 13px; font-weight: 600; letter-spacing: 0.02em;
+  text-transform: uppercase; color: var(--ink-dim);
+}
+.hf-block { margin-top: 14px; }
+.hf input[type="text"], .hf input[type="tel"], .hf input[type="email"],
+.hf input[type="date"], .hf input[type="datetime-local"], .hf input[type="number"],
+.hf select, .hf textarea {
+  font-family: var(--body); font-size: 16px; font-weight: 400; letter-spacing: 0;
+  text-transform: none; color: var(--ink);
+  background: var(--canvas); border: 1px solid var(--line); padding: 10px 12px; width: 100%;
+}
+.hf textarea { resize: vertical; }
+.hf input:focus-visible, .hf select:focus-visible, .hf textarea:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+.hf-checks { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-top: 14px; }
+.hf-checks label {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 14px; color: var(--ink-dim); text-transform: none; letter-spacing: 0; font-weight: 400;
+}
+.hf-checks input[type="checkbox"] { width: 18px; height: 18px; accent-color: oklch(0.55 0.19 25); }
+.hf-line { display: block; height: 38px; border-bottom: 1px solid var(--line); }
+@media print {
+  header, footer, .watermark, .ticker, .hf-bar, .call-bar, .hf-note, .hf-hint { display: none !important; }
+  .hf-set { border-color: #999; background: none; break-inside: avoid; }
+  .hf-hero { padding: 0 0 12px; }
+}
