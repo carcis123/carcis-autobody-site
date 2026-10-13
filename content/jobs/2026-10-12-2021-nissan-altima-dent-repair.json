@@ -37,11 +37,11 @@
     "color": "Blue"
   },
   "insurance": false,
-  "draft": true,
+  "draft": false,
   "story": [
-    "A 2021 Nissan Altima arrived with denting on the rear body panel and scuffs along the hood edge. Proper metal straightening and surface preparation were required to restore the original body lines.",
-    "Technicians repaired the dented body panel and hood areas. After leveling the metal and finishing the bodywork, the panels were primed to prepare for topcoat refinishing.",
-    "The shop formulated blue paint to match the factory finish. Refinishing both the hood and rear panel restored the exterior finish with seamless color blending across the vehicle."
+    "A 2021 Nissan Altima came in with a dent in the rear quarter panel and a crease running along the hood edge. Both needed the metal worked back to true before any paint went near them, so the body lines would read straight again in daylight.",
+    "Carlos straightened the panel and the hood, then levelled, sanded and primed the repaired areas ready for refinishing.",
+    "The blue was mixed to the car's factory color code and blended into the surrounding panels, so the repaired hood and quarter panel match the rest of the car rather than announcing themselves."
   ],
   "photos": [
     {

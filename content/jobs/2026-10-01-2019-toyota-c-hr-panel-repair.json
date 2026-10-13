@@ -35,11 +35,11 @@
     "color": "White"
   },
   "insurance": false,
-  "draft": true,
+  "draft": false,
   "story": [
-    "This 2019 Toyota C-HR arrived at our shop with damage to the rear passenger door. The door glass was broken out and temporarily covered with cardboard. Below the window line, a sharp crease dent distorted the sheet metal across the door panel contour.",
-    "Our technicians disassembled the interior door trim to clear out glass debris and inspect internal components. Metalworking tools were used to straighten the door panel skin and restore the original body line. The repair area was sanded, feathered, and primed to prepare for paint.",
-    "A replacement window glass unit was installed into the door assembly. We color matched the factory white finish and sprayed the panel in our paint booth. After cure time, the door was reassembled and inspected for smooth window operation."
+    "This 2019 Toyota C-HR arrived with the rear passenger door glass broken out and taped over with cardboard, and a sharp crease dent running below the window line.",
+    "Carlos stripped the interior door trim to clear the broken glass out of the door cavity and check the components inside, then worked the door skin back to its original body line and sanded, feathered and primed the repair.",
+    "A new glass unit went into the door, the panel was sprayed in a white matched to the factory finish, and the door was reassembled and checked to make sure the window ran smoothly again."
   ],
   "photos": [
     {

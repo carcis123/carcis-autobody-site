@@ -494,7 +494,7 @@ function select(jobs, attrs) {
    this list fails the build, because a typo in the JSON would otherwise hide
    a finished feature forever with no error anywhere. */
 const FEATURE_NAMES = ['towInterestCheck', 'towRequestPage'];
-const FEATURE_STRINGS = ['requestFormUrl'];
+const FEATURE_STRINGS = ['requestFormUrl', 'handoffFolderUrl'];
 
 function loadFeatures() {
   if (!fs.existsSync(FEATURES_FILE)) fail('missing content/features.json');
@@ -669,9 +669,17 @@ function build() {
   // 1. Static pages at the site root.
   const sources = fs.readdirSync(PAGES).filter(f => f.endsWith('.html')).sort();
   if (!sources.length) fail('no page sources found in src/pages/');
+  // The staff handoff page links to the shared Drive folder when one is
+  // configured. It lives in content/features.json rather than in the page so
+  // the folder link is a setting, not something baked into public HTML.
+  const handoffFolderHtml = FEATURES.handoffFolderUrl
+    ? '<a class="btn btn-secondary" href="' + esc(FEATURES.handoffFolderUrl)
+      + '" rel="noopener" target="_blank">Open the photo folder</a>'
+    : '';
+
   for (const name of sources) {
     const src = fs.readFileSync(path.join(PAGES, name), 'utf8');
-    writeIfChanged(path.join(ROOT, name), render(src, { v }, jobs, name), report);
+    writeIfChanged(path.join(ROOT, name), render(src, { v, handoffFolderHtml }, jobs, name), report);
   }
 
   // 2. One page per job, plus the work index.
