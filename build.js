@@ -197,9 +197,27 @@ function loadJobs() {
   return jobs;
 }
 
+/* The slider defaults to the first before and the first after, which is right
+   only when those two photos show the same part of the car. When they don't,
+   a job can name the pair:
+     "compare": { "before": "before-2.webp", "after": "after-2.webp" }
+   The value matches the end of the photo's file path. A name that matches
+   nothing fails the build rather than silently falling back, because a
+   mismatched slider is exactly the bug this exists to fix. */
+function pickCompare(job, role, where) {
+  const want = job.compare && job.compare[role];
+  const ofRole = job.photos.filter(p => p.role === role);
+  if (!want) return ofRole[0];
+  const found = ofRole.find(p => p.file.endsWith(want));
+  if (!found) {
+    fail(where + ': compare.' + role + ' "' + want + '" matches no ' + role + ' photo');
+  }
+  return found;
+}
+
 function decorate(job, where) {
-  const before = job.photos.find(p => p.role === 'before');
-  const after = job.photos.find(p => p.role === 'after');
+  const before = pickCompare(job, 'before', where);
+  const after = pickCompare(job, 'after', where);
 
   job.url = '/work/' + job.slug;
   job.absUrl = SITE + job.url;

@@ -86,5 +86,9 @@
       "height": 900,
       "role": "after"
     }
-  ]
+  ],
+  "compare": {
+    "before": "before-2.webp",
+    "after": "after-2.webp"
+  }
 }
