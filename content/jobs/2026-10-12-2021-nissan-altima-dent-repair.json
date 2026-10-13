@@ -1,0 +1,90 @@
+{
+  "_generated": {
+    "by": "tools/sync-form.js",
+    "model": "gemini-3.6-flash",
+    "importedAt": "2026-10-13T09:04:16.281Z",
+    "formTimestamp": "10/12/2026 18:41:56",
+    "formRow": 5,
+    "submittedOn": "2026-10-12",
+    "shopNotes": "Repair panel and hood. Color matched the car.",
+    "corrections": [
+      "make: Nissian -> Nissan"
+    ],
+    "correctionsRejected": [],
+    "redactions": [
+      {
+        "photo": 5,
+        "label": "license plate",
+        "stage": "draft"
+      }
+    ],
+    "privacyChecks": 1,
+    "privacyVerifiedClean": true,
+    "privacyIssues": [],
+    "uncertain": [],
+    "skippedPhotos": [],
+    "review": "Personal information in the photos and notes was redacted automatically; look at every photo anyway. The vehicle fields are the shop's answers with typos fixed (see corrections), and the service and date are as submitted. The title, summary, story and alt text are a Gemini draft. Check every claim, fix the voice, then set \"draft\" to false to publish."
+  },
+  "slug": "2021-nissan-altima-dent-repair",
+  "date": "2026-10-12",
+  "title": "2021 Nissan Altima Dent Repair",
+  "summary": "Rear panel and hood dent repair with color-matched painting on a blue 2021 Nissan Altima.",
+  "service": "dent",
+  "vehicle": {
+    "year": "2021",
+    "make": "Nissan",
+    "model": "Altima",
+    "color": "Blue"
+  },
+  "insurance": false,
+  "draft": true,
+  "story": [
+    "A 2021 Nissan Altima arrived with denting on the rear body panel and scuffs along the hood edge. Proper metal straightening and surface preparation were required to restore the original body lines.",
+    "Technicians repaired the dented body panel and hood areas. After leveling the metal and finishing the bodywork, the panels were primed to prepare for topcoat refinishing.",
+    "The shop formulated blue paint to match the factory finish. Refinishing both the hood and rear panel restored the exterior finish with seamless color blending across the vehicle."
+  ],
+  "photos": [
+    {
+      "file": "/assets/work/2021-nissan-altima-dent-repair/before-1.webp",
+      "alt": "Close-up of dented rear quarter panel and bumper joint on a blue sedan.",
+      "width": 900,
+      "height": 1200,
+      "role": "before"
+    },
+    {
+      "file": "/assets/work/2021-nissan-altima-dent-repair/before-2.webp",
+      "alt": "Rear quarter panel damage and tail light on a blue vehicle before repair.",
+      "width": 900,
+      "height": 1200,
+      "role": "before"
+    },
+    {
+      "file": "/assets/work/2021-nissan-altima-dent-repair/before-3.webp",
+      "alt": "Front hood and headlight assembly showing paint scuffs before repair.",
+      "width": 900,
+      "height": 1200,
+      "role": "before"
+    },
+    {
+      "file": "/assets/work/2021-nissan-altima-dent-repair/before-4.webp",
+      "alt": "Angle of damaged front hood edge on a blue vehicle prior to repair.",
+      "width": 900,
+      "height": 1200,
+      "role": "before"
+    },
+    {
+      "file": "/assets/work/2021-nissan-altima-dent-repair/after-1.webp",
+      "alt": "Front end view of a blue 2021 Nissan Altima after hood repair and repainting.",
+      "width": 1200,
+      "height": 900,
+      "role": "after"
+    },
+    {
+      "file": "/assets/work/2021-nissan-altima-dent-repair/after-2.webp",
+      "alt": "Side profile of a blue 2021 Nissan Altima after panel dent repair.",
+      "width": 1200,
+      "height": 900,
+      "role": "after"
+    }
+  ]
+}

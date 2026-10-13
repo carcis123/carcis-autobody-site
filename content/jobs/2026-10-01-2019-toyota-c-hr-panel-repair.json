@@ -1,0 +1,60 @@
+{
+  "_generated": {
+    "by": "tools/sync-form.js",
+    "model": "gemini-3.6-flash",
+    "importedAt": "2026-10-13T09:03:50.218Z",
+    "formTimestamp": "10/12/2026 14:01:07",
+    "formRow": 4,
+    "submittedOn": "2026-10-12",
+    "shopNotes": "Replace passenger side window and repair the dent. Color matched the paint.",
+    "corrections": [],
+    "correctionsRejected": [],
+    "redactions": [
+      {
+        "photo": 2,
+        "label": "person reflection",
+        "stage": "draft"
+      }
+    ],
+    "privacyChecks": 1,
+    "privacyVerifiedClean": true,
+    "privacyIssues": [],
+    "uncertain": [],
+    "skippedPhotos": [],
+    "review": "Personal information in the photos and notes was redacted automatically; look at every photo anyway. The vehicle fields are the shop's answers with typos fixed (see corrections), and the service and date are as submitted. The title, summary, story and alt text are a Gemini draft. Check every claim, fix the voice, then set \"draft\" to false to publish."
+  },
+  "slug": "2019-toyota-c-hr-panel-repair",
+  "date": "2026-10-01",
+  "title": "2019 Toyota C-HR Door Panel Repair and Window Replacement",
+  "summary": "Carcis Autobody Repair replaced the missing passenger window and repaired a door panel dent on a 2019 Toyota C-HR in Vancouver, WA.",
+  "service": "panel",
+  "vehicle": {
+    "year": "2019",
+    "make": "Toyota",
+    "model": "C-HR",
+    "color": "White"
+  },
+  "insurance": false,
+  "draft": true,
+  "story": [
+    "This 2019 Toyota C-HR arrived at our shop with damage to the rear passenger door. The door glass was broken out and temporarily covered with cardboard. Below the window line, a sharp crease dent distorted the sheet metal across the door panel contour.",
+    "Our technicians disassembled the interior door trim to clear out glass debris and inspect internal components. Metalworking tools were used to straighten the door panel skin and restore the original body line. The repair area was sanded, feathered, and primed to prepare for paint.",
+    "A replacement window glass unit was installed into the door assembly. We color matched the factory white finish and sprayed the panel in our paint booth. After cure time, the door was reassembled and inspected for smooth window operation."
+  ],
+  "photos": [
+    {
+      "file": "/assets/work/2019-toyota-c-hr-panel-repair/before-1.webp",
+      "alt": "White Toyota C-HR rear passenger door showing crease dent and cardboard taped over missing window.",
+      "width": 1200,
+      "height": 900,
+      "role": "before"
+    },
+    {
+      "file": "/assets/work/2019-toyota-c-hr-panel-repair/after-1.webp",
+      "alt": "White Toyota C-HR rear passenger door after dent repair, paint refinishing, and window glass installation.",
+      "width": 1200,
+      "height": 900,
+      "role": "after"
+    }
+  ]
+}
