@@ -1,0 +1,88 @@
+{
+  "_generated": {
+    "by": "tools/sync-form.js",
+    "model": "gemini-3.6-flash",
+    "importedAt": "2026-10-21T13:32:04.363Z",
+    "formTimestamp": "10/20/2026 14:31:55",
+    "formRow": 6,
+    "submittedOn": "2026-10-20",
+    "shopNotes": "Repaint the hood and replace grill",
+    "corrections": [],
+    "correctionsRejected": [],
+    "redactions": [
+      {
+        "photo": 1,
+        "label": "windshield sticker",
+        "stage": "draft"
+      },
+      {
+        "photo": 2,
+        "label": "windshield sticker",
+        "stage": "draft"
+      },
+      {
+        "photo": 2,
+        "label": "person reflection",
+        "stage": "draft"
+      },
+      {
+        "photo": 3,
+        "label": "windshield sticker",
+        "stage": "draft"
+      }
+    ],
+    "privacyChecks": 1,
+    "privacyVerifiedClean": true,
+    "privacyIssues": [],
+    "uncertain": [],
+    "skippedPhotos": [
+      "14JY2RUEoGqP1FSwZLn-uI4zsWrw1CRoG (source: bad seek to 1946086)",
+      "1OQ3Fu14doiT7HxWCwK4_BnHSqulGXkEf (source: bad seek to 1340643)",
+      "1fBF4Fm_vCR-_v2UKdq6dcjs4vUjGun05 (source: bad seek to 1731768)",
+      "1N2AihZGJt4BtDGqgSVGrms85_hrsLnH2 (source: bad seek to 1733247)",
+      "12xAXgnih12wkOTOdgTomzP5Vx9Vz8OO3 (source: bad seek to 1506432)"
+    ],
+    "review": "Personal information in the photos and notes was redacted automatically; look at every photo anyway. The vehicle fields are the shop's answers with typos fixed (see corrections), and the service and date are as submitted. The title, summary, story and alt text are a Gemini draft. Check every claim, fix the voice, then set \"draft\" to false to publish."
+  },
+  "slug": "2017-toyota-camry-xse-paint",
+  "date": "2026-10-20",
+  "title": "2017 Toyota Camry XSE Hood Paint and Grille Replacement",
+  "summary": "2017 Toyota Camry XSE received a front grille replacement and a complete hood refinish at Carcis Autobody Repair.",
+  "service": "paint",
+  "vehicle": {
+    "year": "2017",
+    "make": "Toyota",
+    "model": "Camry XSE",
+    "color": "Black"
+  },
+  "insurance": false,
+  "draft": true,
+  "story": [
+    "This 2017 Toyota Camry XSE came to the shop for front-end repair work involving hood repainting and grille replacement. Front-end components like the hood and grille often sustain damage from road debris or minor collisions, requiring careful refinishing and panel alignment.",
+    "The technician removed the original damaged grille and installed a new replacement grille assembly. To prepare the hood for refinishing, the surface was thoroughly cleaned, sanded, and primed to eliminate surface imperfections and ensure full paint adhesion.",
+    "A color-matched black base coat was sprayed onto the hood, followed by a durable clear coat layer. Once cured, the finish was polished to match the vehicle's glossy black appearance."
+  ],
+  "photos": [
+    {
+      "file": "/assets/work/2017-toyota-camry-xse-paint/after-1.webp",
+      "alt": "Close-up front view of a black 2017 Toyota Camry XSE showing the newly installed front grille and emblem.",
+      "width": 900,
+      "height": 1200,
+      "role": "after"
+    },
+    {
+      "file": "/assets/work/2017-toyota-camry-xse-paint/after-2.webp",
+      "alt": "High-angle view of the freshly repainted black hood on the 2017 Toyota Camry XSE.",
+      "width": 1200,
+      "height": 900,
+      "role": "after"
+    },
+    {
+      "file": "/assets/work/2017-toyota-camry-xse-paint/after-3.webp",
+      "alt": "Front three-quarter view of the black 2017 Toyota Camry XSE after hood refinishing and grille installation.",
+      "width": 1200,
+      "height": 900,
+      "role": "after"
+    }
+  ]
+}
