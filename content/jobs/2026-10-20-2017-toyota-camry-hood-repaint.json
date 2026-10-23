@@ -49,42 +49,42 @@
     ],
     "review": "Personal information in the photos and notes was redacted automatically; look at every photo anyway. The vehicle fields are the shop's answers with typos fixed (see corrections), and the service and date are as submitted. The title, summary, story and alt text are a Gemini draft. Check every claim, fix the voice, then set \"draft\" to false to publish."
   },
-  "slug": "2017-toyota-camry-xse-paint",
+  "slug": "2017-toyota-camry-hood-repaint",
   "date": "2026-10-20",
-  "title": "2017 Toyota Camry XSE Hood Repaint and Grille Replacement",
-  "summary": "2017 Toyota Camry XSE received a repainted hood and new front grille at Carcis Autobody Repair in Vancouver, WA.",
+  "title": "2017 Toyota Camry Hood Repaint and Grille Replacement",
+  "summary": "A black 2017 Toyota Camry with a repainted hood and a new front grille, colour matched and finished in Vancouver, WA.",
   "service": "paint",
   "vehicle": {
     "year": "2017",
     "make": "Toyota",
-    "model": "Camry XSE",
+    "model": "Camry",
     "color": "Black"
   },
   "insurance": false,
-  "draft": true,
+  "draft": false,
   "story": [
-    "This 2017 Toyota Camry XSE came to the shop for front-end service. The job required repainting the hood and replacing the front grille assembly.",
-    "Before painting a hood, the panel surface is thoroughly cleaned, sanded, and prepared. Proper preparation ensures durable adhesion for the primer, base coat, and clear coat layers. Matching the factory black paint tone maintains a uniform finish across adjacent panels.",
-    "The front grille replacement was installed to complete the front assembly. After applying the final clear coat and allowing it to cure, the surface was inspected under light to confirm proper coverage."
+    "A black 2017 Toyota Camry came in for a repainted hood and a new front grille, with the old grille damaged and the hood due for refinishing.",
+    "Carlos stripped the hood back, sanded and prepped the panel, then laid down primer, base and clear. Black is one of the least forgiving colours to match, so the hood was blended against the fenders rather than sprayed in isolation.",
+    "The new grille assembly went on once the paint had cured, and the finished front end was checked in daylight for coverage and colour before the car went back to its owner."
   ],
   "photos": [
     {
-      "file": "/assets/work/2017-toyota-camry-xse-paint/after-1.webp",
-      "alt": "Front view of a black 2017 Toyota Camry XSE showing the installed front grille.",
+      "file": "/assets/work/2017-toyota-camry-hood-repaint/after-1.webp",
+      "alt": "Front view of a black 2017 Toyota Camry showing the installed front grille.",
       "width": 900,
       "height": 1200,
       "role": "after"
     },
     {
-      "file": "/assets/work/2017-toyota-camry-xse-paint/after-2.webp",
-      "alt": "Close-up top view of the repainted black hood on a 2017 Toyota Camry XSE.",
+      "file": "/assets/work/2017-toyota-camry-hood-repaint/after-2.webp",
+      "alt": "Close-up top view of the repainted black hood on a 2017 Toyota Camry.",
       "width": 1200,
       "height": 900,
       "role": "after"
     },
     {
-      "file": "/assets/work/2017-toyota-camry-xse-paint/after-3.webp",
-      "alt": "Front three-quarter view of a black 2017 Toyota Camry XSE after hood paint and grille replacement.",
+      "file": "/assets/work/2017-toyota-camry-hood-repaint/after-3.webp",
+      "alt": "Front three-quarter view of a black 2017 Toyota Camry after hood paint and grille replacement.",
       "width": 1200,
       "height": 900,
       "role": "after"
