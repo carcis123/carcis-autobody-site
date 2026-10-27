@@ -1109,3 +1109,6 @@ a.feature-row:hover .feature-title { color: var(--red-bright); }
   .hf-set { border-color: #999; background: none; break-inside: avoid; }
   .hf-hero { padding: 0 0 12px; }
 }
+/* The accreditation line sits under the footer blurb, quieter than the
+   contact details beside it. */
+.footer-accred { margin-top: 10px; color: var(--ink-faint); font-size: 13px; }
