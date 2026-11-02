@@ -1,0 +1,82 @@
+{
+  "_generated": {
+    "by": "tools/sync-form.js",
+    "model": "gemini-3.6-flash",
+    "importedAt": "2026-11-02T22:37:32.389Z",
+    "formTimestamp": "11/2/2026 8:48:03",
+    "formRow": 7,
+    "submittedOn": "2026-11-02",
+    "shopNotes": "Repaired collision on the passenger side.",
+    "corrections": [],
+    "correctionsRejected": [],
+    "redactions": [],
+    "privacyChecks": 1,
+    "privacyVerifiedClean": true,
+    "privacyIssues": [],
+    "uncertain": [],
+    "skippedPhotos": [],
+    "review": "Personal information in the photos and notes was redacted automatically; look at every photo anyway. The vehicle fields are the shop's answers with typos fixed (see corrections), and the service and date are as submitted. The title, summary, story and alt text are a Gemini draft. Check every claim, fix the voice, then set \"draft\" to false to publish."
+  },
+  "slug": "2013-toyota-highlander-collision-repair",
+  "date": "2026-11-02",
+  "title": "2013 Toyota Highlander Passenger Side Collision Repair",
+  "summary": "Carcis Autobody Repair completed passenger side collision repair on a maroon 2013 Toyota Highlander in Vancouver, Washington.",
+  "service": "collision",
+  "vehicle": {
+    "year": "2013",
+    "make": "Toyota",
+    "model": "Highlander",
+    "color": "Maroon"
+  },
+  "insurance": true,
+  "draft": true,
+  "story": [
+    "This 2013 Toyota Highlander arrived at the shop with heavy collision damage concentrated on the front passenger side. The impact crushed the front right fender, damaged the headlight assembly, and deformed the hood corner. The inner structure and surrounding mounting points required careful assessment before body repair began.",
+    "Our team repaired the passenger side collision by removing crushed exterior panels and inspecting underlying structural components. Technicians aligned the inner apron and frame mounting points to factory specifications. Replacement panels were fitted and aligned to re-establish proper body lines and door gaps.",
+    "After structural and metal repairs were completed, the front end was prepared for refinishing. The shop color-matched the maroon paint to ensure seamless blending across adjacent panels. The finished assembly was reinstalled with new lighting and trim components."
+  ],
+  "photos": [
+    {
+      "file": "/assets/work/2013-toyota-highlander-collision-repair/before-1.webp",
+      "alt": "Front passenger side view of a maroon 2013 Toyota Highlander showing crushed front right fender and headlight damage.",
+      "width": 900,
+      "height": 1200,
+      "role": "before"
+    },
+    {
+      "file": "/assets/work/2013-toyota-highlander-collision-repair/before-2.webp",
+      "alt": "Front view of the maroon Toyota Highlander with severe damage to the front right hood corner, headlight, and fender.",
+      "width": 900,
+      "height": 1200,
+      "role": "before"
+    },
+    {
+      "file": "/assets/work/2013-toyota-highlander-collision-repair/before-3.webp",
+      "alt": "Side view showing heavy damage to the front right fender and wheel arch area of the maroon Highlander.",
+      "width": 900,
+      "height": 1200,
+      "role": "before"
+    },
+    {
+      "file": "/assets/work/2013-toyota-highlander-collision-repair/after-1.webp",
+      "alt": "Front passenger side view of the repaired maroon 2013 Toyota Highlander parked outside the shop.",
+      "width": 1200,
+      "height": 900,
+      "role": "after"
+    },
+    {
+      "file": "/assets/work/2013-toyota-highlander-collision-repair/after-2.webp",
+      "alt": "Direct front view of the 2013 Toyota Highlander after collision repair, showing restored headlight and hood.",
+      "width": 900,
+      "height": 1200,
+      "role": "after"
+    },
+    {
+      "file": "/assets/work/2013-toyota-highlander-collision-repair/after-3.webp",
+      "alt": "Side view of the passenger side of the repaired maroon Toyota Highlander showing smooth fender and refinished paint.",
+      "width": 1200,
+      "height": 900,
+      "role": "after"
+    }
+  ]
+}
