@@ -20,7 +20,7 @@
   "slug": "2013-toyota-highlander-collision-repair",
   "date": "2026-11-02",
   "title": "2013 Toyota Highlander Passenger-Side Collision Repair",
-  "summary": "Collision repair on a 2013 Toyota Highlander with passenger-side front damage at Carcis Autobody Repair.",
+  "summary": "Front passenger-side collision repair on a 2013 Toyota Highlander: new fender, headlight and bumper, painted to match the factory maroon.",
   "service": "collision",
   "vehicle": {
     "year": "2013",
@@ -29,11 +29,11 @@
     "color": "Maroon"
   },
   "insurance": true,
-  "draft": true,
+  "draft": false,
   "story": [
-    "A 2013 Toyota Highlander arrived with severe impact damage to the front passenger side. The collision crushed the right front fender, shattered the headlight assembly, tore open the inner wheel liner, and damaged the front bumper cover.",
-    "Technicians disassembled the front end to inspect the underlying apron structure and mounting points. The repair required replacing the passenger-side fender, headlight assembly, inner fender liner, and bumper components. Structural alignments were checked to ensure proper panel fitment and gap tolerances across the hood and front door.",
-    "After structural and body repairs, the replacement panels were prepped, primed, and painted to match the factory maroon color. Clear coat was applied and blended across adjoining panels for a seamless finish. Final reassembly included aligning the new headlight assembly and verifying all front clip components were secure."
+    "This 2013 Toyota Highlander came in with the front passenger side caved in. The impact crushed the fender back into the door, destroyed the headlight assembly, tore the inner wheel liner out and split the bumper cover.",
+    "Carlos stripped the front end down to see what the collision had done underneath, then replaced the fender, headlight, liner and bumper components, checking the panel gaps against the hood and door as it went back together so the lines sat right.",
+    "The new panels were prepped, primed and sprayed to match the factory maroon, with the clear blended into the neighbouring panels. Insurance covered the work, and the Highlander went home looking like the accident never happened."
   ],
   "photos": [
     {
@@ -78,5 +78,9 @@
       "height": 900,
       "role": "after"
     }
-  ]
+  ],
+  "compare": {
+    "before": "before-3.webp",
+    "after": "after-3.webp"
+  }
 }
