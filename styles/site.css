@@ -1112,3 +1112,8 @@ a.feature-row:hover .feature-title { color: var(--red-bright); }
 /* The accreditation line sits under the footer blurb, quieter than the
    contact details beside it. */
 .footer-accred { margin-top: 10px; color: var(--ink-faint); font-size: 13px; }
+/* Clarity recorded visitors tapping these service names expecting to go
+   somewhere, so they are links now. Underlined on hover only, to keep the
+   list reading as a list rather than a wall of blue. */
+.feature-title a { color: inherit; text-decoration: none; border-bottom: 1px solid transparent; }
+.feature-title a:hover { color: var(--red-bright); border-bottom-color: currentColor; }
