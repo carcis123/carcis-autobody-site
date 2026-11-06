@@ -6,6 +6,8 @@
   "towRequestPage": true,
   "_requestFormUrl": "Google Form link used by the layer 2 page. While it is empty the page asks people to call or book instead.",
   "requestFormUrl": "",
+  "_reviewUrl": "Google review link for the /review page that gets texted to customers after pickup and printed on the counter card. While it is empty there is no review page at all, so the link can never go out dead. Paste the short link from the Google Business Profile 'Ask for reviews' button.",
+  "reviewUrl": "",
   "_handoffFolderUrl": "Shared Drive folder where loaner handoff photos and documents go. Shown as a button on the staff handoff page.",
   "handoffFolderUrl": "https://drive.google.com/drive/folders/1XBlpIqU1_Xnv0-iF3_QQLsrHPqBBOBn4"
 }

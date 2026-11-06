@@ -512,7 +512,7 @@ function select(jobs, attrs) {
    this list fails the build, because a typo in the JSON would otherwise hide
    a finished feature forever with no error anywhere. */
 const FEATURE_NAMES = ['towInterestCheck', 'towRequestPage'];
-const FEATURE_STRINGS = ['requestFormUrl', 'handoffFolderUrl'];
+const FEATURE_STRINGS = ['requestFormUrl', 'handoffFolderUrl', 'reviewUrl'];
 
 function loadFeatures() {
   if (!fs.existsSync(FEATURES_FILE)) fail('missing content/features.json');
@@ -764,10 +764,24 @@ function build() {
     if (!CHECK) fs.unlinkSync(towFile);
   }
 
-  // 6. Sitemap, derived from whatever is live.
+  // 6. The review page, which exists only while there is somewhere to send
+  //    people. An empty reviewUrl means no page at all rather than a page
+  //    with a dead button -- the link gets texted to customers and printed on
+  //    a card at the counter, so it has to work the first time or not exist.
+  const reviewFile = path.join(ROOT, 'review.html');
+  if (FEATURES.reviewUrl) {
+    const reviewTemplate = fs.readFileSync(path.join(TEMPLATES, 'review.html'), 'utf8');
+    writeIfChanged(reviewFile, render(reviewTemplate,
+      { v, reviewUrl: esc(FEATURES.reviewUrl) }, jobs, 'review'), report);
+  } else if (fs.existsSync(reviewFile)) {
+    report.removed.push('review.html');
+    if (!CHECK) fs.unlinkSync(reviewFile);
+  }
+
+  // 7. Sitemap, derived from whatever is live.
   writeIfChanged(path.join(ROOT, 'sitemap.xml'), renderSitemap(jobs), report);
 
-  // 7. Report.
+  // 8. Report.
   const live = jobs.filter(j => !j.draft).length;
   for (const f of report.changed) console.log('  ' + (CHECK ? 'STALE   ' : 'wrote   ') + f);
   for (const f of report.removed) console.log('  ' + (CHECK ? 'ORPHAN  ' : 'deleted ') + f);

@@ -364,9 +364,17 @@
   // production hostname nothing is sent.
   document.addEventListener('click', function (e) {
     var a = e.target.closest
-      ? e.target.closest('a[href^="tel:"], a[href^="mailto:"], a.map-link, a.ticker-link, a.bbb-link')
+      ? e.target.closest('a[href^="tel:"], a[href^="mailto:"], a.map-link, a.ticker-link, a.bbb-link, a.review-go')
       : null;
     if (!a || typeof gtag !== 'function') return;
+    if (a.classList.contains('review-go')) {
+      // Tells us how many people who open the texted link actually go on to
+      // Google. If this number is high and the review count is not, the
+      // problem is Google's form, not the ask.
+      gtag('event', 'review_click');
+      clarityLead('review_click');
+      return;
+    }
     if (a.classList.contains('bbb-link')) {
       // A trust check, not a lead: worth counting how many people go read the
       // BBB profile, but it must not tag the session as a lead or the lead
