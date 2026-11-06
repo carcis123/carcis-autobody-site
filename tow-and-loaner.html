@@ -36,7 +36,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#d94a3e">
 <link rel="preload" as="image" href="/assets/logo/carcis-logo-sm.webp" type="image/webp">
-<link rel="stylesheet" href="/styles/site.css?v=0137bbe5">
+<link rel="stylesheet" href="/styles/site.css?v=b01ffc66">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -254,10 +254,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </picture>
         </div>
         <p class="footer-line" style="max-width:32ch;">Certified collision, paint, and custom body work in Vancouver, WA.</p>
-        <!-- Plain text, no logo: the BBB seal is licensed artwork that has to
-             come from the BBB business account and link to the live profile.
-             Swap this line for the real seal once that profile exists. -->
-        <p class="footer-line footer-accred">BBB Accredited Business since October 2026</p>
+        <!-- Official seal artwork supplied by BBB to the business account, used
+             the way BBB requires: linked to the live profile with #sealclick so
+             their click tracking sees it. rel="nofollow" is BBB's own markup. -->
+        <a class="footer-seal bbb-link" href="https://www.bbb.org/us/wa/vancouver/profile/auto-body-repair-and-painting/carcis-autobody-repair-llc-1296-1000201905/#sealclick" rel="noopener nofollow" target="_blank">
+          <picture>
+            <source srcset="/assets/awards/bbb-accredited.webp" type="image/webp">
+            <img src="/assets/awards/bbb-accredited.png" alt="Carcis Autobody Repair, LLC BBB Business Review" width="440" height="195" loading="lazy" decoding="async">
+          </picture>
+        </a>
+        <p class="footer-line footer-accred">BBB Accredited Business since October 23, 2026</p>
       </div>
       <div>
         <div class="footer-label">Visit</div>
@@ -286,6 +292,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <span>Call (360) 381-5219</span>
 </a>
 
-<script src="/js/site.js?v=f967e728"></script>
+<script src="/js/site.js?v=73cad017"></script>
 </body>
 </html>

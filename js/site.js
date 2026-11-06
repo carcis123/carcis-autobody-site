@@ -364,9 +364,19 @@
   // production hostname nothing is sent.
   document.addEventListener('click', function (e) {
     var a = e.target.closest
-      ? e.target.closest('a[href^="tel:"], a[href^="mailto:"], a.map-link, a.ticker-link')
+      ? e.target.closest('a[href^="tel:"], a[href^="mailto:"], a.map-link, a.ticker-link, a.bbb-link')
       : null;
     if (!a || typeof gtag !== 'function') return;
+    if (a.classList.contains('bbb-link')) {
+      // A trust check, not a lead: worth counting how many people go read the
+      // BBB profile, but it must not tag the session as a lead or the lead
+      // filters in Clarity stop meaning anything.
+      gtag('event', 'bbb_click');
+      if (typeof window.clarity === 'function') {
+        try { window.clarity('event', 'bbb_click'); } catch (err) { /* never let tracking break the page */ }
+      }
+      return;
+    }
     if (a.classList.contains('ticker-link')) {
       // Carlos asked for towing in the top banner so it is seen without
       // reading the whole page; this counts whether that is what happens.

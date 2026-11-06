@@ -498,6 +498,11 @@ header {
 .owner-card + .owner-card { margin-top: 16px; }
 .owner-name { font-family: var(--display); font-weight: 700; font-size: 24px; color: var(--ink); }
 .owner-role { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--red-bright); margin-top: 4px; }
+/* The BBB card is the one that goes somewhere -- out to the live profile. */
+.owner-card-link { display: block; text-decoration: none; transition: border-color 0.2s var(--ease-snap); }
+.owner-card-link:hover, .owner-card-link:focus-visible { border-color: var(--red-bright); }
+.owner-seal { margin-top: 18px; }
+.owner-seal img { width: 170px; height: auto; display: block; }
 
 /* ---------- CTA banner ---------- */
 .cta-banner { padding: 72px 0; text-align: left; border-bottom: 1px solid var(--line-soft); position: relative; }
@@ -1111,7 +1116,13 @@ a.feature-row:hover .feature-title { color: var(--red-bright); }
 }
 /* The accreditation line sits under the footer blurb, quieter than the
    contact details beside it. */
-.footer-accred { margin-top: 10px; color: var(--ink-faint); font-size: 13px; }
+.footer-accred { margin-top: 8px; color: var(--ink-faint); font-size: 13px; }
+/* BBB's own artwork, so no recolouring, no filters, no cropping -- it is a
+   licensed mark and has to appear as supplied. Sized in CSS off the real
+   440x195 file so the ratio stays exact. */
+.footer-seal { display: inline-block; margin-top: 18px; opacity: 0.92; transition: opacity 0.2s var(--ease-snap); }
+.footer-seal:hover, .footer-seal:focus-visible { opacity: 1; }
+.footer-seal img { width: 190px; height: auto; display: block; }
 /* Clarity recorded visitors tapping these service names expecting to go
    somewhere, so they are links now. Underlined on hover only, to keep the
    list reading as a list rather than a wall of blue. */
