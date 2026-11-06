@@ -364,9 +364,17 @@
   // production hostname nothing is sent.
   document.addEventListener('click', function (e) {
     var a = e.target.closest
-      ? e.target.closest('a[href^="tel:"], a[href^="mailto:"], a.map-link, a.ticker-link, a.bbb-link, a.review-go')
+      ? e.target.closest('a[href^="tel:"], a[href^="mailto:"], a.map-link, a.ticker-link, a.bbb-link, a.review-go, a.gift-go')
       : null;
     if (!a || typeof gtag !== 'function') return;
+    if (a.classList.contains('gift-go')) {
+      // The sale itself happens on Clover, which we cannot see, so this is the
+      // last thing we can measure. It is a real buying intent, so unlike the
+      // BBB seal it is worth tagging the session and keeping the recording.
+      gtag('event', 'gift_card_click');
+      clarityLead('gift_card_click');
+      return;
+    }
     if (a.classList.contains('review-go')) {
       // Tells us how many people who open the texted link actually go on to
       // Google. If this number is high and the review count is not, the

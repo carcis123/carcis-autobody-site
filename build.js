@@ -512,7 +512,7 @@ function select(jobs, attrs) {
    this list fails the build, because a typo in the JSON would otherwise hide
    a finished feature forever with no error anywhere. */
 const FEATURE_NAMES = ['towInterestCheck', 'towRequestPage'];
-const FEATURE_STRINGS = ['requestFormUrl', 'handoffFolderUrl', 'reviewUrl'];
+const FEATURE_STRINGS = ['requestFormUrl', 'handoffFolderUrl', 'reviewUrl', 'giftCardUrl'];
 
 function loadFeatures() {
   if (!fs.existsSync(FEATURES_FILE)) fail('missing content/features.json');
@@ -588,10 +588,14 @@ function expand(text, scope, jobs, depth) {
   let out = text.replace(IF_JOBS, (_m, body) => (anyLive ? body : ''));
 
   out = out.replace(IF_FEATURE, (_m, negate, name, body) => {
-    if (FEATURE_NAMES.indexOf(name) === -1) {
-      fail('unknown feature "' + name + '" in #iffeature. Valid: ' + FEATURE_NAMES.join(', '));
+    // A URL string counts as "on" when it is set. That way one switch drives
+    // both the page and the links to it: there is no way to have a nav link
+    // pointing at a page that was never written.
+    const valid = FEATURE_NAMES.concat(FEATURE_STRINGS);
+    if (valid.indexOf(name) === -1) {
+      fail('unknown feature "' + name + '" in #iffeature. Valid: ' + valid.join(', '));
     }
-    const on = negate ? !FEATURES[name] : FEATURES[name];
+    const on = negate ? !FEATURES[name] : !!FEATURES[name];
     return on ? body : '';
   });
 
@@ -651,6 +655,9 @@ function renderSitemap(jobs) {
     { loc: SITE + '/ranked-number-one-vancouver', lastmod: '2026-10-06', changefreq: 'yearly', priority: '0.7' },
     ...(FEATURES.towRequestPage
       ? [{ loc: SITE + '/tow-and-loaner', lastmod: newest, changefreq: 'monthly', priority: '0.8' }]
+      : []),
+    ...(FEATURES.giftCardUrl
+      ? [{ loc: SITE + '/gift-cards', lastmod: newest, changefreq: 'weekly', priority: '0.8' }]
       : []),
   ];
 
@@ -778,10 +785,23 @@ function build() {
     if (!CHECK) fs.unlinkSync(reviewFile);
   }
 
-  // 7. Sitemap, derived from whatever is live.
+  // 7. The gift card page, which exists only while there is a Clover page to
+  //    send buyers to. Same rule as the review page: no destination, no page,
+  //    so an ad can never point at a button that does not sell anything.
+  const giftFile = path.join(ROOT, 'gift-cards.html');
+  if (FEATURES.giftCardUrl) {
+    const giftTemplate = fs.readFileSync(path.join(TEMPLATES, 'gift-cards.html'), 'utf8');
+    writeIfChanged(giftFile, render(giftTemplate,
+      { nav: 'gift', v, giftCardUrl: esc(FEATURES.giftCardUrl) }, jobs, 'gift-cards'), report);
+  } else if (fs.existsSync(giftFile)) {
+    report.removed.push('gift-cards.html');
+    if (!CHECK) fs.unlinkSync(giftFile);
+  }
+
+  // 8. Sitemap, derived from whatever is live.
   writeIfChanged(path.join(ROOT, 'sitemap.xml'), renderSitemap(jobs), report);
 
-  // 8. Report.
+  // 9. Report.
   const live = jobs.filter(j => !j.draft).length;
   for (const f of report.changed) console.log('  ' + (CHECK ? 'STALE   ' : 'wrote   ') + f);
   for (const f of report.removed) console.log('  ' + (CHECK ? 'ORPHAN  ' : 'deleted ') + f);

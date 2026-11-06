@@ -8,6 +8,8 @@
   "requestFormUrl": "",
   "_reviewUrl": "Google review link for the /review page that gets texted to customers after pickup and printed on the counter card. While it is empty there is no review page at all, so the link can never go out dead. Paste the short link from the Google Business Profile 'Ask for reviews' button.",
   "reviewUrl": "",
+  "_giftCardUrl": "Clover's hosted gift card page. Set this and the /gift-cards page is built and linked from the menu; leave it empty and the page does not exist at all. Get the link from the Clover Dashboard under Settings > Business Operations > Sell Digital Gift Cards Online.",
+  "giftCardUrl": "",
   "_handoffFolderUrl": "Shared Drive folder where loaner handoff photos and documents go. Shown as a button on the staff handoff page.",
   "handoffFolderUrl": "https://drive.google.com/drive/folders/1XBlpIqU1_Xnv0-iF3_QQLsrHPqBBOBn4"
 }
