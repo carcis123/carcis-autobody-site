@@ -4,11 +4,17 @@
  * abandon a review. So they talk instead, the browser transcribes it, and the
  * words stay theirs. Nothing here writes a review for anyone.
  *
- * The button takes either gesture, because people split roughly down the
- * middle on which one they try first and being wrong costs them the recording:
- *   hold it down  -> talks while held, stops on release (walkie-talkie)
- *   tap it once   -> stays listening until tapped again (hands free)
- * A press shorter than HOLD_MS is read as a tap. Keyboard gets a plain toggle.
+ * The button is a plain toggle: press to start, press again to stop. It was
+ * a hold gesture first, and the hold caused most of its faults, so it went.
+ *
+ * Transcription is the browser's Web Speech API. Worth being clear-eyed
+ * about where the audio goes: in Chrome this is NOT on-device -- Chrome
+ * streams the microphone to Google's speech service and returns text, and
+ * Safari does the same with Apple. None of it reaches Carcis, and this file
+ * never records, stores or uploads anything itself, but the page must not
+ * tell people their voice stayed on their phone, because in Chrome it did
+ * not. It also means recognition needs a working network connection: on a
+ * weak signal it returns nothing and looks broken.
  *
  * The optional "tidy up" step sends what they said to /api/review-polish and
  * shows the result BESIDE their original, with their own version kept unless
@@ -44,7 +50,6 @@
   var doneHead  = doneEl ? doneEl.querySelector('.cp-done-head') : null;
 
   var POLISH_URL = root.getAttribute('data-polish') || '';
-  var HOLD_MS = 500;
 
   function track(name) {
     try { if (window.clarity) window.clarity('event', name); } catch (e) {}
@@ -170,9 +175,6 @@
   var wantListening = false;   // the user's intent, separate from engine state
   var committed = '';          // everything finalised or typed
   var interim = '';
-  var mode = 'hold';           // 'hold' while held down, 'toggle' after a tap
-  var pressedAt = 0;
-  var ignoreNextUp = false;
 
   function paint() {
     var joined = committed + (interim ? ' ' + interim : '');
@@ -200,19 +202,20 @@
     liveNow.textContent = interim ? (done ? ' ' : '') + interim : '';
     liveEl.classList.toggle('cp-live-empty', !done && !interim);
 
-    // Once their own words are on screen the "say it how you'd say it"
-    // prompt has done its job, and keeping it only pushes the caption
-    // further from the button on a phone.
-    if ((done || interim) && statusEl.classList.contains('cp-status-live')) say('');
+    // Once their own words are on screen, anything the status line was
+    // saying is stale: the opening prompt has done its job, and a "not
+    // picking anything up" warning is now flatly contradicted by the text
+    // appearing underneath it. Clear it either way.
+    if (done || interim) say('');
   }
 
   function labels() {
     if (listening) {
       micLabel.textContent = 'Listening';
-      micHint.textContent = mode === 'hold' ? 'Let go when you’re done' : 'Tap again to stop';
+      micHint.textContent = 'Press again when you’re done';
     } else {
-      micLabel.textContent = committed ? 'Hold to add more' : 'Hold to talk';
-      micHint.textContent = 'or tap once and it keeps listening';
+      micLabel.textContent = committed ? 'Press to add more' : 'Press to talk';
+      micHint.textContent = 'press again to stop';
     }
   }
 
@@ -232,65 +235,47 @@
     micBtn.hidden = true;
     say('Talking isn’t supported in this browser, so type it below — it works the same from there.');
   } else {
-    micBtn.addEventListener('pointerdown', onDown);
-    micBtn.addEventListener('pointerup', onUp);
-    micBtn.addEventListener('pointercancel', onUp);
-    // Deliberately NOT pointerleave. A thumb resting on a round button drifts
-    // a few pixels while someone talks, and treating that as a release killed
-    // recordings mid-sentence. setPointerCapture above means pointerup comes
-    // back to this button wherever the finger has wandered to, so leaving the
-    // button's bounds needs no handling at all.
-    // Pointer events already handled it; stop the synthetic click doubling up.
-    micBtn.addEventListener('click', function (e) { e.preventDefault(); });
-    micBtn.addEventListener('keydown', onKey);
+    // One plain click handler: press to start, press again to stop.
+    //
+    // This used to be a hold gesture built on pointer events, and the hold
+    // was the source of most of its faults -- a thumb drifting off a round
+    // button, capture behaving differently per browser, and a synthetic
+    // click arriving behind every press. A button that toggles needs none of
+    // that, works identically under touch, mouse, keyboard and screen
+    // reader, and cannot end a recording because someone's finger moved.
+    micBtn.addEventListener('click', function () {
+      if (listening) { endListening(); } else { beginListening(); }
+    });
   }
 
-  function onDown(e) {
-    e.preventDefault();
-    if (listening) {
-      // Second press of a tapped-on session: stop, and do not let the
-      // matching release start it again.
-      ignoreNextUp = true;
-      endListening();
-      return;
-    }
-    ignoreNextUp = false;
-    pressedAt = Date.now();
-    mode = 'hold';
-    try { if (e.pointerId != null) micBtn.setPointerCapture(e.pointerId); } catch (err) {}
-    beginListening();
-  }
+  /* Android Chrome ignores `continuous` and ends the session after a single
+     utterance, so the restart below is what makes dictation feel continuous
+     there rather than a nicety. It is also why a restart loop has to be
+     guarded: if the engine ends immediately and repeatedly without ever
+     returning a word, restarting forever would hammer the microphone and
+     leave the button looking live while nothing happens. */
+  var results = 0;      // results returned in this session
+  var restarts = 0;     // consecutive restarts with nothing to show for them
+  var MAX_DEAD_RESTARTS = 4;
+  var watchId = 0;
 
-  function onUp(e) {
-    if (e && e.pointerId != null) {
-      try { micBtn.releasePointerCapture(e.pointerId); } catch (err) {}
-    }
-    if (ignoreNextUp) { ignoreNextUp = false; return; }
-    if (!listening) return;
-
-    if (Date.now() - pressedAt < HOLD_MS) {
-      // Too quick to be a hold, so they meant it as a tap. Keep going.
-      mode = 'toggle';
-      labels();
-      say('Listening. Say it how you’d say it to a friend — pauses are fine. Tap again when you’re done.', 'live');
-      return;
-    }
-    endListening();
-  }
-
-  function onKey(e) {
-    if (e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Spacebar') return;
-    e.preventDefault();
-    if (listening) { endListening(); return; }
-    // Holding a key down is not a gesture anyone makes deliberately, so the
-    // keyboard gets the plain toggle.
-    mode = 'toggle';
-    beginListening();
+  // Nothing heard for a while is the single most confusing failure, because
+  // the button looks alive. Say so rather than leaving someone talking at a
+  // phone that is not listening.
+  function watchdog() {
+    clearTimeout(watchId);
+    watchId = setTimeout(function () {
+      if (listening && results === 0) {
+        say('Not picking anything up yet. Check the microphone is allowed for this site, and that you have a signal — or just type it below.', 'warn');
+      }
+    }, 7000);
   }
 
   function beginListening() {
     committed = box.value.trim();
     interim = '';
+    results = 0;
+    restarts = 0;
     wantListening = true;
     start();
     track('review_voice_start');
@@ -313,13 +298,13 @@
     rec.onstart = function () {
       setMic(true);
       openMeter();
-      say(mode === 'hold'
-        ? 'Listening. Say it how you’d say it to a friend — pauses are fine.'
-        : 'Listening. Say it how you’d say it to a friend — pauses are fine. Tap again when you’re done.',
-        'live');
+      say('Listening. Say it how you’d say it to a friend — pauses are fine. Press again when you’re done.', 'live');
+      watchdog();
     };
 
     rec.onresult = function (e) {
+      results++;
+      restarts = 0;
       var pending = '';
       for (var i = e.resultIndex; i < e.results.length; i++) {
         var chunk = e.results[i][0].transcript;
@@ -335,6 +320,11 @@
 
     rec.onerror = function (e) {
       var code = e.error || '';
+      clearTimeout(watchId);
+      // Android fires no-speech constantly during ordinary pauses. Ending
+      // the session on it would stop someone mid-thought every time they
+      // drew breath, so it is left to onend's restart instead.
+      if (code === 'no-speech' && wantListening) return;
       wantListening = false;
       setMic(false);
       closeMeter();
@@ -355,12 +345,23 @@
     };
 
     rec.onend = function () {
-      // Chrome ends the session by itself after a pause. While the button is
-      // still held or still tapped on, restart, so a long pause mid-thought
-      // does not quietly end the dictation.
+      // Chrome ends the session by itself after a pause, and Android Chrome
+      // ends it after every single utterance. While the button is still on,
+      // start a fresh recogniser so a pause mid-thought does not quietly end
+      // the dictation. A brand new object rather than restarting the old one:
+      // Android throws InvalidStateError on reusing a stopped recogniser.
       if (wantListening) {
-        try { rec.start(); return; } catch (e) {}
+        if (results > 0) restarts = 0; else restarts++;
+        if (restarts <= MAX_DEAD_RESTARTS) {
+          setTimeout(function () { if (wantListening) start(); }, 120);
+          return;
+        }
+        // It has ended several times running without ever returning a word.
+        // Something is wrong that restarting will not fix.
+        wantListening = false;
+        say('The microphone keeps dropping out. That is usually permission or signal — type it below and you will not lose anything.', 'warn');
       }
+      clearTimeout(watchId);
       setMic(false);
       closeMeter();
       if (interim) {
