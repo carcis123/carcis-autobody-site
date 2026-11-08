@@ -36,6 +36,9 @@
   var tidiedEl  = document.getElementById('cpTidied');
   var useMine   = document.getElementById('cpUseMine');
   var useTidied = document.getElementById('cpUseTidied');
+  var liveEl    = document.getElementById('cpLive');
+  var liveDone  = document.getElementById('cpLiveDone');
+  var liveNow   = document.getElementById('cpLiveNow');
   var goBtn     = document.getElementById('cpGo');
   var doneEl    = document.getElementById('cpDone');
   var doneHead  = doneEl ? doneEl.querySelector('.cp-done-head') : null;
@@ -78,13 +81,35 @@
      pulse and dictation is unaffected. */
 
   var media = null, audioCtx = null, analyser = null, rafId = 0, buf = null;
+  // Shared by openMeter and startStream. Kept here rather than inside
+  // openMeter so splitting the two apart cannot leave startStream reaching
+  // for a name it cannot see -- which is exactly what happened once, and the
+  // meter's own catch block swallowed the ReferenceError without a word.
+  var AC = window.AudioContext || window.webkitAudioContext;
 
   function openMeter() {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
-    var AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return;
 
-    navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
+    // Only ask for the audio stream when the microphone has ALREADY been
+    // granted. Asking during a live session raises a second permission
+    // prompt, and that prompt can abort the speech recognition that just
+    // started -- the meter is a nicety, and it is not worth costing someone
+    // the recording they were in the middle of making. Without the
+    // Permissions API we simply do without the meter.
+    if (!navigator.permissions || !navigator.permissions.query) return;
+
+    navigator.permissions.query({ name: 'microphone' }).then(function (status) {
+      if (status.state !== 'granted' || !listening) return;
+      return startStream();
+    }).catch(function () {
+      // Firefox and some Safari builds reject the 'microphone' descriptor
+      // outright. No meter, no harm.
+    });
+  }
+
+  function startStream() {
+    return navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
       // The user may have stopped talking while the prompt was up.
       if (!listening) { stopTracks(stream); return; }
       media = stream;
@@ -95,8 +120,11 @@
       buf = new Uint8Array(analyser.fftSize);
       micBtn.classList.add('cp-mic-metered');
       meter();
-    }).catch(function () {
-      // No meter. The pulse keeps doing its job.
+    }).catch(function (err) {
+      // No meter. The pulse keeps doing its job. Logged rather than
+      // swallowed: a refused stream and a mistake in this file look
+      // identical from the outside otherwise.
+      if (window.console && console.warn) console.warn('review: level meter off -', err && err.message);
     });
   }
 
@@ -149,7 +177,33 @@
   function paint() {
     var joined = committed + (interim ? ' ' + interim : '');
     box.value = joined.replace(/\s+/g, ' ').replace(/^\s+/, '');
+    caption();
     refresh();
+  }
+
+  /* While someone is holding the button their own hand covers the lower half
+     of the screen and the textarea is often below the fold, so words landing
+     in it prove nothing. The caption repeats the tail of the transcript
+     directly under the button, where they are already looking. It is the
+     honest version of a "listening" animation: it can only move if the
+     recogniser is actually returning words. */
+  function caption() {
+    if (!liveEl) return;
+    if (!listening) { liveEl.hidden = true; return; }
+
+    var done = committed.replace(/^\s+/, '');
+    var TAIL = 90;
+    if (done.length > TAIL) done = '…' + done.slice(-TAIL);
+
+    liveEl.hidden = false;
+    liveDone.textContent = done;
+    liveNow.textContent = interim ? (done ? ' ' : '') + interim : '';
+    liveEl.classList.toggle('cp-live-empty', !done && !interim);
+
+    // Once their own words are on screen the "say it how you'd say it"
+    // prompt has done its job, and keeping it only pushes the caption
+    // further from the button on a phone.
+    if ((done || interim) && statusEl.classList.contains('cp-status-live')) say('');
   }
 
   function labels() {
@@ -166,7 +220,9 @@
     listening = on;
     micBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
     micBtn.classList.toggle('cp-mic-live', on);
+    root.classList.toggle('cp-is-live', on);
     labels();
+    caption();
   }
 
   if (!SR) {
@@ -179,9 +235,11 @@
     micBtn.addEventListener('pointerdown', onDown);
     micBtn.addEventListener('pointerup', onUp);
     micBtn.addEventListener('pointercancel', onUp);
-    // A pointer that leaves the button mid-hold still counts as a release,
-    // otherwise a finger sliding off a phone button leaves it stuck live.
-    micBtn.addEventListener('pointerleave', onUp);
+    // Deliberately NOT pointerleave. A thumb resting on a round button drifts
+    // a few pixels while someone talks, and treating that as a release killed
+    // recordings mid-sentence. setPointerCapture above means pointerup comes
+    // back to this button wherever the finger has wandered to, so leaving the
+    // button's bounds needs no handling at all.
     // Pointer events already handled it; stop the synthetic click doubling up.
     micBtn.addEventListener('click', function (e) { e.preventDefault(); });
     micBtn.addEventListener('keydown', onKey);

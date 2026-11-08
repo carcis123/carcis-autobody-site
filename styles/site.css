@@ -1240,7 +1240,14 @@ a.feature-row:hover .feature-title { color: var(--red-bright); }
 .cp-mic-live {
   background: radial-gradient(circle at 50% 38%, oklch(0.42 0.16 25), var(--red-deep) 74%);
   border-color: var(--red-bright);
+  /* Reads as lit from within, at a glance, in daylight, on a phone held at
+     arm's length -- which is the only viewing condition that matters here. */
+  box-shadow: 0 0 0 4px oklch(0.63 0.205 27 / 0.18), 0 0 34px oklch(0.63 0.205 27 / 0.45);
+  transform: scale(1.04);
 }
+/* The whole card picks up the state too, so the feedback is not confined to
+   the 124px the customer's own thumb is currently covering. */
+.cp-is-live { border-color: var(--red-deep); }
 .cp-mic-live .cp-mic-icon { stroke: oklch(0.98 0.01 35); }
 .cp-mic-ring,
 .cp-mic-halo {
@@ -1250,7 +1257,7 @@ a.feature-row:hover .feature-title { color: var(--red-bright); }
   pointer-events: none;
 }
 .cp-mic-ring { border: 2px solid var(--red-bright); opacity: 0; }
-.cp-mic-live .cp-mic-ring { animation: cp-pulse 1.9s ease-out infinite; }
+.cp-mic-live .cp-mic-ring { animation: cp-pulse 1.6s ease-out infinite; }
 /* Driven from the real input level, so it answers "is it hearing me?" with
    the microphone rather than with an animation that would look identical if
    the mic were dead. Only shown once a level is actually being measured. */
@@ -1267,9 +1274,24 @@ a.feature-row:hover .feature-title { color: var(--red-bright); }
 /* With a real level meter running, the timed pulse would just be noise. */
 .cp-mic-metered .cp-mic-ring { animation: none; opacity: 0.35; }
 @keyframes cp-pulse {
-  0%   { opacity: 0.6; transform: scale(1); }
-  70%  { opacity: 0;   transform: scale(1.22); }
-  100% { opacity: 0;   transform: scale(1.22); }
+  0%   { opacity: 0.85; transform: scale(1); }
+  70%  { opacity: 0;    transform: scale(1.3); }
+  100% { opacity: 0;    transform: scale(1.3); }
+}
+
+/* Without the level meter the label carries the "still going" signal on its
+   own, so it gets the three dots that every voice interface uses. */
+.cp-mic-live + .cp-mic-text::after {
+  content: '';
+  animation: cp-dots 1.4s steps(1, end) infinite;
+}
+.cp-mic-metered + .cp-mic-text::after { content: '' !important; animation: none; }
+@keyframes cp-dots {
+  0%   { content: ''; }
+  25%  { content: '.'; }
+  50%  { content: '..'; }
+  75%  { content: '...'; }
+  100% { content: ''; }
 }
 
 .cp-mic-text {
@@ -1294,6 +1316,30 @@ a.feature-row:hover .feature-title { color: var(--red-bright); }
 
 .cp-status { font-size: 14.5px; line-height: 1.6; color: var(--ink-dim); max-width: 42ch; }
 @media (min-width: 620px) { .cp-status { flex: 1 1 18ch; min-width: 18ch; } }
+
+/* -- live caption --
+   The words arriving, under the button where the customer is looking. This
+   is the real feedback that it is working: unlike an animation, it cannot
+   move unless the recogniser is genuinely returning words. */
+.cp-live {
+  margin: -14px 0 22px;
+  padding: 14px 16px;
+  min-height: 62px;
+  border: 1px solid var(--red-deep);
+  border-left: 3px solid var(--red-bright);
+  background: var(--canvas-deep);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink);
+}
+/* Not yet finalised, so it is shown as provisional rather than as text the
+   customer should start correcting. */
+.cp-live-now { color: var(--ink-faint); }
+.cp-live-empty::after {
+  content: 'Go ahead, I\2019m listening\2026';
+  color: var(--ink-faint);
+  font-style: italic;
+}
 .cp-status-live { color: var(--ink); }
 .cp-status-ok { color: var(--ink); }
 .cp-status-warn { color: oklch(0.78 0.13 70); }

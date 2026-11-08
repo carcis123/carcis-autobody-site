@@ -70,6 +70,11 @@
         <p class="cp-status" id="cpStatus" role="status" aria-live="polite"></p>
       </div>
 
+      <!-- Your words as they land, right under the button. While you're
+           holding it your hand covers the box below, so this is the only
+           feedback you can actually see. -->
+      <p class="cp-live" id="cpLive" hidden aria-hidden="true"><span id="cpLiveDone"></span><span class="cp-live-now" id="cpLiveNow"></span></p>
+
       <label class="cp-label" for="cpText">Your review</label>
       <textarea id="cpText" class="cp-text" rows="7" spellcheck="true"
         placeholder="What you brought in, what we fixed, whether we kept you in the loop, and whether the finish looked right. Honest is more useful than nice."></textarea>
