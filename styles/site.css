@@ -1155,68 +1155,145 @@ a.feature-row:hover .feature-title { color: var(--red-bright); }
 @media (min-width: 720px) { .cp-title { font-size: 38px; } }
 .cp-lede { font-size: 15.5px; line-height: 1.7; color: var(--ink-dim); margin-bottom: 26px; }
 
-/* -- microphone -- */
+/* -- Carcis AI badge -- */
+.cp-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--red-bright);
+  border: 1px solid var(--red-deep);
+  border-radius: 999px;
+  padding: 6px 14px 6px 11px;
+  margin-bottom: 18px;
+}
+.cp-brand-mark { width: 15px; height: 15px; flex: none; fill: currentColor; }
+
+/* -- microphone --
+   Deliberately the biggest thing on the page. People do not read an
+   instruction before they tap, so the control has to be unmistakably the
+   next move, and it takes a hold or a tap because both get tried. */
+/* On a phone the microphone gets the full width and sits in the middle, so
+   it reads as the one thing to do. Beside the text only once there is room
+   for both without squeezing either. */
 .cp-mic-row {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 18px;
-  flex-wrap: wrap;
-  margin-bottom: 26px;
+  text-align: center;
+  gap: 16px;
+  margin-bottom: 30px;
+}
+@media (min-width: 620px) {
+  .cp-mic-row { flex-direction: row; align-items: center; text-align: left; gap: 26px; }
+}
+.cp-mic-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex: none;
 }
 .cp-mic {
   position: relative;
-  display: inline-flex;
+  --level: 0;
+  width: 124px;
+  height: 124px;
+  display: flex;
   align-items: center;
-  gap: 12px;
-  font-family: var(--display);
-  font-weight: 800;
-  font-size: 17px;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: var(--ink);
-  background: var(--canvas-deep);
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 14px 26px 14px 18px;
+  justify-content: center;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 38%, oklch(0.30 0.03 30), var(--canvas-deep) 72%);
+  border: 2px solid var(--line);
   cursor: pointer;
-  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s var(--ease-snap);
+  margin-bottom: 12px;
+  /* A hold gesture must not scroll the page or pop a text-selection bubble
+     on the way down, or the recording dies before it starts. */
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color 0.2s ease, transform 0.12s var(--ease-snap), background 0.2s ease;
 }
-.cp-mic:hover { border-color: var(--silver); transform: translateY(-2px); }
-.cp-mic:active { transform: translateY(0); }
+@media (min-width: 720px) { .cp-mic { width: 136px; height: 136px; } }
+.cp-mic:hover { border-color: var(--silver); }
+.cp-mic:active { transform: scale(0.96); }
 .cp-mic-icon {
-  width: 26px;
-  height: 26px;
-  flex: none;
+  position: relative;
+  z-index: 2;
+  width: 52px;
+  height: 52px;
   fill: none;
   stroke: var(--red-bright);
-  stroke-width: 1.6;
+  stroke-width: 1.5;
   stroke-linecap: round;
   transition: stroke 0.2s ease;
 }
-/* Live state: the button fills in and a ring breathes behind it, so there is
-   no doubt the thing is listening. */
+@media (min-width: 720px) { .cp-mic-icon { width: 58px; height: 58px; } }
+
+/* Live: the button fills in, a ring breathes behind it, and a halo tracks
+   the actual microphone level when the audio stream is available. */
 .cp-mic-live {
-  background: var(--red-deep);
+  background: radial-gradient(circle at 50% 38%, oklch(0.42 0.16 25), var(--red-deep) 74%);
   border-color: var(--red-bright);
-  color: oklch(0.97 0.01 35);
 }
-.cp-mic-live .cp-mic-icon { stroke: oklch(0.97 0.01 35); }
-.cp-mic-ring {
+.cp-mic-live .cp-mic-icon { stroke: oklch(0.98 0.01 35); }
+.cp-mic-ring,
+.cp-mic-halo {
   position: absolute;
-  inset: -4px;
-  border-radius: 999px;
-  border: 2px solid var(--red-bright);
-  opacity: 0;
+  inset: -6px;
+  border-radius: 50%;
   pointer-events: none;
 }
-.cp-mic-live .cp-mic-ring { animation: cp-pulse 1.8s ease-out infinite; }
+.cp-mic-ring { border: 2px solid var(--red-bright); opacity: 0; }
+.cp-mic-live .cp-mic-ring { animation: cp-pulse 1.9s ease-out infinite; }
+/* Driven from the real input level, so it answers "is it hearing me?" with
+   the microphone rather than with an animation that would look identical if
+   the mic were dead. Only shown once a level is actually being measured. */
+.cp-mic-halo {
+  background: radial-gradient(circle, oklch(0.63 0.205 27 / 0.42), transparent 70%);
+  opacity: 0;
+  transform: scale(1);
+}
+.cp-mic-metered .cp-mic-halo {
+  opacity: calc(0.25 + var(--level) * 0.75);
+  transform: scale(calc(1 + var(--level) * 0.34));
+  transition: transform 0.08s linear, opacity 0.08s linear;
+}
+/* With a real level meter running, the timed pulse would just be noise. */
+.cp-mic-metered .cp-mic-ring { animation: none; opacity: 0.35; }
 @keyframes cp-pulse {
-  0%   { opacity: 0.55; transform: scale(1); }
-  70%  { opacity: 0;    transform: scale(1.14); }
-  100% { opacity: 0;    transform: scale(1.14); }
+  0%   { opacity: 0.6; transform: scale(1); }
+  70%  { opacity: 0;   transform: scale(1.22); }
+  100% { opacity: 0;   transform: scale(1.22); }
 }
 
-.cp-status { font-size: 14px; line-height: 1.55; color: var(--ink-dim); flex: 1 1 16ch; min-width: 16ch; }
+.cp-mic-text {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 19px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-align: center;
+}
+.cp-mic-live + .cp-mic-text { color: var(--red-bright); }
+.cp-mic-hint {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink-faint);
+  text-align: center;
+  /* Wide enough to stay on one or two lines rather than stacking into a
+     narrow column under the button. */
+  max-width: 30ch;
+}
+
+.cp-status { font-size: 14.5px; line-height: 1.6; color: var(--ink-dim); max-width: 42ch; }
+@media (min-width: 620px) { .cp-status { flex: 1 1 18ch; min-width: 18ch; } }
 .cp-status-live { color: var(--ink); }
 .cp-status-ok { color: var(--ink); }
 .cp-status-warn { color: oklch(0.78 0.13 70); }
@@ -1332,4 +1409,7 @@ a.feature-row:hover .feature-title { color: var(--red-bright); }
 @media (prefers-reduced-motion: reduce) {
   .cp-mic { transition: none; }
   .cp-mic-live .cp-mic-ring { animation: none; opacity: 0.55; }
+  /* The level halo still reports the microphone, but without the motion:
+     brightness carries it instead of scale. */
+  .cp-mic-metered .cp-mic-halo { transform: none; transition: opacity 0.12s linear; }
 }

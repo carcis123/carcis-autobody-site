@@ -42,18 +42,31 @@
   <div class="wrap">
     <div class="cp" id="composer" data-polish="{{polishUrl}}">
 
+      <div class="cp-brand">
+        <svg class="cp-brand-mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M12 2.6 13.9 9l6.4 1.9-6.4 1.9L12 19.2 10.1 12.8 3.7 10.9 10.1 9 12 2.6Z"/>
+          <path d="M19 3.4 19.7 5.6 21.9 6.3 19.7 7 19 9.2 18.3 7 16.1 6.3 18.3 5.6 19 3.4Z"/>
+        </svg>
+        <span>Carcis AI</span>
+      </div>
+
       <h2 class="cp-title">Too much like hard work to type?</h2>
-      <p class="cp-lede">Tap the microphone and just talk. Your phone turns it into text that you can read back and change. Then you copy it over to Google in one go.</p>
+      <p class="cp-lede">Hold the button and just talk. Your phone turns it into text that you can read back and change. Then you copy it over to Google in one go.</p>
 
       <div class="cp-mic-row">
-        <button type="button" class="cp-mic" id="cpMic" aria-pressed="false" aria-describedby="cpStatus">
-          <span class="cp-mic-ring" aria-hidden="true"></span>
-          <svg class="cp-mic-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M12 15.5a4 4 0 0 0 4-4V6a4 4 0 0 0-8 0v5.5a4 4 0 0 0 4 4Z"/>
-            <path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3.5M8.5 21.5h7"/>
-          </svg>
-          <span class="cp-mic-text" id="cpMicLabel">Tap and talk</span>
-        </button>
+        <div class="cp-mic-stack">
+          <button type="button" class="cp-mic" id="cpMic" aria-pressed="false"
+                  aria-describedby="cpMicHint cpStatus">
+            <span class="cp-mic-halo" aria-hidden="true"></span>
+            <span class="cp-mic-ring" aria-hidden="true"></span>
+            <svg class="cp-mic-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M12 15.5a4 4 0 0 0 4-4V6a4 4 0 0 0-8 0v5.5a4 4 0 0 0 4 4Z"/>
+              <path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3.5M8.5 21.5h7"/>
+            </svg>
+          </button>
+          <span class="cp-mic-text" id="cpMicLabel">Hold to talk</span>
+          <span class="cp-mic-hint" id="cpMicHint">or tap once and it keeps listening</span>
+        </div>
         <p class="cp-status" id="cpStatus" role="status" aria-live="polite"></p>
       </div>
 
@@ -62,13 +75,13 @@
         placeholder="What you brought in, what we fixed, whether we kept you in the loop, and whether the finish looked right. Honest is more useful than nice."></textarea>
       <div class="cp-meta">
         <span class="cp-count" id="cpCount"></span>
-        <button type="button" class="cp-tidy" id="cpPolish" disabled>Tidy up my wording</button>
+        <button type="button" class="cp-tidy" id="cpPolish" disabled>Ask Carcis AI to tidy it up</button>
       </div>
 
-      <!-- Both versions, theirs first and kept by default. The suggestion is
-           only ever a suggestion, and it has to be visibly refusable. -->
+      <!-- Both versions, theirs kept by default. The suggestion is only ever a
+           suggestion, and it has to be visibly refusable. -->
       <div class="cp-compare" id="cpCompare" hidden>
-        <p class="cp-compare-head">Same review, punctuation sorted out. Your call.</p>
+        <p class="cp-compare-head">Carcis AI's version &mdash; same review, punctuation sorted out</p>
         <div class="cp-compare-card">
           <p class="cp-compare-body" id="cpTidied"></p>
         </div>
@@ -76,7 +89,7 @@
           <button type="button" class="btn btn-primary" id="cpUseTidied">Use this version</button>
           <button type="button" class="btn btn-secondary" id="cpUseMine">Keep my own words</button>
         </div>
-        <p class="cp-compare-note">It only fixes wording. If it changed what you actually meant, keep your own &mdash; and tell us, because that's a bug.</p>
+        <p class="cp-compare-note">Carcis AI only fixes wording &mdash; spelling, punctuation, and whatever your phone misheard. It isn't allowed to add anything you didn't say or talk us up. If it changed what you actually meant, keep your own &mdash; and tell us, because that's a bug.</p>
       </div>
 
       <div class="cp-go-row">
@@ -109,8 +122,9 @@
   <p>That goes both ways: we're asking everyone who picks up a car, whatever they thought of the work. We don't screen who gets this page, and we wouldn't want to.</p>
 
 <!--#iffeature reviewComposer-->
-  <h2>About the microphone</h2>
-  <p>Your phone or browser does the transcribing, and we only ever see the text you choose to copy. We don't record audio, we don't store it, and nothing is sent anywhere until you tap the copy button. The review is yours: we won't write one for you, and we'd rather have five honest sentences than fifty polished ones.</p>
+  <h2>About Carcis AI</h2>
+  <p>Two separate things, and it's worth knowing which is which. The talking part is your own phone or browser turning speech into text &mdash; we don't record audio, we don't store it, and no sound reaches us. The tidy-up button is the only part that sends anything anywhere, and only when you press it.</p>
+  <p>What it will do is fix spelling, punctuation and the words your phone misheard. What it won't do is write your review. It can't add a detail you didn't mention, can't talk us up, and can't soften a complaint &mdash; if you say the paint didn't match, it still says the paint didn't match. You see both versions and yours is the one that stays unless you pick the other. We'd rather have five honest sentences than fifty polished ones.</p>
 <!--#endiffeature-->
 
   <h2>Somewhere else you'd rather post?</h2>

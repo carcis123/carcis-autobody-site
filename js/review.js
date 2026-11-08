@@ -1,8 +1,14 @@
-/* Review composer -- /review only.
+/* Carcis AI review composer -- /review only.
  *
  * The point of this file: typing a paragraph on a phone is the reason people
  * abandon a review. So they talk instead, the browser transcribes it, and the
  * words stay theirs. Nothing here writes a review for anyone.
+ *
+ * The button takes either gesture, because people split roughly down the
+ * middle on which one they try first and being wrong costs them the recording:
+ *   hold it down  -> talks while held, stops on release (walkie-talkie)
+ *   tap it once   -> stays listening until tapped again (hands free)
+ * A press shorter than HOLD_MS is read as a tap. Keyboard gets a plain toggle.
  *
  * The optional "tidy up" step sends what they said to /api/review-polish and
  * shows the result BESIDE their original, with their own version kept unless
@@ -22,6 +28,7 @@
   var box       = document.getElementById('cpText');
   var micBtn    = document.getElementById('cpMic');
   var micLabel  = document.getElementById('cpMicLabel');
+  var micHint   = document.getElementById('cpMicHint');
   var statusEl  = document.getElementById('cpStatus');
   var countEl   = document.getElementById('cpCount');
   var polishBtn = document.getElementById('cpPolish');
@@ -34,6 +41,7 @@
   var doneHead  = doneEl ? doneEl.querySelector('.cp-done-head') : null;
 
   var POLISH_URL = root.getAttribute('data-polish') || '';
+  var HOLD_MS = 500;
 
   function track(name) {
     try { if (window.clarity) window.clarity('event', name); } catch (e) {}
@@ -62,6 +70,70 @@
     if (polishBtn) polishBtn.disabled = n < 8;
   }
 
+  /* ------------------------------------------------------- level meter --
+     A real meter off the microphone, so "is it hearing me?" is answered by
+     the microphone itself rather than by an animation that would wave about
+     just as convincingly if the mic were dead. Entirely optional: if the
+     audio stream is refused or unavailable, the ring falls back to a timed
+     pulse and dictation is unaffected. */
+
+  var media = null, audioCtx = null, analyser = null, rafId = 0, buf = null;
+
+  function openMeter() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
+      // The user may have stopped talking while the prompt was up.
+      if (!listening) { stopTracks(stream); return; }
+      media = stream;
+      audioCtx = new AC();
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 256;
+      audioCtx.createMediaStreamSource(stream).connect(analyser);
+      buf = new Uint8Array(analyser.fftSize);
+      micBtn.classList.add('cp-mic-metered');
+      meter();
+    }).catch(function () {
+      // No meter. The pulse keeps doing its job.
+    });
+  }
+
+  function meter() {
+    if (!analyser) return;
+    analyser.getByteTimeDomainData(buf);
+    var sum = 0;
+    for (var i = 0; i < buf.length; i++) {
+      var d = (buf[i] - 128) / 128;
+      sum += d * d;
+    }
+    // Speech sits low in this range, so it is scaled up and clamped rather
+    // than shown raw, where normal talking would barely move the ring.
+    var level = Math.min(1, Math.sqrt(sum / buf.length) * 5.5);
+    micBtn.style.setProperty('--level', level.toFixed(3));
+    rafId = requestAnimationFrame(meter);
+  }
+
+  function stopTracks(stream) {
+    try {
+      stream.getTracks().forEach(function (t) { t.stop(); });
+    } catch (e) {}
+  }
+
+  function closeMeter() {
+    if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+    // Release the microphone properly. Leaving the tracks open keeps the
+    // browser's recording indicator lit after the customer has stopped
+    // talking, which is alarming and fair enough.
+    if (media) { stopTracks(media); media = null; }
+    if (audioCtx) { try { audioCtx.close(); } catch (e) {} audioCtx = null; }
+    analyser = null;
+    buf = null;
+    micBtn.classList.remove('cp-mic-metered');
+    micBtn.style.setProperty('--level', '0');
+  }
+
   /* ----------------------------------------------------------- dictation */
 
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -70,6 +142,9 @@
   var wantListening = false;   // the user's intent, separate from engine state
   var committed = '';          // everything finalised or typed
   var interim = '';
+  var mode = 'hold';           // 'hold' while held down, 'toggle' after a tap
+  var pressedAt = 0;
+  var ignoreNextUp = false;
 
   function paint() {
     var joined = committed + (interim ? ' ' + interim : '');
@@ -77,34 +152,98 @@
     refresh();
   }
 
+  function labels() {
+    if (listening) {
+      micLabel.textContent = 'Listening';
+      micHint.textContent = mode === 'hold' ? 'Let go when you’re done' : 'Tap again to stop';
+    } else {
+      micLabel.textContent = committed ? 'Hold to add more' : 'Hold to talk';
+      micHint.textContent = 'or tap once and it keeps listening';
+    }
+  }
+
   function setMic(on) {
     listening = on;
     micBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
     micBtn.classList.toggle('cp-mic-live', on);
-    micLabel.textContent = on ? 'Stop' : (committed ? 'Keep talking' : 'Tap and talk');
+    labels();
   }
 
   if (!SR) {
     // No speech engine: Firefox, and some iOS versions. The textarea is the
-    // whole feature then, so get out of its way rather than leaving a button
-    // on screen that cannot work.
+    // whole feature then, so get out of its way rather than leaving a big
+    // button on screen that cannot work.
     micBtn.hidden = true;
     say('Talking isn’t supported in this browser, so type it below — it works the same from there.');
   } else {
-    micBtn.addEventListener('click', function () {
-      if (listening) {
-        wantListening = false;
-        setMic(false);
-        if (rec) { try { rec.stop(); } catch (e) {} }
-        say(box.value.trim() ? 'Read it back and change anything that isn’t how you’d say it.' : '');
-        return;
-      }
-      committed = box.value.trim();
-      interim = '';
-      wantListening = true;
-      start();
-      track('review_voice_start');
-    });
+    micBtn.addEventListener('pointerdown', onDown);
+    micBtn.addEventListener('pointerup', onUp);
+    micBtn.addEventListener('pointercancel', onUp);
+    // A pointer that leaves the button mid-hold still counts as a release,
+    // otherwise a finger sliding off a phone button leaves it stuck live.
+    micBtn.addEventListener('pointerleave', onUp);
+    // Pointer events already handled it; stop the synthetic click doubling up.
+    micBtn.addEventListener('click', function (e) { e.preventDefault(); });
+    micBtn.addEventListener('keydown', onKey);
+  }
+
+  function onDown(e) {
+    e.preventDefault();
+    if (listening) {
+      // Second press of a tapped-on session: stop, and do not let the
+      // matching release start it again.
+      ignoreNextUp = true;
+      endListening();
+      return;
+    }
+    ignoreNextUp = false;
+    pressedAt = Date.now();
+    mode = 'hold';
+    try { if (e.pointerId != null) micBtn.setPointerCapture(e.pointerId); } catch (err) {}
+    beginListening();
+  }
+
+  function onUp(e) {
+    if (e && e.pointerId != null) {
+      try { micBtn.releasePointerCapture(e.pointerId); } catch (err) {}
+    }
+    if (ignoreNextUp) { ignoreNextUp = false; return; }
+    if (!listening) return;
+
+    if (Date.now() - pressedAt < HOLD_MS) {
+      // Too quick to be a hold, so they meant it as a tap. Keep going.
+      mode = 'toggle';
+      labels();
+      say('Listening. Say it how you’d say it to a friend — pauses are fine. Tap again when you’re done.', 'live');
+      return;
+    }
+    endListening();
+  }
+
+  function onKey(e) {
+    if (e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Spacebar') return;
+    e.preventDefault();
+    if (listening) { endListening(); return; }
+    // Holding a key down is not a gesture anyone makes deliberately, so the
+    // keyboard gets the plain toggle.
+    mode = 'toggle';
+    beginListening();
+  }
+
+  function beginListening() {
+    committed = box.value.trim();
+    interim = '';
+    wantListening = true;
+    start();
+    track('review_voice_start');
+  }
+
+  function endListening() {
+    wantListening = false;
+    setMic(false);
+    closeMeter();
+    if (rec) { try { rec.stop(); } catch (e) {} }
+    say(box.value.trim() ? 'Read it back and change anything that isn’t how you’d say it.' : '');
   }
 
   function start() {
@@ -115,7 +254,11 @@
 
     rec.onstart = function () {
       setMic(true);
-      say('Listening. Say it how you’d say it to a friend — pauses are fine.', 'live');
+      openMeter();
+      say(mode === 'hold'
+        ? 'Listening. Say it how you’d say it to a friend — pauses are fine.'
+        : 'Listening. Say it how you’d say it to a friend — pauses are fine. Tap again when you’re done.',
+        'live');
     };
 
     rec.onresult = function (e) {
@@ -136,13 +279,14 @@
       var code = e.error || '';
       wantListening = false;
       setMic(false);
+      closeMeter();
       interim = '';
       paint();
 
       if (code === 'not-allowed' || code === 'service-not-allowed') {
         say('The browser blocked the microphone. Allow it from the address bar, or just type below.', 'warn');
       } else if (code === 'no-speech') {
-        say('Didn’t catch anything. Tap again and speak up, or type below.', 'warn');
+        say('Didn’t catch anything. Hold the button again and speak up, or type below.', 'warn');
       } else if (code === 'audio-capture') {
         say('No microphone found. Typing below works just as well.', 'warn');
       } else if (code === 'aborted') {
@@ -154,12 +298,13 @@
 
     rec.onend = function () {
       // Chrome ends the session by itself after a pause. While the button is
-      // still pressed in, restart, so a long pause mid-thought does not
-      // quietly end the dictation.
+      // still held or still tapped on, restart, so a long pause mid-thought
+      // does not quietly end the dictation.
       if (wantListening) {
         try { rec.start(); return; } catch (e) {}
       }
       setMic(false);
+      closeMeter();
       if (interim) {
         committed = (committed + ' ' + interim).replace(/^\s+/, '');
         interim = '';
@@ -172,6 +317,7 @@
     } catch (e) {
       wantListening = false;
       setMic(false);
+      closeMeter();
       say('Couldn’t start the microphone. Type it below instead.', 'warn');
     }
   }
@@ -179,7 +325,7 @@
   // A manual edit becomes the new baseline, so dictating again appends to the
   // edited text rather than resurrecting what was replaced.
   box.addEventListener('input', function () {
-    if (!listening) { committed = box.value; interim = ''; }
+    if (!listening) { committed = box.value; interim = ''; labels(); }
     refresh();
     if (compare) compare.hidden = true;
     if (doneEl) doneEl.hidden = true;
@@ -193,7 +339,7 @@
       if (words(mine) < 8) return;
 
       polishBtn.disabled = true;
-      polishBtn.textContent = 'Tidying…';
+      polishBtn.textContent = 'Thinking…';
       say('');
 
       fetch(POLISH_URL, {
@@ -213,7 +359,7 @@
         // there would be a lie about something that worked correctly.
         var tidied = r.data.polished.trim();
         if (!tidied || tidied === mine) {
-          say('Your wording already reads well — nothing worth changing.', 'ok');
+          say('Carcis AI didn’t find anything worth changing — it already reads well.', 'ok');
           return;
         }
         tidiedEl.textContent = tidied;
@@ -222,9 +368,9 @@
         track('review_polish');
         compare.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }).catch(function () {
-        say('Couldn’t reach the tidy-up service. What you’ve written is fine as it is — carry on.', 'warn');
+        say('Couldn’t reach Carcis AI. What you’ve written is fine as it is — carry on.', 'warn');
       }).then(function () {
-        polishBtn.textContent = 'Tidy up my wording';
+        polishBtn.textContent = 'Ask Carcis AI to tidy it up';
         refresh();
       });
     });
@@ -287,6 +433,9 @@
 
     track('review_copy_open');
   });
+
+  // The microphone must not stay open because someone wandered off mid-review.
+  window.addEventListener('pagehide', function () { wantListening = false; closeMeter(); });
 
   refresh();
   setMic(false);
