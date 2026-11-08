@@ -20,6 +20,8 @@ on:
         options:
           - Towing interest check
           - Towing page
+          - Review page talk-instead-of-typing
+          - Review page tidy-up suggestion
       state:
         description: 'On or Off'
         required: true
@@ -29,6 +31,10 @@ on:
           - 'Off'
       form_url:
         description: 'Optional: link to the request form for the towing page (leave blank to keep what is set)'
+        required: false
+        type: string
+      review_url:
+        description: 'Optional: the Google review short link. Setting this is what makes the review page exist at all.'
         required: false
         type: string
 
@@ -51,6 +57,7 @@ jobs:
           FEATURE: ${{ inputs.feature }}
           STATE: ${{ inputs.state }}
           FORM_URL: ${{ inputs.form_url }}
+          REVIEW_URL: ${{ inputs.review_url }}
         run: |
           node - <<'EOF'
           const fs = require('fs');
@@ -58,12 +65,15 @@ jobs:
           const keys = {
             'Towing interest check': 'towInterestCheck',
             'Towing page': 'towRequestPage',
+            'Review page talk-instead-of-typing': 'reviewComposer',
+            'Review page tidy-up suggestion': 'reviewPolish',
           };
           const key = keys[process.env.FEATURE];
           if (!key) { console.error('Unknown feature: ' + process.env.FEATURE); process.exit(1); }
           const data = JSON.parse(fs.readFileSync(file, 'utf8'));
           data[key] = process.env.STATE === 'On';
           if (process.env.FORM_URL) data.requestFormUrl = process.env.FORM_URL.trim();
+          if (process.env.REVIEW_URL) data.reviewUrl = process.env.REVIEW_URL.trim();
           fs.writeFileSync(file, JSON.stringify(data, null, 2) + '\n');
           console.log(key + ' is now ' + data[key]);
           EOF

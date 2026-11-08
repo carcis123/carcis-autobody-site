@@ -1128,3 +1128,208 @@ a.feature-row:hover .feature-title { color: var(--red-bright); }
    list reading as a list rather than a wall of blue. */
 .feature-title a { color: inherit; text-decoration: none; border-bottom: 1px solid transparent; }
 .feature-title a:hover { color: var(--red-bright); border-bottom-color: currentColor; }
+
+/* ---------- Review composer (/review) ----------
+   Dictation, not generation. The microphone is the loudest thing on the page
+   because talking is the whole point; the textarea underneath is equally
+   usable on its own, since a third of visitors will be on a browser with no
+   speech engine or will simply refuse the mic prompt. */
+.cp-section { padding: 8px 0 64px; }
+@media (min-width: 900px) { .cp-section { padding: 16px 0 88px; } }
+.cp {
+  border: 1px solid var(--line);
+  background: var(--canvas-raised);
+  padding: 28px 22px 26px;
+  max-width: 70ch;
+  scroll-margin-top: 92px;
+}
+@media (min-width: 720px) { .cp { padding: 36px 36px 32px; } }
+
+.cp-title {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 30px;
+  line-height: 1.05;
+  margin-bottom: 10px;
+}
+@media (min-width: 720px) { .cp-title { font-size: 38px; } }
+.cp-lede { font-size: 15.5px; line-height: 1.7; color: var(--ink-dim); margin-bottom: 26px; }
+
+/* -- microphone -- */
+.cp-mic-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-bottom: 26px;
+}
+.cp-mic {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--canvas-deep);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 14px 26px 14px 18px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s var(--ease-snap);
+}
+.cp-mic:hover { border-color: var(--silver); transform: translateY(-2px); }
+.cp-mic:active { transform: translateY(0); }
+.cp-mic-icon {
+  width: 26px;
+  height: 26px;
+  flex: none;
+  fill: none;
+  stroke: var(--red-bright);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  transition: stroke 0.2s ease;
+}
+/* Live state: the button fills in and a ring breathes behind it, so there is
+   no doubt the thing is listening. */
+.cp-mic-live {
+  background: var(--red-deep);
+  border-color: var(--red-bright);
+  color: oklch(0.97 0.01 35);
+}
+.cp-mic-live .cp-mic-icon { stroke: oklch(0.97 0.01 35); }
+.cp-mic-ring {
+  position: absolute;
+  inset: -4px;
+  border-radius: 999px;
+  border: 2px solid var(--red-bright);
+  opacity: 0;
+  pointer-events: none;
+}
+.cp-mic-live .cp-mic-ring { animation: cp-pulse 1.8s ease-out infinite; }
+@keyframes cp-pulse {
+  0%   { opacity: 0.55; transform: scale(1); }
+  70%  { opacity: 0;    transform: scale(1.14); }
+  100% { opacity: 0;    transform: scale(1.14); }
+}
+
+.cp-status { font-size: 14px; line-height: 1.55; color: var(--ink-dim); flex: 1 1 16ch; min-width: 16ch; }
+.cp-status-live { color: var(--ink); }
+.cp-status-ok { color: var(--ink); }
+.cp-status-warn { color: oklch(0.78 0.13 70); }
+
+/* -- the text itself -- */
+.cp-label {
+  display: block;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 8px;
+}
+.cp-text {
+  width: 100%;
+  font-family: var(--body);
+  /* 16px minimum, or iOS Safari zooms the whole page on focus and the
+     customer loses sight of the buttons. */
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--ink);
+  background: var(--canvas-deep);
+  border: 1px solid var(--line);
+  padding: 15px 16px;
+  resize: vertical;
+  min-height: 150px;
+}
+.cp-text::placeholder { color: var(--ink-faint); }
+.cp-text:focus-visible { border-color: var(--focus); }
+
+.cp-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.cp-count { font-size: 13px; color: var(--ink-faint); font-variant-numeric: tabular-nums; }
+.cp-count-ok { color: var(--ink-dim); }
+.cp-tidy {
+  font-family: var(--body);
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--ink-dim);
+  background: transparent;
+  border: 1px solid var(--line-soft);
+  padding: 9px 14px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+.cp-tidy:hover:not(:disabled) { border-color: var(--silver); color: var(--ink); }
+.cp-tidy:disabled { opacity: 0.4; cursor: default; }
+
+/* -- the suggestion, offered beside their own and never instead of it -- */
+.cp-compare { margin-top: 24px; border-top: 1px solid var(--line-soft); padding-top: 22px; }
+.cp-compare-head {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--red-bright);
+  margin-bottom: 12px;
+}
+.cp-compare-card {
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--red-bright);
+  background: var(--canvas-deep);
+  padding: 16px 18px;
+}
+.cp-compare-body { font-size: 15.5px; line-height: 1.7; color: var(--ink); white-space: pre-wrap; }
+.cp-compare-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+.cp-compare-note { margin-top: 14px; font-size: 13px; line-height: 1.6; color: var(--ink-faint); }
+
+/* -- handover to Google -- */
+.cp-go-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 28px;
+  border-top: 1px solid var(--line-soft);
+  padding-top: 26px;
+}
+.cp-go { text-decoration: none; }
+/* Nothing written yet, so the button is visibly not the next thing to do.
+   Still focusable and still a real link -- dimmed, not disabled, because a
+   disabled anchor is a dead end for a screen reader. */
+.cp-go-off { opacity: 0.45; }
+.cp-go-note { font-size: 13px; line-height: 1.6; color: var(--ink-faint); flex: 1 1 22ch; }
+
+.cp-done {
+  margin-top: 22px;
+  border: 1px solid var(--red-deep);
+  background: oklch(0.21 0.035 25);
+  padding: 18px 20px;
+}
+.cp-done-head {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 19px;
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+.cp-done-steps { margin: 0; padding-left: 20px; font-size: 14.5px; line-height: 1.75; color: var(--ink-dim); }
+.cp-done-steps strong { color: var(--ink); }
+.cp-done-note { margin-top: 12px; font-size: 13px; color: var(--ink-faint); }
+.cp-done-note a { color: var(--red-bright); text-decoration: none; border-bottom: 1px solid currentColor; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cp-mic { transition: none; }
+  .cp-mic-live .cp-mic-ring { animation: none; opacity: 0.55; }
+}

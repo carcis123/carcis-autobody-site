@@ -21,20 +21,97 @@
       <h1 class="page-headline">How did we <span class="accent">do</span>?</h1>
       <p class="page-sub">We're a new shop, and a couple of sentences from you does more for us than any advertising we could buy. It takes about a minute.</p>
       <div class="hero-actions">
+<!--#iffeature reviewComposer-->
+        <a class="btn btn-primary btn-lg" href="#composer">Say it out loud instead</a>
+        <span class="hero-note">Talk, we'll type it up &middot; or write it yourself on Google</span>
+<!--#endiffeature-->
+<!--#iffeature !reviewComposer-->
         <a class="btn btn-primary btn-lg review-go" href="{{reviewUrl}}" rel="noopener" target="_blank">Write a Google review</a>
-        <span class="hero-note">Opens Google · no account setup beyond signing in</span>
+        <span class="hero-note">Opens Google &middot; no account setup beyond signing in</span>
+<!--#endiffeature-->
       </div>
     </div>
   </div>
 </section>
+
+<!--#iffeature reviewComposer-->
+<!-- The composer. Talking is easier than typing a paragraph on a phone, which
+     is the actual reason reviews get abandoned half-written. The browser
+     transcribes; the words stay the customer's own. -->
+<section class="cp-section">
+  <div class="wrap">
+    <div class="cp" id="composer" data-polish="{{polishUrl}}">
+
+      <h2 class="cp-title">Too much like hard work to type?</h2>
+      <p class="cp-lede">Tap the microphone and just talk. Your phone turns it into text that you can read back and change. Then you copy it over to Google in one go.</p>
+
+      <div class="cp-mic-row">
+        <button type="button" class="cp-mic" id="cpMic" aria-pressed="false" aria-describedby="cpStatus">
+          <span class="cp-mic-ring" aria-hidden="true"></span>
+          <svg class="cp-mic-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M12 15.5a4 4 0 0 0 4-4V6a4 4 0 0 0-8 0v5.5a4 4 0 0 0 4 4Z"/>
+            <path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3.5M8.5 21.5h7"/>
+          </svg>
+          <span class="cp-mic-text" id="cpMicLabel">Tap and talk</span>
+        </button>
+        <p class="cp-status" id="cpStatus" role="status" aria-live="polite"></p>
+      </div>
+
+      <label class="cp-label" for="cpText">Your review</label>
+      <textarea id="cpText" class="cp-text" rows="7" spellcheck="true"
+        placeholder="What you brought in, what we fixed, whether we kept you in the loop, and whether the finish looked right. Honest is more useful than nice."></textarea>
+      <div class="cp-meta">
+        <span class="cp-count" id="cpCount"></span>
+        <button type="button" class="cp-tidy" id="cpPolish" disabled>Tidy up my wording</button>
+      </div>
+
+      <!-- Both versions, theirs first and kept by default. The suggestion is
+           only ever a suggestion, and it has to be visibly refusable. -->
+      <div class="cp-compare" id="cpCompare" hidden>
+        <p class="cp-compare-head">Same review, punctuation sorted out. Your call.</p>
+        <div class="cp-compare-card">
+          <p class="cp-compare-body" id="cpTidied"></p>
+        </div>
+        <div class="cp-compare-actions">
+          <button type="button" class="btn btn-primary" id="cpUseTidied">Use this version</button>
+          <button type="button" class="btn btn-secondary" id="cpUseMine">Keep my own words</button>
+        </div>
+        <p class="cp-compare-note">It only fixes wording. If it changed what you actually meant, keep your own &mdash; and tell us, because that's a bug.</p>
+      </div>
+
+      <div class="cp-go-row">
+        <a class="btn btn-primary btn-lg cp-go cp-go-off review-go" id="cpGo"
+           href="{{reviewUrl}}" rel="noopener" target="_blank">Copy it and open Google</a>
+        <span class="cp-go-note">Google won't let us fill the box for you, so paste it when you get there.</span>
+      </div>
+
+      <div class="cp-done" id="cpDone" hidden>
+        <p class="cp-done-head">Copied. Now paste it into the box on Google.</p>
+        <ol class="cp-done-steps">
+          <li>Google opens in a new tab &mdash; sign in if it asks.</li>
+          <li>Press and hold in the review box, then choose <strong>Paste</strong>.</li>
+          <li>Pick your stars and post it.</li>
+        </ol>
+        <p class="cp-done-note">If the tab didn't open, <a class="review-go" href="{{reviewUrl}}" rel="noopener" target="_blank">open Google here</a>.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+<!--#endiffeature-->
 
 <section class="legal-body wrap">
   <h2>Not sure what to say?</h2>
   <p>Anything honest helps. What you brought in, what we fixed, whether we kept you in the loop, and whether the finish looked right. Specifics help other drivers more than a star rating on its own.</p>
 
   <h2>If something wasn't right</h2>
-  <p>Please tell us first, and tell us straight — we'd rather fix it than find out about it later. Call <a href="tel:+13603815219">(360) 381-5219</a> or email <a href="mailto:carcisautobodyrepair@gmail.com">carcisautobodyrepair@gmail.com</a> and you'll get Carlos or Kayla, not a call center.</p>
+  <p>Please tell us first, and tell us straight &mdash; we'd rather fix it than find out about it later. Call <a href="tel:+13603815219">(360) 381-5219</a> or email <a href="mailto:carcisautobodyrepair@gmail.com">carcisautobodyrepair@gmail.com</a> and you'll get Carlos or Kayla, not a call center.</p>
   <p>That goes both ways: we're asking everyone who picks up a car, whatever they thought of the work. We don't screen who gets this page, and we wouldn't want to.</p>
+
+<!--#iffeature reviewComposer-->
+  <h2>About the microphone</h2>
+  <p>Your phone or browser does the transcribing, and we only ever see the text you choose to copy. We don't record audio, we don't store it, and nothing is sent anywhere until you tap the copy button. The review is yours: we won't write one for you, and we'd rather have five honest sentences than fifty polished ones.</p>
+<!--#endiffeature-->
 
   <h2>Somewhere else you'd rather post?</h2>
   <p>Our <a class="bbb-link" href="https://www.bbb.org/us/wa/vancouver/profile/auto-body-repair-and-painting/carcis-autobody-repair-llc-1296-1000201905/#sealclick" rel="noopener nofollow" target="_blank">BBB profile</a> takes reviews too, and we're on <a href="https://www.instagram.com/carcisautobody" rel="noopener" target="_blank">Instagram</a> if you'd rather just tag us in a photo of the car.</p>
@@ -54,5 +131,8 @@
 <!--#include footer-->
 
 <!--#include scripts-->
+<!--#iffeature reviewComposer-->
+<script src="/js/review.js?v={{v.reviewjs}}"></script>
+<!--#endiffeature-->
 </body>
 </html>

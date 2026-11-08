@@ -4,11 +4,16 @@
 # directive wins. So no path may be matched by more than one Cache-Control
 # rule below. Check that before adding one.
 
+# microphone=(self) is what lets the /review page transcribe what a customer
+# says instead of making them type a paragraph on a phone. It grants nothing on
+# its own: the browser still asks the customer, per visit, and refusing just
+# leaves them typing. With microphone=() here the browser blocks the request
+# before the prompt ever appears, and the feature fails silently.
 /*
   X-Content-Type-Options: nosniff
   X-Frame-Options: SAMEORIGIN
   Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
+  Permissions-Policy: camera=(), microphone=(self), geolocation=(), interest-cohort=()
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
   Cross-Origin-Opener-Policy: same-origin
   X-DNS-Prefetch-Control: on

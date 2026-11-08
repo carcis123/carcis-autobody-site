@@ -511,7 +511,7 @@ function select(jobs, attrs) {
    one on later is a one-line change and not a release. A name that is not on
    this list fails the build, because a typo in the JSON would otherwise hide
    a finished feature forever with no error anywhere. */
-const FEATURE_NAMES = ['towInterestCheck', 'towRequestPage'];
+const FEATURE_NAMES = ['towInterestCheck', 'towRequestPage', 'reviewComposer', 'reviewPolish'];
 const FEATURE_STRINGS = ['requestFormUrl', 'handoffFolderUrl', 'reviewUrl', 'giftCardUrl'];
 
 function loadFeatures() {
@@ -689,7 +689,13 @@ function build() {
   const report = { changed: [], upToDate: [], removed: [] };
   const anyLive = jobs.some(j => !j.draft);
 
-  const v = { css: assetVersion('styles/site.css'), js: assetVersion('js/site.js') };
+  const v = {
+    css: assetVersion('styles/site.css'),
+    js: assetVersion('js/site.js'),
+    // Only /review loads this one, so it is hashed separately rather than
+    // bundled into site.js and shipped to every other page for nothing.
+    reviewjs: assetVersion('js/review.js'),
+  };
 
   // 1. Static pages at the site root.
   const sources = fs.readdirSync(PAGES).filter(f => f.endsWith('.html')).sort();
@@ -778,8 +784,13 @@ function build() {
   const reviewFile = path.join(ROOT, 'review.html');
   if (FEATURES.reviewUrl) {
     const reviewTemplate = fs.readFileSync(path.join(TEMPLATES, 'review.html'), 'utf8');
+    // The tidy-up endpoint is only advertised to the browser when the feature
+    // is on. Empty and review.js hides the button, so a missing Cloudflare
+    // API key shows up as one absent button rather than a dead one that
+    // errors the first time a customer presses it.
+    const polishUrl = FEATURES.reviewPolish ? '/api/review-polish' : '';
     writeIfChanged(reviewFile, render(reviewTemplate,
-      { v, reviewUrl: esc(FEATURES.reviewUrl) }, jobs, 'review'), report);
+      { v, reviewUrl: esc(FEATURES.reviewUrl), polishUrl }, jobs, 'review'), report);
   } else if (fs.existsSync(reviewFile)) {
     report.removed.push('review.html');
     if (!CHECK) fs.unlinkSync(reviewFile);
