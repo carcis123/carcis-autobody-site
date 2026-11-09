@@ -20,7 +20,7 @@ on:
         options:
           - Towing interest check
           - Towing page
-          - Review page talk-instead-of-typing
+          - Review page guided questions
           - Review page tidy-up suggestion
       state:
         description: 'On or Off'
@@ -65,7 +65,7 @@ jobs:
           const keys = {
             'Towing interest check': 'towInterestCheck',
             'Towing page': 'towRequestPage',
-            'Review page talk-instead-of-typing': 'reviewComposer',
+            'Review page guided questions': 'reviewComposer',
             'Review page tidy-up suggestion': 'reviewPolish',
           };
           const key = keys[process.env.FEATURE];

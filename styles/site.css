@@ -1129,11 +1129,12 @@ a.feature-row:hover .feature-title { color: var(--red-bright); }
 .feature-title a { color: inherit; text-decoration: none; border-bottom: 1px solid transparent; }
 .feature-title a:hover { color: var(--red-bright); border-bottom-color: currentColor; }
 
+
 /* ---------- Review composer (/review) ----------
-   Dictation, not generation. The microphone is the loudest thing on the page
-   because talking is the whole point; the textarea underneath is equally
-   usable on its own, since a third of visitors will be on a browser with no
-   speech engine or will simply refuse the mic prompt. */
+   Four tapped questions, then a box. This replaced a microphone: dictation
+   was the better idea on paper and the worse one in a customer's hand, and a
+   chip cannot half-work. The textarea is not a fallback here -- it is an
+   equal way in, and plenty of people will go straight to it. */
 .cp-section { padding: 8px 0 64px; }
 @media (min-width: 900px) { .cp-section { padding: 16px 0 88px; } }
 .cp {
@@ -1173,278 +1174,219 @@ a.feature-row:hover .feature-title { color: var(--red-bright); }
 }
 .cp-brand-mark { width: 15px; height: 15px; flex: none; fill: currentColor; }
 
-/* -- microphone --
-   Deliberately the biggest thing on the page. People do not read an
-   instruction before they tap, so the control has to be unmistakably the
-   next move, and it takes a hold or a tap because both get tried. */
-/* On a phone the microphone gets the full width and sits in the middle, so
-   it reads as the one thing to do. Beside the text only once there is room
-   for both without squeezing either. */
-.cp-mic-row {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 16px;
-  margin-bottom: 30px;
+/* -- the questions -- */
+.wz {
+  border: 1px solid var(--line-soft);
+  background: var(--canvas);
+  padding: 20px 18px 18px;
+  margin-bottom: 14px;
 }
-@media (min-width: 620px) {
-  .cp-mic-row { flex-direction: row; align-items: center; text-align: left; gap: 26px; }
-}
-.cp-mic-stack {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  flex: none;
-}
-.cp-mic {
-  position: relative;
-  --level: 0;
-  width: 124px;
-  height: 124px;
+@media (min-width: 720px) { .wz { padding: 24px 24px 20px; } }
+.wz[hidden] { display: none; }
+
+.wz-head {
   display: flex;
   align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: radial-gradient(circle at 50% 38%, oklch(0.30 0.03 30), var(--canvas-deep) 72%);
-  border: 2px solid var(--line);
-  cursor: pointer;
-  margin-bottom: 12px;
-  /* A hold gesture must not scroll the page or pop a text-selection bubble
-     on the way down, or the recording dies before it starts. */
-  touch-action: none;
-  -webkit-user-select: none;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  transition: border-color 0.2s ease, transform 0.12s var(--ease-snap), background 0.2s ease;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
 }
-@media (min-width: 720px) { .cp-mic { width: 136px; height: 136px; } }
-.cp-mic:hover { border-color: var(--silver); }
-.cp-mic:active { transform: scale(0.96); }
-.cp-mic-icon {
-  position: relative;
-  z-index: 2;
-  width: 52px;
-  height: 52px;
-  fill: none;
-  stroke: var(--red-bright);
-  stroke-width: 1.5;
-  stroke-linecap: round;
-  transition: stroke 0.2s ease;
+.wz-count {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
 }
-@media (min-width: 720px) { .cp-mic-icon { width: 58px; height: 58px; } }
+.wz-dots { display: inline-flex; gap: 6px; }
+.wz-dot {
+  width: 7px; height: 7px;
+  border-radius: 999px;
+  background: var(--line);
+}
+.wz-dot-done { background: var(--red-deep); }
+.wz-dot-on { background: var(--red-bright); }
 
-/* Live: the button fills in, a ring breathes behind it, and a halo tracks
-   the actual microphone level when the audio stream is available. */
-.cp-mic-live {
-  background: radial-gradient(circle at 50% 38%, oklch(0.42 0.16 25), var(--red-deep) 74%);
-  border-color: var(--red-bright);
-  /* Reads as lit from within, at a glance, in daylight, on a phone held at
-     arm's length -- which is the only viewing condition that matters here. */
-  box-shadow: 0 0 0 4px oklch(0.63 0.205 27 / 0.18), 0 0 34px oklch(0.63 0.205 27 / 0.45);
-  transform: scale(1.04);
-}
-/* The whole card picks up the state too, so the feedback is not confined to
-   the 124px the customer's own thumb is currently covering. */
-.cp-is-live { border-color: var(--red-deep); }
-.cp-mic-live .cp-mic-icon { stroke: oklch(0.98 0.01 35); }
-.cp-mic-ring,
-.cp-mic-halo {
-  position: absolute;
-  inset: -6px;
-  border-radius: 50%;
-  pointer-events: none;
-}
-.cp-mic-ring { border: 2px solid var(--red-bright); opacity: 0; }
-.cp-mic-live .cp-mic-ring { animation: cp-pulse 1.6s ease-out infinite; }
-/* Driven from the real input level, so it answers "is it hearing me?" with
-   the microphone rather than with an animation that would look identical if
-   the mic were dead. Only shown once a level is actually being measured. */
-.cp-mic-halo {
-  background: radial-gradient(circle, oklch(0.63 0.205 27 / 0.42), transparent 70%);
-  opacity: 0;
-  transform: scale(1);
-}
-.cp-mic-metered .cp-mic-halo {
-  opacity: calc(0.25 + var(--level) * 0.75);
-  transform: scale(calc(1 + var(--level) * 0.34));
-  transition: transform 0.08s linear, opacity 0.08s linear;
-}
-/* With a real level meter running, the timed pulse would just be noise. */
-.cp-mic-metered .cp-mic-ring { animation: none; opacity: 0.35; }
-@keyframes cp-pulse {
-  0%   { opacity: 0.85; transform: scale(1); }
-  70%  { opacity: 0;    transform: scale(1.3); }
-  100% { opacity: 0;    transform: scale(1.3); }
-}
-
-/* Without the level meter the label carries the "still going" signal on its
-   own, so it gets the three dots that every voice interface uses. */
-.cp-mic-live + .cp-mic-text::after {
-  content: '';
-  animation: cp-dots 1.4s steps(1, end) infinite;
-}
-.cp-mic-metered + .cp-mic-text::after { content: '' !important; animation: none; }
-@keyframes cp-dots {
-  0%   { content: ''; }
-  25%  { content: '.'; }
-  50%  { content: '..'; }
-  75%  { content: '...'; }
-  100% { content: ''; }
-}
-
-.cp-mic-text {
+.wz-q {
   font-family: var(--display);
   font-weight: 800;
-  font-size: 19px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--ink);
-  text-align: center;
+  font-size: 21px;
+  line-height: 1.2;
+  margin: 0 0 6px;
 }
-.cp-mic-live + .cp-mic-text { color: var(--red-bright); }
-.cp-mic-hint {
-  font-size: 13px;
-  line-height: 1.45;
-  color: var(--ink-faint);
-  text-align: center;
-  /* Wide enough to stay on one or two lines rather than stacking into a
-     narrow column under the button. */
-  max-width: 30ch;
+@media (min-width: 720px) { .wz-q { font-size: 24px; } }
+.wz-note { font-size: 13.5px; line-height: 1.6; color: var(--ink-faint); margin: 0 0 16px; }
+
+.wz-chips { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 20px; }
+.wz-chip {
+  font: inherit;
+  font-size: 15px;
+  /* 44px of height: a chip that is hard to hit on a phone is the whole
+     problem this page exists to avoid. */
+  min-height: 44px;
+  padding: 10px 15px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--canvas-raised);
+  color: var(--ink-dim);
+  cursor: pointer;
+  transition: border-color 0.14s ease, color 0.14s ease, background 0.14s ease;
+}
+.wz-chip:hover { border-color: var(--silver); color: var(--ink); }
+.wz-chip-on {
+  border-color: var(--red-bright);
+  background: var(--red-deep);
+  color: oklch(0.98 0.01 35);
+}
+/* The unhappy answers are styled no less invitingly than the happy ones.
+   Making them look like the wrong button is a thumb on the scale. */
+.wz-chip-bad.wz-chip-on {
+  background: oklch(0.42 0.09 60);
+  border-color: oklch(0.62 0.13 70);
 }
 
-.cp-status { font-size: 14.5px; line-height: 1.6; color: var(--ink-dim); max-width: 42ch; }
-@media (min-width: 620px) { .cp-status { flex: 1 1 18ch; min-width: 18ch; } }
-
-/* -- live caption --
-   The words arriving, under the button where the customer is looking. This
-   is the real feedback that it is working: unlike an animation, it cannot
-   move unless the recogniser is genuinely returning words. */
-.cp-live {
-  margin: -14px 0 22px;
-  padding: 14px 16px;
-  min-height: 62px;
-  border: 1px solid var(--red-deep);
-  border-left: 3px solid var(--red-bright);
-  background: var(--canvas-deep);
-  font-size: 16px;
+.wz-text {
+  width: 100%;
+  font: inherit;
+  font-size: 16px;            /* 16px stops iOS zooming on focus */
   line-height: 1.6;
   color: var(--ink);
+  background: var(--canvas-raised);
+  border: 1px solid var(--line);
+  padding: 12px 13px;
+  resize: vertical;
+  margin-bottom: 20px;
 }
-/* Not yet finalised, so it is shown as provisional rather than as text the
-   customer should start correcting. */
-.cp-live-now { color: var(--ink-faint); }
-.cp-live-empty::after {
-  content: 'Go ahead, I\2019m listening\2026';
-  color: var(--ink-faint);
-  font-style: italic;
-}
-.cp-status-live { color: var(--ink); }
-.cp-status-ok { color: var(--ink); }
-.cp-status-warn { color: oklch(0.78 0.13 70); }
+.wz-text::placeholder { color: var(--ink-faint); }
+.wz-text:focus-visible { border-color: var(--focus); }
 
-/* -- the text itself -- */
+.wz-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.wz-next { order: -1; flex: 1 1 auto; min-height: 46px; }
+@media (min-width: 560px) { .wz-next { order: 0; flex: 0 0 auto; } }
+.wz-next:disabled { opacity: 0.4; cursor: default; }
+.wz-back, .wz-skip {
+  font: inherit;
+  font-size: 14px;
+  min-height: 44px;
+  padding: 10px 12px;
+  background: none;
+  border: 0;
+  color: var(--ink-faint);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.wz-back:hover, .wz-skip:hover { color: var(--ink); }
+.wz-skip { margin-left: auto; }
+
+.wz-or {
+  font-size: 13.5px;
+  color: var(--ink-faint);
+  margin: 0 0 24px;
+}
+
+/* -- the box -- */
 .cp-label {
   display: block;
   font-family: var(--display);
-  font-weight: 700;
+  font-weight: 800;
   font-size: 13px;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--ink-faint);
+  color: var(--ink-dim);
   margin-bottom: 8px;
 }
+.cp-draft-note {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--ink-dim);
+  margin: 0 0 10px;
+  padding-left: 11px;
+  border-left: 2px solid var(--red-deep);
+}
+.cp-draft-note[hidden] { display: none; }
 .cp-text {
   width: 100%;
-  font-family: var(--body);
-  /* 16px minimum, or iOS Safari zooms the whole page on focus and the
-     customer loses sight of the buttons. */
-  font-size: 16px;
-  line-height: 1.65;
+  font: inherit;
+  font-size: 16px;            /* 16px stops iOS zooming on focus */
+  line-height: 1.7;
   color: var(--ink);
-  background: var(--canvas-deep);
+  background: var(--canvas);
   border: 1px solid var(--line);
-  padding: 15px 16px;
+  padding: 14px 15px;
   resize: vertical;
-  min-height: 150px;
 }
 .cp-text::placeholder { color: var(--ink-faint); }
 .cp-text:focus-visible { border-color: var(--focus); }
 
+.cp-note { font-size: 14px; line-height: 1.6; color: var(--ink-dim); margin: 12px 0 0; }
+.cp-note[hidden] { display: none; }
+
 .cp-meta {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
-  flex-wrap: wrap;
-  margin-top: 10px;
+  gap: 12px;
+  margin-top: 12px;
 }
 .cp-count { font-size: 13px; color: var(--ink-faint); font-variant-numeric: tabular-nums; }
 .cp-count-ok { color: var(--ink-dim); }
 .cp-tidy {
-  font-family: var(--body);
-  font-weight: 600;
-  font-size: 13.5px;
+  font: inherit;
+  font-size: 14px;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  background: none;
   color: var(--ink-dim);
-  background: transparent;
-  border: 1px solid var(--line-soft);
-  padding: 9px 14px;
   cursor: pointer;
-  transition: border-color 0.2s ease, color 0.2s ease;
 }
 .cp-tidy:hover:not(:disabled) { border-color: var(--silver); color: var(--ink); }
 .cp-tidy:disabled { opacity: 0.4; cursor: default; }
 
-/* -- the suggestion, offered beside their own and never instead of it -- */
+/* -- the tidy-up comparison -- */
 .cp-compare { margin-top: 24px; border-top: 1px solid var(--line-soft); padding-top: 22px; }
 .cp-compare-head {
   font-family: var(--display);
-  font-weight: 700;
-  font-size: 15px;
+  font-weight: 800;
+  font-size: 13px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--red-bright);
+  color: var(--ink-dim);
   margin-bottom: 12px;
 }
 .cp-compare-card {
   border: 1px solid var(--line);
-  border-left: 3px solid var(--red-bright);
-  background: var(--canvas-deep);
-  padding: 16px 18px;
+  background: var(--canvas);
+  padding: 16px 16px 15px;
 }
 .cp-compare-body { font-size: 15.5px; line-height: 1.7; color: var(--ink); white-space: pre-wrap; }
 .cp-compare-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
 .cp-compare-note { margin-top: 14px; font-size: 13px; line-height: 1.6; color: var(--ink-faint); }
 
-/* -- handover to Google -- */
+/* -- hand over to Google -- */
 .cp-go-row {
   display: flex;
-  align-items: center;
-  gap: 16px;
   flex-wrap: wrap;
-  margin-top: 28px;
-  border-top: 1px solid var(--line-soft);
-  padding-top: 26px;
+  align-items: center;
+  gap: 14px;
+  margin-top: 26px;
 }
 .cp-go { text-decoration: none; }
-/* Nothing written yet, so the button is visibly not the next thing to do.
-   Still focusable and still a real link -- dimmed, not disabled, because a
-   disabled anchor is a dead end for a screen reader. */
 .cp-go-off { opacity: 0.45; }
 .cp-go-note { font-size: 13px; line-height: 1.6; color: var(--ink-faint); flex: 1 1 22ch; }
 
 .cp-done {
   margin-top: 22px;
-  border: 1px solid var(--red-deep);
-  background: oklch(0.21 0.035 25);
-  padding: 18px 20px;
+  border-top: 1px solid var(--line-soft);
+  padding-top: 20px;
 }
 .cp-done-head {
   font-family: var(--display);
   font-weight: 800;
-  font-size: 19px;
-  line-height: 1.2;
+  font-size: 16px;
+  color: var(--ink);
   margin-bottom: 10px;
 }
 .cp-done-steps { margin: 0; padding-left: 20px; font-size: 14.5px; line-height: 1.75; color: var(--ink-dim); }
@@ -1453,30 +1395,5 @@ a.feature-row:hover .feature-title { color: var(--red-bright); }
 .cp-done-note a { color: var(--red-bright); text-decoration: none; border-bottom: 1px solid currentColor; }
 
 @media (prefers-reduced-motion: reduce) {
-  .cp-mic { transition: none; }
-  .cp-mic-live .cp-mic-ring { animation: none; opacity: 0.55; }
-  /* The level halo still reports the microphone, but without the motion:
-     brightness carries it instead of scale. */
-  .cp-mic-metered .cp-mic-halo { transform: none; transition: opacity 0.12s linear; }
-}
-
-/* The live microphone trace on /review. Exposed as a custom property on .cp
-   so review.js can read the colour from here rather than carrying its own
-   copy of it. */
-.cp { --cp-wave: oklch(63% 0.21 25); }
-.cp-wave {
-  display: block;
-  width: 100%;
-  height: 64px;
-  margin: 0.25rem 0 0.1rem;
-  /* Sits between the button and the status line, full width of the block, so
-     the first thing in view under the microphone is the microphone working. */
-  flex-basis: 100%;
-  order: 1;
-}
-.cp-wave[hidden] { display: none; }
-@media (prefers-reduced-motion: reduce) {
-  /* The wave is information, not decoration, so it stays -- but nothing else
-     about the button needs to move while it is doing the work. */
-  .cp-mic-live { animation: none; }
+  .wz-chip { transition: none; }
 }

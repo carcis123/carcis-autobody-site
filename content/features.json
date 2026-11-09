@@ -6,7 +6,7 @@
   "towRequestPage": true,
   "_requestFormUrl": "Google Form link used by the layer 2 page. While it is empty the page asks people to call or book instead.",
   "requestFormUrl": "",
-  "_reviewComposer": "The Carcis AI block on the /review page: the customer holds a button and talks, their phone turns it into text, they read it back and fix it, then copy it over to Google. Off, the page just links straight to Google like before. No audio is recorded and none of it reaches us.",
+  "_reviewComposer": "The Carcis AI block on the /review page: four tapped questions, whose answers are joined into a draft the customer edits and then copies over to Google. They can ignore the questions and just type instead. Off, the page links straight to Google like before. Nothing they tap leaves their phone.",
   "reviewComposer": true,
   "_reviewPolish": "The optional 'Ask Carcis AI to tidy it up' button inside that block. Fixes spelling and punctuation only and shows both versions so the customer picks. Needs GEMINI_API_KEY set in Cloudflare (see functions/api/review-polish.js). Leave this off until that key is in place.",
   "reviewPolish": false,

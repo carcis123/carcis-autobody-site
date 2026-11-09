@@ -25,7 +25,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#d94a3e">
 <link rel="preload" as="image" href="/assets/logo/carcis-logo-sm.webp" type="image/webp">
-<link rel="stylesheet" href="/styles/site.css?v=5e4a4732">
+<link rel="stylesheet" href="/styles/site.css?v=c71e7a83">
 <!-- Measurement: Google Ads, Google Analytics 4 and Microsoft Clarity.
      Every ID lives in CARCIS_TRACKING below, and an empty string switches that
      service off. Google Ads and GA4 share one gtag.js loader.
@@ -154,8 +154,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <h1 class="page-headline">How did we <span class="accent">do</span>?</h1>
       <p class="page-sub">We're a new shop, and a couple of sentences from you does more for us than any advertising we could buy. It takes about a minute.</p>
       <div class="hero-actions">
-        <a class="btn btn-primary btn-lg" href="#composer">Say it out loud instead</a>
-        <span class="hero-note">Talk, we'll type it up &middot; or write it yourself on Google</span>
+        <a class="btn btn-primary btn-lg" href="#composer">Answer four quick questions</a>
+        <span class="hero-note">We&rsquo;ll draft it from your answers &middot; or write your own</span>
       </div>
     </div>
   </div>
@@ -176,41 +176,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <span>Carcis AI</span>
       </div>
 
-      <h2 class="cp-title">Too much like hard work to type?</h2>
-      <p class="cp-lede">Press the button and just talk. Your phone turns it into text that you can read back and change. Press it again when you're done, then copy it over to Google in one go.</p>
+      <h2 class="cp-title">Four quick questions?</h2>
+      <p class="cp-lede">Tap the answers and Carcis AI will put them into a few sentences for you. Read it back, change whatever you want, then copy it over to Google in one go. Or ignore the questions and write your own &mdash; the box is right there.</p>
 
-      <div class="cp-mic-row">
-        <div class="cp-mic-stack">
-          <button type="button" class="cp-mic" id="cpMic" aria-pressed="false"
-                  aria-describedby="cpMicHint cpStatus">
-            <span class="cp-mic-halo" aria-hidden="true"></span>
-            <span class="cp-mic-ring" aria-hidden="true"></span>
-            <svg class="cp-mic-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <path d="M12 15.5a4 4 0 0 0 4-4V6a4 4 0 0 0-8 0v5.5a4 4 0 0 0 4 4Z"/>
-              <path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3.5M8.5 21.5h7"/>
-            </svg>
-          </button>
-          <span class="cp-mic-text" id="cpMicLabel">Press to talk</span>
-          <span class="cp-mic-hint" id="cpMicHint">press again to stop</span>
-        </div>
-        <!-- A real trace off the microphone, drawn from the audio itself. It
-           answers "is this thing hearing me?" in the half second before any
-           words come back, and because it is driven by the stream rather than
-           by a timer it cannot reassure anyone about a microphone that is
-           dead. No stream, no wave. -->
-        <canvas class="cp-wave" id="cpWave" height="64" hidden aria-hidden="true"></canvas>
+      <!-- The questions are rendered by review-draft.js + review.js so that
+           their wording lives in exactly one place. No script, no wizard --
+           and the box below still works, which is the point of having it. -->
+      <div class="wz" id="cpWizard"></div>
 
-        <p class="cp-status" id="cpStatus" role="status" aria-live="polite"></p>
-      </div>
-
-      <!-- Your words as they land, right under the button. While you're
-           holding it your hand covers the box below, so this is the only
-           feedback you can actually see. -->
-      <p class="cp-live" id="cpLive" hidden aria-hidden="true"><span id="cpLiveDone"></span><span class="cp-live-now" id="cpLiveNow"></span></p>
+      <p class="wz-or">Or skip the questions and just write it yourself.</p>
 
       <label class="cp-label" for="cpText">Your review</label>
+      <p class="cp-draft-note" id="cpDraftNote" hidden>Change anything that isn&rsquo;t how you&rsquo;d put it. This goes out in your name, so it should sound like you &mdash; rewrite as much of it as you like.</p>
       <textarea id="cpText" class="cp-text" rows="7" spellcheck="true"
         placeholder="What you brought in, what we fixed, whether we kept you in the loop, and whether the finish looked right. Honest is more useful than nice."></textarea>
+      <p class="cp-note" id="cpNote" role="status" aria-live="polite" hidden></p>
       <div class="cp-meta">
         <span class="cp-count" id="cpCount"></span>
         <button type="button" class="cp-tidy" id="cpPolish" disabled>Ask Carcis AI to tidy it up</button>
@@ -259,8 +239,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <p>That goes both ways: we're asking everyone who picks up a car, whatever they thought of the work. We don't screen who gets this page, and we wouldn't want to.</p>
 
   <h2>About Carcis AI</h2>
-  <p>Two separate things, and it's worth knowing which is which. The talking part is your browser's own speech-to-text. On most phones that means the audio goes to Google or Apple to be turned into words, the same as the dictation button on your keyboard does &mdash; so it's worth knowing it isn't staying on your phone. What we can tell you is that none of it comes to us: we never receive audio, record it or store it, and the only thing that reaches Carcis is the text you choose to copy. The tidy-up button is the only part that sends anything from this page, and only when you press it.</p>
-  <p>What it will do is fix spelling, punctuation and the words your phone misheard. What it won't do is write your review. It can't add a detail you didn't mention, can't talk us up, and can't soften a complaint &mdash; if you say the paint didn't match, it still says the paint didn't match. You see both versions and yours is the one that stays unless you pick the other. We'd rather have five honest sentences than fifty polished ones.</p>
+  <p>It is a set of questions and a bit of sentence-joining, and we would rather describe it plainly than make it sound cleverer than it is. You tap the answers; it puts those answers into sentences. It cannot add a detail you did not give it, cannot talk us up, and cannot soften a complaint &mdash; if you tap &ldquo;the finish was not right&rdquo;, the draft says the finish was not right. Nothing you tap leaves your phone.</p>
+  <p>Then it is yours. The draft lands in a box you can rewrite completely, and nothing goes anywhere until you copy it over to Google yourself. If what comes out does not sound like you, change it or bin it &mdash; we would rather have five sentences in your own words than fifty in ours.</p>
+
 
   <h2>Somewhere else you'd rather post?</h2>
   <p>Our <a class="bbb-link" href="https://www.bbb.org/us/wa/vancouver/profile/auto-body-repair-and-painting/carcis-autobody-repair-llc-1296-1000201905/#sealclick" rel="noopener nofollow" target="_blank">BBB profile</a> takes reviews too, and we're on <a href="https://www.instagram.com/carcisautobody" rel="noopener" target="_blank">Instagram</a> if you'd rather just tag us in a photo of the car.</p>
@@ -327,6 +308,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </a>
 
 <script src="/js/site.js?v=f347bc97"></script>
-<script src="/js/review.js?v=e38e3b18"></script>
+<script src="/js/review-draft.js?v=84221c57"></script>
+<script src="/js/review.js?v=bb28868b"></script>
 </body>
 </html>

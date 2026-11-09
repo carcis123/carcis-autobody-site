@@ -695,6 +695,7 @@ function build() {
     // Only /review loads this one, so it is hashed separately rather than
     // bundled into site.js and shipped to every other page for nothing.
     reviewjs: assetVersion('js/review.js'),
+    reviewdraftjs: assetVersion('js/review-draft.js'),
   };
 
   // 1. Static pages at the site root.
