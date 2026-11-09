@@ -311,6 +311,7 @@
   var MAX_DEAD_RESTARTS = 4;
   var watchId = 0;
   var grantId = 0;
+  var meterDropped = false;   // the wave was given up to free the microphone
   var listeningStarted = false;  // the engine has actually begun
 
   // Nothing heard for a while is the single most confusing failure, because
@@ -325,12 +326,22 @@
     }, 7000);
   }
 
+  // Move anything still provisional into the permanent transcript. Called on
+  // every end, restart included, because an utterance that was heard must not
+  // depend on a final result arriving to survive.
+  function keep() {
+    if (!interim) return;
+    committed = (committed + ' ' + interim).replace(/^\s+/, '');
+    interim = '';
+  }
+
   function beginListening() {
     committed = box.value.trim();
     interim = '';
     results = 0;
     restarts = 0;
     listeningStarted = false;
+    meterDropped = false;
     wantListening = true;
     // Visual feedback on the press itself. Waiting for the engine's onstart
     // leaves the button looking dead for as long as a permission prompt is
@@ -458,6 +469,30 @@
       if (wantListening) {
         if (results > 0) restarts = 0; else restarts++;
         if (restarts <= MAX_DEAD_RESTARTS) {
+          // Bank whatever is still pending BEFORE restarting. Android Chrome
+          // ends the session after every utterance, frequently with the last
+          // words still interim and no final behind them; the restart used to
+          // return straight past this and the next session's first result
+          // overwrote `interim`, so each utterance quietly destroyed the one
+          // before it. Desktop almost always sends a final before ending,
+          // which is why this only ever showed up on a phone -- words
+          // appearing on screen and then no text in the box at the end.
+          keep();
+          // Two dead sessions in a row with the wave's audio stream open is
+          // the signature of the microphone being held against the
+          // recogniser. It is NOT what happens on this desktop -- measured
+          // on the live page, holding the stream is what made transcription
+          // work at all there -- but a phone arbitrates a second capture
+          // differently and I have no way to test that from here. So rather
+          // than pick a side, give the stream up and carry on without it.
+          // The wave is worth having; it is not worth the words.
+          if (results === 0 && media && !meterDropped && restarts >= 2) {
+            meterDropped = true;
+            closeMeter();
+            if (window.console && console.warn) {
+              console.warn('review: no results with the meter open - dropping it and retrying without');
+            }
+          }
           setTimeout(function () { if (wantListening) start(); }, 120);
           return;
         }
@@ -469,10 +504,7 @@
       clearTimeout(watchId);
       setMic(false);
       closeMeter();
-      if (interim) {
-        committed = (committed + ' ' + interim).replace(/^\s+/, '');
-        interim = '';
-      }
+      keep();
       paint();
     };
 
