@@ -99,13 +99,20 @@
      session, which could kill the session it was decorating, and so it only
      ran when permission was already granted -- meaning on a first visit, when
      reassurance matters most, there was none. */
-  function openMeter() {
+  function openMeter(mine) {
     if (media) return Promise.resolve(true);          // restart: already open
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !AC) {
       return Promise.resolve(false);
     }
     return navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
-      if (!wantListening) { stopTracks(stream); return false; }
+      // The customer may have stopped, or stopped and started again, while
+      // the prompt was up. A stream belonging to a session that has moved on
+      // is nobody's, and leaving it open keeps the browser's recording
+      // indicator lit over a page that is not listening.
+      if (!wantListening || (mine !== undefined && mine !== session) || media) {
+        stopTracks(stream);
+        return false;
+      }
       media = stream;
       audioCtx = new AC();
       if (audioCtx.state === 'suspended') { try { audioCtx.resume(); } catch (e) {} }
@@ -223,6 +230,17 @@
     return LANG_REGION[tag.toLowerCase()] || 'en-US';
   })();
   var rec = null;
+  /* Every press of the button opens a session and bumps this counter; every
+     stop bumps it again. A recogniser's callbacks capture the number they
+     were born under and do nothing once it has moved on.
+     Without it, the engine's events outlive the session that created them:
+     a stopped recogniser's late `onend` sees the button live again and opens
+     a SECOND engine on the same microphone, a late `onresult` appends ghost
+     words to the next session's text or over what the customer has since
+     typed, and an in-flight getUserMedia hands back a stream nobody owns any
+     more, leaving the recording indicator lit. All four are the same bug. */
+  var session = 0;
+  var restartId = 0;
   var listening = false;
   var wantListening = false;   // the user's intent, separate from engine state
   var committed = '';          // everything finalised or typed
@@ -329,6 +347,14 @@
   // Move anything still provisional into the permanent transcript. Called on
   // every end, restart included, because an utterance that was heard must not
   // depend on a final result arriving to survive.
+  // Silence a recogniser we have finished with, so nothing it says later is
+  // acted on and it lets go of the microphone.
+  function detach(r) {
+    if (!r) return;
+    r.onstart = null; r.onresult = null; r.onerror = null; r.onend = null;
+    try { if (r.abort) r.abort(); else if (r.stop) r.stop(); } catch (e) {}
+  }
+
   function keep() {
     if (!interim) return;
     committed = (committed + ' ' + interim).replace(/^\s+/, '');
@@ -342,6 +368,10 @@
     restarts = 0;
     listeningStarted = false;
     meterDropped = false;
+    session++;
+    clearTimeout(restartId);
+    detach(rec);
+    rec = null;
     wantListening = true;
     // Visual feedback on the press itself. Waiting for the engine's onstart
     // leaves the button looking dead for as long as a permission prompt is
@@ -373,29 +403,48 @@
         say('The microphone was never allowed, so there is nothing to listen with. Type it below instead — it works the same.', 'warn');
       }
     }, 20000);
-    openMeter().then(startSpeech, startSpeech);
+    var mine = session;
+    openMeter(mine).then(function () { startSpeech(mine); }, function () { startSpeech(mine); });
     track('review_voice_start');
   }
 
-  function startSpeech() { clearTimeout(grantId); if (wantListening) start(); else closeMeter(); }
+  function startSpeech(mine) {
+    if (mine !== session) return;
+    clearTimeout(grantId);
+    if (wantListening) start(); else closeMeter();
+  }
 
   function endListening() {
     wantListening = false;
     listeningStarted = false;
+    session++;                       // everything in flight is now orphaned
     clearTimeout(grantId);
+    clearTimeout(watchId);
+    clearTimeout(restartId);
+    var finished = rec;
+    rec = null;
+    detach(finished);
     setMic(false);
     closeMeter();
-    if (rec) { try { rec.stop(); } catch (e) {} }
+    // Bank anything still provisional here rather than relying on the
+    // recogniser's own onend, which this session no longer owns.
+    keep();
+    paint();
     say(box.value.trim() ? 'Read it back and change anything that isn’t how you’d say it.' : '');
   }
 
   function start() {
+    // The session this recogniser belongs to. Every callback below checks it
+    // before touching anything shared.
+    var mine = session;
+    detach(rec);
     rec = new SR();
     rec.lang = SPEECH_LANG;
     rec.continuous = true;
     rec.interimResults = true;
 
     rec.onstart = function () {
+      if (mine !== session) return;
       listeningStarted = true;
       clearTimeout(grantId);
       setMic(true);
@@ -406,6 +455,7 @@
     };
 
     rec.onresult = function (e) {
+      if (mine !== session) return;
       results++;
       restarts = 0;
       var pending = '';
@@ -422,6 +472,7 @@
     };
 
     rec.onerror = function (e) {
+      if (mine !== session) return;
       var code = e.error || '';
       clearTimeout(watchId);
       // Android fires no-speech constantly during ordinary pauses. Ending
@@ -461,6 +512,7 @@
     };
 
     rec.onend = function () {
+      if (mine !== session) return;
       // Chrome ends the session by itself after a pause, and Android Chrome
       // ends it after every single utterance. While the button is still on,
       // start a fresh recogniser so a pause mid-thought does not quietly end
@@ -493,7 +545,10 @@
               console.warn('review: no results with the meter open - dropping it and retrying without');
             }
           }
-          setTimeout(function () { if (wantListening) start(); }, 120);
+          clearTimeout(restartId);
+          restartId = setTimeout(function () {
+            if (wantListening && mine === session) start();
+          }, 120);
           return;
         }
         // It has ended several times running without ever returning a word.
@@ -511,6 +566,7 @@
     try {
       rec.start();
     } catch (e) {
+      if (mine !== session) return;
       wantListening = false;
       setMic(false);
       closeMeter();
@@ -537,6 +593,11 @@
       polishBtn.disabled = true;
       polishBtn.textContent = 'Thinking…';
       say('');
+      // Which text this answer is for. A suggestion that arrives after the
+      // customer has rewritten the review is advice about a review that no
+      // longer exists, and showing it invites them to accept words they did
+      // not write.
+      var askedAbout = mine;
 
       fetch(POLISH_URL, {
         method: 'POST',
@@ -553,6 +614,10 @@
         // checked the edit, decided it had drifted from what the customer
         // actually said, and withheld it. Saying "couldn't reach the service"
         // there would be a lie about something that worked correctly.
+        if (box.value.trim() !== askedAbout) {
+          say('You’ve changed it since — press the button again for a fresh suggestion.', 'ok');
+          return;
+        }
         var tidied = r.data.polished.trim();
         if (!tidied || tidied === mine) {
           say('Carcis AI didn’t find anything worth changing — it already reads well.', 'ok');
@@ -631,7 +696,14 @@
   });
 
   // The microphone must not stay open because someone wandered off mid-review.
-  window.addEventListener('pagehide', function () { wantListening = false; closeMeter(); });
+  window.addEventListener('pagehide', function () {
+    wantListening = false;
+    session++;                 // orphan anything still in flight
+    clearTimeout(restartId);
+    detach(rec);
+    rec = null;
+    closeMeter();
+  });
 
   refresh();
   setMic(false);
