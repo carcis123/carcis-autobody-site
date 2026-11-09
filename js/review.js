@@ -42,6 +42,7 @@
   var tidiedEl  = document.getElementById('cpTidied');
   var useMine   = document.getElementById('cpUseMine');
   var useTidied = document.getElementById('cpUseTidied');
+  var waveEl    = document.getElementById('cpWave');
   var liveEl    = document.getElementById('cpLive');
   var liveDone  = document.getElementById('cpLiveDone');
   var liveNow   = document.getElementById('cpLiveNow');
@@ -50,6 +51,9 @@
   var doneHead  = doneEl ? doneEl.querySelector('.cp-done-head') : null;
 
   var POLISH_URL = root.getAttribute('data-polish') || '';
+  // Read from the stylesheet rather than hard-coded, so the wave cannot
+  // drift away from the rest of the page's colour the next time it moves.
+  var WAVE_COLOR = (getComputedStyle(root).getPropertyValue('--cp-wave') || '').trim() || '#e23b3b';
 
   function track(name) {
     try { if (window.clarity) window.clarity('event', name); } catch (e) {}
@@ -86,51 +90,81 @@
      pulse and dictation is unaffected. */
 
   var media = null, audioCtx = null, analyser = null, rafId = 0, buf = null;
-  // Shared by openMeter and startStream. Kept here rather than inside
-  // openMeter so splitting the two apart cannot leave startStream reaching
-  // for a name it cannot see -- which is exactly what happened once, and the
-  // meter's own catch block swallowed the ReferenceError without a word.
   var AC = window.AudioContext || window.webkitAudioContext;
+  var waveCtx = null, waveW = 0, waveH = 0;
 
+  /* The stream is opened BEFORE speech recognition starts, from the click
+     itself, so there is one permission prompt and it is answered before
+     anything else begins. The old order asked for it midway through a live
+     session, which could kill the session it was decorating, and so it only
+     ran when permission was already granted -- meaning on a first visit, when
+     reassurance matters most, there was none. */
   function openMeter() {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
-    if (!AC) return;
-
-    // Only ask for the audio stream when the microphone has ALREADY been
-    // granted. Asking during a live session raises a second permission
-    // prompt, and that prompt can abort the speech recognition that just
-    // started -- the meter is a nicety, and it is not worth costing someone
-    // the recording they were in the middle of making. Without the
-    // Permissions API we simply do without the meter.
-    if (!navigator.permissions || !navigator.permissions.query) return;
-
-    navigator.permissions.query({ name: 'microphone' }).then(function (status) {
-      if (status.state !== 'granted' || !listening) return;
-      return startStream();
-    }).catch(function () {
-      // Firefox and some Safari builds reject the 'microphone' descriptor
-      // outright. No meter, no harm.
-    });
-  }
-
-  function startStream() {
+    if (media) return Promise.resolve(true);          // restart: already open
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !AC) {
+      return Promise.resolve(false);
+    }
     return navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
-      // The user may have stopped talking while the prompt was up.
-      if (!listening) { stopTracks(stream); return; }
+      if (!wantListening) { stopTracks(stream); return false; }
       media = stream;
       audioCtx = new AC();
+      if (audioCtx.state === 'suspended') { try { audioCtx.resume(); } catch (e) {} }
       analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 256;
+      analyser.fftSize = 1024;
+      analyser.smoothingTimeConstant = 0.6;
       audioCtx.createMediaStreamSource(stream).connect(analyser);
       buf = new Uint8Array(analyser.fftSize);
       micBtn.classList.add('cp-mic-metered');
+      if (waveEl) { waveEl.hidden = false; sizeWave(); }
       meter();
+      return true;
     }).catch(function (err) {
-      // No meter. The pulse keeps doing its job. Logged rather than
-      // swallowed: a refused stream and a mistake in this file look
-      // identical from the outside otherwise.
-      if (window.console && console.warn) console.warn('review: level meter off -', err && err.message);
+      if (window.console && console.warn) console.warn('review: no level meter -', err && err.name, err && err.message);
+      return false;
     });
+  }
+
+  function sizeWave() {
+    if (!waveEl) return;
+    var dpr = window.devicePixelRatio || 1;
+    var r = waveEl.getBoundingClientRect();
+    if (!r.width) return;
+    waveW = Math.round(r.width); waveH = Math.round(r.height);
+    waveEl.width = Math.round(waveW * dpr);
+    waveEl.height = Math.round(waveH * dpr);
+    waveCtx = waveEl.getContext('2d');
+    waveCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  /* A real trace off the microphone, not an animation. The distinction
+     matters: a decorative wave would wave just as convincingly with the mic
+     dead, which is precisely the question someone staring at this button is
+     asking. If the stream is refused there is no wave at all, rather than a
+     comforting one. */
+  function drawWave() {
+    if (!waveCtx || !analyser) return;
+    var w = waveW, h = waveH, mid = h / 2;
+    waveCtx.clearRect(0, 0, w, h);
+
+    var BAR = 4, GAP = 3, step = BAR + GAP;
+    var bars = Math.max(1, Math.floor(w / step));
+    var per = Math.floor(buf.length / bars) || 1;
+
+    waveCtx.fillStyle = WAVE_COLOR;
+    for (var b = 0; b < bars; b++) {
+      var sum = 0, n = 0;
+      for (var i = b * per; i < (b + 1) * per && i < buf.length; i++) {
+        var d = (buf[i] - 128) / 128;
+        sum += d * d; n++;
+      }
+      var amp = Math.min(1, Math.sqrt(sum / (n || 1)) * 4.5);
+      // Always at least a hairline, so the strip reads as a quiet microphone
+      // rather than as a broken one.
+      var bh = Math.max(3, amp * (h - 6));
+      waveCtx.globalAlpha = 0.45 + amp * 0.55;
+      waveCtx.fillRect(b * step, mid - bh / 2, BAR, bh);
+    }
+    waveCtx.globalAlpha = 1;
   }
 
   function meter() {
@@ -141,10 +175,9 @@
       var d = (buf[i] - 128) / 128;
       sum += d * d;
     }
-    // Speech sits low in this range, so it is scaled up and clamped rather
-    // than shown raw, where normal talking would barely move the ring.
     var level = Math.min(1, Math.sqrt(sum / buf.length) * 5.5);
     micBtn.style.setProperty('--level', level.toFixed(3));
+    drawWave();
     rafId = requestAnimationFrame(meter);
   }
 
@@ -165,11 +198,30 @@
     buf = null;
     micBtn.classList.remove('cp-mic-metered');
     micBtn.style.setProperty('--level', '0');
+    if (waveEl) { waveEl.hidden = true; if (waveCtx) waveCtx.clearRect(0, 0, waveW, waveH); }
   }
+
+  window.addEventListener('resize', function () { if (analyser) sizeWave(); });
 
   /* ----------------------------------------------------------- dictation */
 
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  /* The recogniser's language has to be a full tag with a region.
+     document.documentElement.lang here is "en", and Google's speech service
+     rejects a bare "en" outright -- not with language-not-supported, which
+     would have said what was wrong, but with a `network` error about half a
+     second in. That one line is what made this look like a broken microphone,
+     a flaky Android, and a dead feature on the desktop too. The site is one
+     shop in Vancouver WA, so en-US is the honest default; the map is here so
+     that adding a Spanish page later is a one-line change rather than this
+     bug again. */
+  var LANG_REGION = { en: 'en-US', es: 'es-US', ru: 'ru-RU', uk: 'uk-UA', vi: 'vi-VN' };
+  var SPEECH_LANG = (function () {
+    var tag = (document.documentElement.lang || '').trim();
+    if (/^[a-z]{2,3}-[A-Za-z0-9]{2,}/.test(tag)) return tag;       // already regioned
+    return LANG_REGION[tag.toLowerCase()] || 'en-US';
+  })();
   var rec = null;
   var listening = false;
   var wantListening = false;   // the user's intent, separate from engine state
@@ -258,6 +310,8 @@
   var restarts = 0;     // consecutive restarts with nothing to show for them
   var MAX_DEAD_RESTARTS = 4;
   var watchId = 0;
+  var grantId = 0;
+  var listeningStarted = false;  // the engine has actually begun
 
   // Nothing heard for a while is the single most confusing failure, because
   // the button looks alive. Say so rather than leaving someone talking at a
@@ -276,13 +330,48 @@
     interim = '';
     results = 0;
     restarts = 0;
+    listeningStarted = false;
     wantListening = true;
-    start();
+    // Visual feedback on the press itself. Waiting for the engine's onstart
+    // leaves the button looking dead for as long as a permission prompt is
+    // up, which is exactly when someone decides it is broken.
+    setMic(true);
+    say('Starting…', 'live');
+    // The microphone first, so there is one prompt and it is settled before
+    // recognition begins. Recognition starts either way: a refused stream
+    // costs the wave, not the dictation.
+    //
+    // Nothing can happen until that prompt is answered, so say what we are
+    // waiting for. Tested on a fresh origin, the button otherwise sat on
+    // \"Starting…\" indefinitely while the browser's own dialog waited
+    // off to one side, which reads as the feature hanging.
+    if (navigator.permissions && navigator.permissions.query) {
+      navigator.permissions.query({ name: 'microphone' }).then(function (st) {
+        if (st.state === 'prompt' && wantListening && !media) {
+          say('Allow the microphone when your browser asks — nothing is recorded or sent to us.', 'live');
+        }
+      }).catch(function () {});
+    }
+    // And if it is never answered, do not sit there forever.
+    clearTimeout(grantId);
+    grantId = setTimeout(function () {
+      if (wantListening && !media && !listeningStarted) {
+        wantListening = false;
+        setMic(false);
+        closeMeter();
+        say('The microphone was never allowed, so there is nothing to listen with. Type it below instead — it works the same.', 'warn');
+      }
+    }, 20000);
+    openMeter().then(startSpeech, startSpeech);
     track('review_voice_start');
   }
 
+  function startSpeech() { clearTimeout(grantId); if (wantListening) start(); else closeMeter(); }
+
   function endListening() {
     wantListening = false;
+    listeningStarted = false;
+    clearTimeout(grantId);
     setMic(false);
     closeMeter();
     if (rec) { try { rec.stop(); } catch (e) {} }
@@ -291,14 +380,17 @@
 
   function start() {
     rec = new SR();
-    rec.lang = document.documentElement.lang || 'en-US';
+    rec.lang = SPEECH_LANG;
     rec.continuous = true;
     rec.interimResults = true;
 
     rec.onstart = function () {
+      listeningStarted = true;
+      clearTimeout(grantId);
       setMic(true);
-      openMeter();
-      say('Listening. Say it how you’d say it to a friend — pauses are fine. Press again when you’re done.', 'live');
+      if (!committed && !interim) {
+        say('Listening. Say it how you’d say it to a friend — pauses are fine. Press again when you’re done.', 'live');
+      }
       watchdog();
     };
 
@@ -331,16 +423,29 @@
       interim = '';
       paint();
 
+      // Logged every time. The fault that cost two rounds of this feature was
+      // a `network` error reported to the customer as \"stopped working\", with
+      // the actual code visible nowhere -- so there was nothing to go on but
+      // guesswork. The code goes to the console now, always.
+      if (window.console && console.warn) console.warn('review: speech error -', code, e.message || '');
+
       if (code === 'not-allowed' || code === 'service-not-allowed') {
         say('The browser blocked the microphone. Allow it from the address bar, or just type below.', 'warn');
       } else if (code === 'no-speech') {
-        say('Didn’t catch anything. Hold the button again and speak up, or type below.', 'warn');
+        say('Didn’t catch anything. Press the button again and speak up, or type below.', 'warn');
       } else if (code === 'audio-capture') {
         say('No microphone found. Typing below works just as well.', 'warn');
+      } else if (code === 'network') {
+        // Transcription happens on Google's servers, not on the phone, so
+        // this is a connection problem and worth saying plainly rather than
+        // leaving someone pressing a button that will not work.
+        say(media
+          ? 'Your microphone is working, but the words can’t get to the transcription service — that needs a connection. Type it below instead.'
+          : 'Couldn’t reach the transcription service. Check your connection, or type it below instead.', 'warn');
       } else if (code === 'aborted') {
         say('');
       } else {
-        say('Speech recognition stopped working. You can carry on typing below.', 'warn');
+        say('Speech recognition stopped (' + (code || 'unknown') + '). You can carry on typing below.', 'warn');
       }
     };
 

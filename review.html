@@ -25,7 +25,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#d94a3e">
 <link rel="preload" as="image" href="/assets/logo/carcis-logo-sm.webp" type="image/webp">
-<link rel="stylesheet" href="/styles/site.css?v=398c167e">
+<link rel="stylesheet" href="/styles/site.css?v=5e4a4732">
 <!-- Measurement: Google Ads, Google Analytics 4 and Microsoft Clarity.
      Every ID lives in CARCIS_TRACKING below, and an empty string switches that
      service off. Google Ads and GA4 share one gtag.js loader.
@@ -193,6 +193,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <span class="cp-mic-text" id="cpMicLabel">Press to talk</span>
           <span class="cp-mic-hint" id="cpMicHint">press again to stop</span>
         </div>
+        <!-- A real trace off the microphone, drawn from the audio itself. It
+           answers "is this thing hearing me?" in the half second before any
+           words come back, and because it is driven by the stream rather than
+           by a timer it cannot reassure anyone about a microphone that is
+           dead. No stream, no wave. -->
+        <canvas class="cp-wave" id="cpWave" height="64" hidden aria-hidden="true"></canvas>
+
         <p class="cp-status" id="cpStatus" role="status" aria-live="polite"></p>
       </div>
 
@@ -320,6 +327,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </a>
 
 <script src="/js/site.js?v=f347bc97"></script>
-<script src="/js/review.js?v=1370fabd"></script>
+<script src="/js/review.js?v=aaf285a6"></script>
 </body>
 </html>

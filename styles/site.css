@@ -1459,3 +1459,24 @@ a.feature-row:hover .feature-title { color: var(--red-bright); }
      brightness carries it instead of scale. */
   .cp-mic-metered .cp-mic-halo { transform: none; transition: opacity 0.12s linear; }
 }
+
+/* The live microphone trace on /review. Exposed as a custom property on .cp
+   so review.js can read the colour from here rather than carrying its own
+   copy of it. */
+.cp { --cp-wave: oklch(63% 0.21 25); }
+.cp-wave {
+  display: block;
+  width: 100%;
+  height: 64px;
+  margin: 0.25rem 0 0.1rem;
+  /* Sits between the button and the status line, full width of the block, so
+     the first thing in view under the microphone is the microphone working. */
+  flex-basis: 100%;
+  order: 1;
+}
+.cp-wave[hidden] { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  /* The wave is information, not decoration, so it stays -- but nothing else
+     about the button needs to move while it is doing the work. */
+  .cp-mic-live { animation: none; }
+}

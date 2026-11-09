@@ -67,6 +67,13 @@
           <span class="cp-mic-text" id="cpMicLabel">Press to talk</span>
           <span class="cp-mic-hint" id="cpMicHint">press again to stop</span>
         </div>
+        <!-- A real trace off the microphone, drawn from the audio itself. It
+           answers "is this thing hearing me?" in the half second before any
+           words come back, and because it is driven by the stream rather than
+           by a timer it cannot reassure anyone about a microphone that is
+           dead. No stream, no wave. -->
+        <canvas class="cp-wave" id="cpWave" height="64" hidden aria-hidden="true"></canvas>
+
         <p class="cp-status" id="cpStatus" role="status" aria-live="polite"></p>
       </div>
 
