@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Review card 5&times;7 | Carcis Autobody Repair</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/assets/favicon/favicon.ico" sizes="any">
+
+<!--
+  The counter card, 5x7, for printing.
+
+  Deliberately NOT built on the site's stylesheet. The website is a single
+  dark theme by design, and a dark 5x7 is the wrong object: it drinks ink,
+  it greys out on anything but a good printer, and reversed-out text at card
+  size is simply harder to read across a counter. So this page is
+  self-contained and light, and carries the brand with the band, the logo,
+  the typeface and the red rather than with the background.
+
+  Print it from a browser: File > Print, paper size 5 x 7 in, margins None,
+  Background graphics ON. The @page rule below asks for exactly that, but
+  background graphics is a checkbox no stylesheet can set.
+-->
+
+<style>
+  @font-face {
+    font-family: 'Big Shoulders Display';
+    src: url('/styles/fonts/bigshoulders.woff2') format('woff2');
+    font-weight: 400 800;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Public Sans';
+    src: url('/styles/fonts/publicsans.woff2') format('woff2');
+    font-weight: 400 700;
+    font-display: swap;
+  }
+
+  :root {
+    --card-w: 5in;
+    --card-h: 7in;
+    /* The site's own red and near-black, so the card and the website are
+       visibly the same brand. Hex alongside oklch because some print
+       pipelines still fall back. */
+    --red: #d1332b;
+    --red-oklch: oklch(0.58 0.195 27);
+    --ink: #17110f;
+    --ink-soft: #4a403d;
+    --band: #150f0d;
+    --paper: #ffffff;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { margin: 0; padding: 0; background: #8a8a8a; }
+
+  .card {
+    width: var(--card-w);
+    height: var(--card-h);
+    margin: 24px auto;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Public Sans', -apple-system, sans-serif;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    /* Make the band and the red actually appear on paper. */
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* -- brand band -- */
+  .band {
+    background: var(--band);
+    padding: 0.30in 0 0.26in;
+    text-align: center;
+    flex: none;
+    border-bottom: 0.055in solid var(--red);
+    border-bottom-color: var(--red-oklch);
+  }
+  .band img { height: 0.72in; width: auto; display: inline-block; }
+
+  /* -- body -- */
+  .body {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0.30in 0.38in 0.26in;
+  }
+
+  .eyebrow {
+    font-family: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+    font-weight: 700;
+    font-size: 11.5pt;
+    letter-spacing: 0.17em;
+    text-transform: uppercase;
+    color: var(--red);
+    color: var(--red-oklch);
+    margin: 0 0 0.07in;
+  }
+
+  h1 {
+    font-family: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+    font-weight: 800;
+    font-size: 47pt;
+    line-height: 0.92;
+    letter-spacing: -0.005em;
+    margin: 0 0 0.11in;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  h1 .accent { color: var(--red); color: var(--red-oklch); }
+
+  .lede {
+    font-size: 11.5pt;
+    line-height: 1.45;
+    color: var(--ink-soft);
+    margin: 0 0 0.20in;
+    max-width: 3.35in;
+    /* Keeps the last line from ending on a lone orphan word, which at card
+       size is the difference between reading as typeset and reading as a
+       printout. */
+    text-wrap: pretty;
+  }
+
+  /* -- the code --
+     1.85in square. Below about 1.4in a version-3 code starts needing a
+     steady hand at arm's length, which is exactly the moment someone gives
+     up and puts the card down. */
+  .qr {
+    width: 1.85in;
+    height: 1.85in;
+    flex: none;
+    display: block;
+    /* A quiet zone is part of the symbol, not decoration: without it the
+       card's own edges and text read as modules and some scanners miss it. */
+    padding: 0.10in;
+    background: #fff;
+    border: 1.25pt solid var(--ink);
+  }
+
+  .url {
+    font-family: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+    font-weight: 700;
+    font-size: 15pt;
+    letter-spacing: 0.02em;
+    margin: 0.15in 0 0;
+    color: var(--ink);
+  }
+  .url-note {
+    font-size: 9.5pt;
+    color: var(--ink-soft);
+    margin: 0.045in 0 0;
+  }
+
+  .foot {
+    margin-top: auto;
+    padding-top: 0.16in;
+    width: 100%;
+    border-top: 0.75pt solid #ddd6d3;
+    display: flex;
+    justify-content: center;
+    gap: 0.22in;
+    font-size: 10pt;
+    color: var(--ink-soft);
+  }
+  .foot strong { color: var(--ink); font-weight: 700; }
+
+  /* -- screen-only helper, never printed -- */
+  .hint {
+    max-width: 5in;
+    margin: 0 auto 28px;
+    font-family: 'Public Sans', -apple-system, sans-serif;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #fff;
+    background: #272022;
+    padding: 14px 16px;
+    border-left: 3px solid var(--red);
+  }
+  .hint b { color: #ffb3ad; }
+
+  @page { size: 5in 7in; margin: 0; }
+
+  @media print {
+    html, body { background: #fff; }
+    .hint { display: none !important; }
+    .card { margin: 0; width: 100%; height: 100vh; }
+  }
+</style>
+</head>
+<body>
+
+<p class="hint">
+  <b>To print:</b> File &rarr; Print &rarr; paper size <b>5 &times; 7 in</b>,
+  margins <b>None</b>, and tick <b>Background graphics</b> &mdash; without that
+  last one the band and the red line come out blank. This note is not printed.
+</p>
+
+<div class="card">
+
+  <div class="band">
+    <img src="/assets/logo/carcis-logo-sm.jpg" alt="Carcis Autobody Repair LLC" width="240" height="164">
+  </div>
+
+  <div class="body">
+    <p class="eyebrow">Thanks for trusting us with your car</p>
+    <h1>How did we <span class="accent">do</span>?</h1>
+    <p class="lede">Scan the code and answer four quick questions. We&rsquo;ll turn your answers into a review you can change before you post it.</p>
+
+    <img class="qr" src="/assets/review-qr.svg" alt="Scan to leave a review at carcisautobody.com/review" width="178" height="178">
+
+    <p class="url">carcisautobody.com/review</p>
+    <p class="url-note">No app, no account to set up. About a minute.</p>
+
+    <div class="foot">
+      <span><strong>(360) 381-5219</strong></span>
+      <span>1520 Washington St, Vancouver</span>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
