@@ -46,7 +46,7 @@
     --red-oklch: oklch(0.58 0.195 27);
     --ink: #17110f;
     --ink-soft: #4a403d;
-    --band: #150f0d;
+    --band: #000000;   /* the logo JPEG has a black box baked in; matching it hides the seam */
     --paper: #ffffff;
   }
 
@@ -117,8 +117,8 @@
     font-size: 11.5pt;
     line-height: 1.45;
     color: var(--ink-soft);
-    margin: 0 0 0.20in;
-    max-width: 3.35in;
+    margin: 0 0 0.18in;
+    max-width: 3.3in;
     /* Keeps the last line from ending on a lone orphan word, which at card
        size is the difference between reading as typeset and reading as a
        printout. */
@@ -126,19 +126,19 @@
   }
 
   /* -- the code --
-     1.85in square. Below about 1.4in a version-3 code starts needing a
-     steady hand at arm's length, which is exactly the moment someone gives
-     up and puts the card down. */
+     2.15in overall: a 37-module symbol plus the 4 modules of quiet zone the
+     spec requires on every side, which works out at 0.191in. The quiet zone
+     is part of the symbol, not padding round it -- too little and the card's
+     own text and rules read as modules and the scan silently never resolves.
+     2.15 / (37 + 8) = 0.0478in per module, about 1.2mm, which an office
+     inkjet holds without bleeding neighbouring modules together. */
   .qr {
-    width: 1.85in;
-    height: 1.85in;
+    width: 2.15in;
+    height: 2.15in;
     flex: none;
     display: block;
-    /* A quiet zone is part of the symbol, not decoration: without it the
-       card's own edges and text read as modules and some scanners miss it. */
-    padding: 0.10in;
+    padding: 0.1911in;
     background: #fff;
-    border: 1.25pt solid var(--ink);
   }
 
   .url {
@@ -210,7 +210,7 @@
     <h1>How did we <span class="accent">do</span>?</h1>
     <p class="lede">Scan the code and answer four quick questions. We&rsquo;ll turn your answers into a review you can change before you post it.</p>
 
-    <img class="qr" src="/assets/review-qr.svg" alt="Scan to leave a review at carcisautobody.com/review" width="178" height="178">
+    <img class="qr" src="/assets/review-qr.svg" alt="Scan to leave a review at carcisautobody.com/review" width="206" height="206">
 
     <p class="url">carcisautobody.com/review</p>
     <p class="url-note">No app, no account to set up. About a minute.</p>
