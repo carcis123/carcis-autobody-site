@@ -1,0 +1,95 @@
+{
+  "_generated": {
+    "by": "tools/sync-form.js",
+    "model": "gemini-3.6-flash",
+    "importedAt": "2026-11-26T22:50:53.032Z",
+    "formTimestamp": "11/25/2026 11:00:35",
+    "formRow": 8,
+    "submittedOn": "2026-11-25",
+    "shopNotes": "Repaired and painted all four door moldings as well as replaced the driver side fender.",
+    "corrections": [
+      "model: Piolt -> Pilot"
+    ],
+    "correctionsRejected": [],
+    "redactions": [
+      {
+        "photo": 5,
+        "label": "license plate",
+        "stage": "draft"
+      },
+      {
+        "photo": 6,
+        "label": "license plate",
+        "stage": "draft"
+      }
+    ],
+    "privacyChecks": 1,
+    "privacyVerifiedClean": true,
+    "privacyIssues": [],
+    "uncertain": [],
+    "skippedPhotos": [],
+    "review": "Personal information in the photos and notes was redacted automatically; look at every photo anyway. The vehicle fields are the shop's answers with typos fixed (see corrections), and the service and date are as submitted. The title, summary, story and alt text are a Gemini draft. Check every claim, fix the voice, then set \"draft\" to false to publish."
+  },
+  "slug": "2013-honda-pilot-dent-repair",
+  "date": "2026-11-21",
+  "title": "2013 Honda Pilot Fender Replacement & Door Molding Repair",
+  "summary": "Carcis Autobody Repair replaced the driver-side fender and repaired door moldings on a maroon 2013 Honda Pilot.",
+  "service": "dent",
+  "vehicle": {
+    "year": "2013",
+    "make": "Honda",
+    "model": "Pilot",
+    "color": "Maroon"
+  },
+  "insurance": true,
+  "draft": true,
+  "story": [
+    "Carcis Autobody Repair performed collision repair on a maroon 2013 Honda Pilot with damage along the driver side. The driver-side front fender required full replacement, while the exterior door moldings along the side needed repair.",
+    "The damaged front fender panel was removed to prepare the area for a replacement fender. Technicians sanded and smoothed out scrapes on all four door moldings, applying primer to restore surface uniformness prior to refinishing.",
+    "The new fender panel and prepped door moldings were painted and clear-coated to match the vehicle's original factory maroon color. After painting, the newly finished components were reinstalled and aligned."
+  ],
+  "photos": [
+    {
+      "file": "/assets/work/2013-honda-pilot-dent-repair/before-1.webp",
+      "alt": "Front driver-side fender of a maroon 2013 Honda Pilot with primer applied during prep work.",
+      "width": 900,
+      "height": 1200,
+      "role": "before"
+    },
+    {
+      "file": "/assets/work/2013-honda-pilot-dent-repair/before-2.webp",
+      "alt": "Side profile view showing sanded door moldings on a maroon Honda Pilot during repair.",
+      "width": 1200,
+      "height": 900,
+      "role": "before"
+    },
+    {
+      "file": "/assets/work/2013-honda-pilot-dent-repair/before-3.webp",
+      "alt": "Close-up view of damaged side door molding trim prepped for paint repair.",
+      "width": 900,
+      "height": 1200,
+      "role": "before"
+    },
+    {
+      "file": "/assets/work/2013-honda-pilot-dent-repair/before-4.webp",
+      "alt": "Front driver-side angle of the maroon SUV prior to fender replacement.",
+      "width": 900,
+      "height": 1200,
+      "role": "before"
+    },
+    {
+      "file": "/assets/work/2013-honda-pilot-dent-repair/after-1.webp",
+      "alt": "Front view of the completed maroon 2013 Honda Pilot parked outside the shop.",
+      "width": 1200,
+      "height": 900,
+      "role": "after"
+    },
+    {
+      "file": "/assets/work/2013-honda-pilot-dent-repair/after-2.webp",
+      "alt": "Driver-side profile view of the completed maroon 2013 Honda Pilot after repair.",
+      "width": 1200,
+      "height": 900,
+      "role": "after"
+    }
+  ]
+}
