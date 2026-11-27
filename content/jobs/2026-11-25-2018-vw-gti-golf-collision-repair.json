@@ -1,0 +1,113 @@
+{
+  "_generated": {
+    "by": "tools/sync-form.js",
+    "model": "gemini-3.6-flash",
+    "importedAt": "2026-11-27T22:32:11.895Z",
+    "formTimestamp": "11/25/2026 17:10:56",
+    "formRow": 9,
+    "submittedOn": "2026-11-25",
+    "shopNotes": "Hit and run.",
+    "corrections": [
+      "color: Metallic Dark Grey -> Metallic Dark Gray"
+    ],
+    "correctionsRejected": [
+      "make: kept \"VW\", the model suggested \"Volkswagen\"",
+      "model: kept \"GTI Golf\", the model suggested \"Golf GTI\""
+    ],
+    "redactions": [
+      {
+        "photo": 4,
+        "label": "street address",
+        "stage": "draft"
+      },
+      {
+        "photo": 4,
+        "label": "license plate",
+        "stage": "draft"
+      },
+      {
+        "photo": 5,
+        "label": "license plate",
+        "stage": "draft"
+      },
+      {
+        "photo": 6,
+        "label": "license plate",
+        "stage": "draft"
+      },
+      {
+        "photo": 6,
+        "label": "license plate",
+        "stage": "draft"
+      }
+    ],
+    "privacyChecks": 1,
+    "privacyVerifiedClean": true,
+    "privacyIssues": [],
+    "uncertain": [],
+    "skippedPhotos": [],
+    "review": "Personal information in the photos and notes was redacted automatically; look at every photo anyway. The vehicle fields are the shop's answers with typos fixed (see corrections), and the service and date are as submitted. The title, summary, story and alt text are a Gemini draft. Check every claim, fix the voice, then set \"draft\" to false to publish."
+  },
+  "slug": "2018-vw-gti-golf-collision-repair",
+  "date": "2026-11-25",
+  "title": "2018 Volkswagen Golf GTI Collision Repair",
+  "summary": "Carcis Autobody Repair completed collision repair on a 2018 Volkswagen Golf GTI damaged in a hit-and-run incident.",
+  "service": "collision",
+  "vehicle": {
+    "year": "2018",
+    "make": "VW",
+    "model": "GTI Golf",
+    "color": "Metallic Dark Gray"
+  },
+  "insurance": true,
+  "draft": true,
+  "story": [
+    "This 2018 Volkswagen Golf GTI arrived at the shop requiring front-end collision repair following a hit-and-run incident. Initial inspection showed impact damage concentrated on the front right fender, headlight mounting area, and front bumper cover assembly.",
+    "The repair process involved disassembling affected components around the front quarter section, including removing the headlight assembly and front bumper cover for complete assessment. Technicians addressed structural alignment at the fender mounts and prepared replacement panels for paint.",
+    "After applying primer, a Metallic Dark Gray color coat, and clear coat, the team reassembled the headlight and bumper trim. Body gaps and panel alignments were verified before completing final cleanup."
+  ],
+  "photos": [
+    {
+      "file": "/assets/work/2018-vw-gti-golf-collision-repair/before-1.webp",
+      "alt": "Front right quarter view of a gray 2018 Volkswagen Golf GTI with front fender damage and shop repair markings before service.",
+      "width": 1200,
+      "height": 900,
+      "role": "before"
+    },
+    {
+      "file": "/assets/work/2018-vw-gti-golf-collision-repair/before-2.webp",
+      "alt": "Side profile view of a gray Volkswagen Golf GTI showing front fender damage and chalked repair notes before collision repair.",
+      "width": 1200,
+      "height": 900,
+      "role": "before"
+    },
+    {
+      "file": "/assets/work/2018-vw-gti-golf-collision-repair/before-3.webp",
+      "alt": "Close-up photo of the damaged front right fender and headlight area on a Volkswagen Golf GTI before repair.",
+      "width": 1200,
+      "height": 900,
+      "role": "before"
+    },
+    {
+      "file": "/assets/work/2018-vw-gti-golf-collision-repair/after-1.webp",
+      "alt": "Front right quarter view of a gray Volkswagen Golf GTI parked outdoors after completed collision repair.",
+      "width": 1200,
+      "height": 900,
+      "role": "after"
+    },
+    {
+      "file": "/assets/work/2018-vw-gti-golf-collision-repair/after-2.webp",
+      "alt": "Front angled view of a clean 2018 Volkswagen Golf GTI following fender and bumper restoration.",
+      "width": 1200,
+      "height": 900,
+      "role": "after"
+    },
+    {
+      "file": "/assets/work/2018-vw-gti-golf-collision-repair/after-3.webp",
+      "alt": "Direct front view of the repaired gray Volkswagen Golf GTI showing completed body and paint work.",
+      "width": 1200,
+      "height": 900,
+      "role": "after"
+    }
+  ]
+}
