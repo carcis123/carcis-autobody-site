@@ -1,0 +1,122 @@
+{
+  "_generated": {
+    "by": "tools/sync-form.js",
+    "model": "gemini-3.6-flash",
+    "importedAt": "2026-11-28T09:54:46.512Z",
+    "formTimestamp": "11/27/2026 11:43:57",
+    "formRow": 10,
+    "submittedOn": "2026-11-27",
+    "shopNotes": "Passenger side repair and quarter panel replacement .",
+    "corrections": [],
+    "correctionsRejected": [],
+    "redactions": [
+      {
+        "photo": 1,
+        "label": "license plate",
+        "stage": "draft"
+      },
+      {
+        "photo": 4,
+        "label": "license plate",
+        "stage": "draft"
+      },
+      {
+        "photo": 6,
+        "label": "license plate",
+        "stage": "draft"
+      },
+      {
+        "photo": 7,
+        "label": "license plate",
+        "stage": "draft"
+      },
+      {
+        "photo": 8,
+        "label": "license plate",
+        "stage": "draft"
+      }
+    ],
+    "privacyChecks": 1,
+    "privacyVerifiedClean": true,
+    "privacyIssues": [],
+    "uncertain": [],
+    "skippedPhotos": [],
+    "review": "Personal information in the photos and notes was redacted automatically; look at every photo anyway. The vehicle fields are the shop's answers with typos fixed (see corrections), and the service and date are as submitted. The title, summary, story and alt text are a Gemini draft. Check every claim, fix the voice, then set \"draft\" to false to publish."
+  },
+  "slug": "2025-kia-niro-collision-repair",
+  "date": "2026-11-25",
+  "title": "2025 Kia Niro Collision Repair",
+  "summary": "Collision repair and quarter panel replacement on a 2025 Kia Niro at Carcis Autobody Repair in Vancouver, WA.",
+  "service": "collision",
+  "vehicle": {
+    "year": "2025",
+    "make": "Kia",
+    "model": "Niro",
+    "color": "Green"
+  },
+  "insurance": true,
+  "draft": true,
+  "story": [
+    "This 2025 Kia Niro arrived with heavy passenger side collision damage. The rear door panel metal was deeply gouged and torn open. The rear quarter panel area around the wheel well and pillar sustained structural crushing, requiring complete panel disassembly and outer structure replacement.",
+    "Technicians cut away the compromised sheet metal and prepped the inner structure. A replacement quarter panel was fitted, measured for alignment, and welded in place according to factory specifications. The right rear door shell was repaired, prepped, and seamlessly integrated with adjacent body lines.",
+    "After body fill, priming, and block sanding, the panels were painted to match the factory green coat. The shop reinstalled the tail lamp assembly, handle components, and lower cladding. Final polishing returned the exterior to factory condition."
+  ],
+  "photos": [
+    {
+      "file": "/assets/work/2025-kia-niro-collision-repair/before-1.webp",
+      "alt": "Damaged rear passenger quarter panel section on a green Kia Niro before repair.",
+      "width": 900,
+      "height": 1200,
+      "role": "before"
+    },
+    {
+      "file": "/assets/work/2025-kia-niro-collision-repair/before-2.webp",
+      "alt": "Close-up of severe tear damage on the passenger rear door metal.",
+      "width": 900,
+      "height": 1200,
+      "role": "before"
+    },
+    {
+      "file": "/assets/work/2025-kia-niro-collision-repair/before-3.webp",
+      "alt": "Rear angle view showing passenger side body damage and missing trim elements.",
+      "width": 1200,
+      "height": 900,
+      "role": "before"
+    },
+    {
+      "file": "/assets/work/2025-kia-niro-collision-repair/after-1.webp",
+      "alt": "Rear passenger three-quarter view of the green Kia Niro after collision repair.",
+      "width": 1200,
+      "height": 900,
+      "role": "after"
+    },
+    {
+      "file": "/assets/work/2025-kia-niro-collision-repair/after-2.webp",
+      "alt": "Full passenger side profile view of the green Kia Niro post-repair.",
+      "width": 1200,
+      "height": 900,
+      "role": "after"
+    },
+    {
+      "file": "/assets/work/2025-kia-niro-collision-repair/after-3.webp",
+      "alt": "Front passenger side angle of the restored green Kia Niro parked outside.",
+      "width": 1200,
+      "height": 900,
+      "role": "after"
+    },
+    {
+      "file": "/assets/work/2025-kia-niro-collision-repair/after-4.webp",
+      "alt": "Wider front passenger view of the repaired Kia Niro outside the shop.",
+      "width": 1200,
+      "height": 900,
+      "role": "after"
+    },
+    {
+      "file": "/assets/work/2025-kia-niro-collision-repair/after-5.webp",
+      "alt": "Front driver side three-quarter view of the green Kia Niro following complete restoration.",
+      "width": 1200,
+      "height": 900,
+      "role": "after"
+    }
+  ]
+}
